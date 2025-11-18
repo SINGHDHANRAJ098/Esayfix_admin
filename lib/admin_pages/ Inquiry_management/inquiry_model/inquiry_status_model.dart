@@ -40,20 +40,6 @@ extension InquiryStatusX on InquiryStatus {
     }
   }
 
-  Color get backgroundColor {
-    switch (this) {
-      case InquiryStatus.pending:
-        return Colors.orange.withOpacity(0.1);
-      case InquiryStatus.assigned:
-        return Colors.blue.withOpacity(0.1);
-      case InquiryStatus.inProgress:
-        return Colors.purple.withOpacity(0.1);
-      case InquiryStatus.completed:
-        return Colors.green.withOpacity(0.1);
-      case InquiryStatus.cancelled:
-        return Colors.red.withOpacity(0.1);
-    }
-  }
   IconData get icon {
     switch (this) {
       case InquiryStatus.pending:
@@ -68,5 +54,4 @@ extension InquiryStatusX on InquiryStatus {
         return Icons.cancel;
     }
   }
-
 }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../inquiry_model/inquiry.model.dart';
 import '../inquiry_model/inquiry_status_model.dart';
 
-
 class UpdateStatusScreen extends StatefulWidget {
   final Inquiry inquiry;
   final Function(InquiryStatus) onStatusUpdate;
@@ -40,8 +39,10 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.green,
+        margin: const EdgeInsets.all(12),
         behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: Colors.green,
       ),
     );
   }
@@ -49,29 +50,28 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade50,
+
       appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.white,
         title: const Text(
           "Update Status",
           style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
           ),
         ),
-        backgroundColor: Colors.redAccent,
-        elevation: 0,
-        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
+
       body: Column(
         children: [
-          // Current Status Card
           _buildCurrentStatusCard(),
-          SizedBox(height: 20),
-          // Status Options
-          Expanded(
-            child: _buildStatusOptions(),
-          ),
-          // Update Button
+          const SizedBox(height: 10),
+          Expanded(child: _buildStatusOptions()),
           _buildUpdateButton(),
         ],
       ),
@@ -79,53 +79,47 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
   }
 
   Widget _buildCurrentStatusCard() {
+    final status = widget.inquiry.status;
+
     return Container(
-      margin: EdgeInsets.all(16),
-      padding: EdgeInsets.all(20),
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: widget.inquiry.status.color.withOpacity(0.1),
+        color: status.color.withOpacity(0.12),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: widget.inquiry.status.color.withOpacity(0.3)),
+        border: Border.all(color: status.color.withOpacity(0.3)),
       ),
       child: Row(
         children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: widget.inquiry.status.color,
-              shape: BoxShape.circle,
-            ),
+          CircleAvatar(
+            radius: 26,
+            backgroundColor: status.color,
             child: Icon(
-              widget.inquiry.status.icon,
+              status.icon,
               color: Colors.white,
-              size: 24,
+              size: 22,
             ),
           ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Current Status",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
-                  ),
+          const SizedBox(width: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Current Status",
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey.shade700,
                 ),
-                SizedBox(height: 4),
-                Text(
-                  widget.inquiry.status.label,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: widget.inquiry.status.color,
-                  ),
+              ),
+              Text(
+                status.label,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: status.color,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
@@ -134,143 +128,145 @@ class _UpdateStatusScreenState extends State<UpdateStatusScreen> {
 
   Widget _buildStatusOptions() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ListView(
         children: [
-          Text(
-            "Select New Status",
+          const Text(
+            "Choose New Status",
             style: TextStyle(
-              fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.grey[800],
+              fontSize: 17,
             ),
           ),
-          SizedBox(height: 16),
-          Expanded(
-            child: ListView(
-              children: InquiryStatus.values.map((status) {
-                return _buildStatusOptionCard(status);
-              }).toList(),
-            ),
-          ),
+          const SizedBox(height: 8),
+          ...InquiryStatus.values.map(_buildStatusOptionCard),
         ],
       ),
     );
   }
 
   Widget _buildStatusOptionCard(InquiryStatus status) {
-    final isSelected = _selectedStatus == status;
-    final isCurrent = widget.inquiry.status == status;
+    final bool isSelected = _selectedStatus == status;
+    final bool isCurrent = widget.inquiry.status == status;
 
-    return Card(
-      margin: EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
           color: isSelected ? status.color : Colors.transparent,
-          width: isSelected ? 2 : 0,
+          width: isSelected ? 2 : 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isSelected ? 0.08 : 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: status.color.withOpacity(0.2),
-            shape: BoxShape.circle,
-          ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+
+        leading: CircleAvatar(
+          radius: 22,
+          backgroundColor: status.color.withOpacity(0.15),
           child: Icon(
             status.icon,
             color: status.color,
-            size: 20,
+            size: 18,
           ),
         ),
+
         title: Text(
           status.label,
           style: TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
             color: status.color,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        subtitle: _buildStatusDescription(status),
+
+        subtitle: Text(
+          _statusExplanation(status),
+          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+        ),
+
         trailing: isCurrent
-            ? Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            "Current",
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        )
+            ? _currentBadge()
             : isSelected
-            ? Icon(Icons.check_circle, color: Colors.green)
+            ? const Icon(Icons.check_circle, color: Colors.green, size: 24)
             : null,
+
         onTap: () {
-          setState(() {
-            _selectedStatus = status;
-          });
+          if (!isCurrent) {
+            setState(() => _selectedStatus = status);
+          }
         },
       ),
     );
   }
 
-  Widget _buildStatusDescription(InquiryStatus status) {
-    String description = "";
-    switch (status) {
-      case InquiryStatus.pending:
-        description = "Inquiry is waiting for assignment";
-        break;
-      case InquiryStatus.assigned:
-        description = "Provider has been assigned";
-        break;
-      case InquiryStatus.inProgress:
-        description = "Work is currently in progress";
-        break;
-      case InquiryStatus.completed:
-        description = "Service has been completed";
-        break;
-      case InquiryStatus.cancelled:
-        description = "Inquiry has been cancelled";
-        break;
-    }
-
-    return Text(
-      description,
-      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+  Widget _currentBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        "Current",
+        style: TextStyle(
+          fontSize: 11,
+          color: Colors.grey.shade600,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 
+  String _statusExplanation(InquiryStatus s) {
+    switch (s) {
+      case InquiryStatus.pending:
+        return "Awaiting assignment";
+      case InquiryStatus.assigned:
+        return "Provider assigned";
+      case InquiryStatus.inProgress:
+        return "Service is in progress";
+      case InquiryStatus.completed:
+        return "Service completed";
+      case InquiryStatus.cancelled:
+        return "Service request cancelled";
+    }
+  }
+
   Widget _buildUpdateButton() {
+    final isChanged = _selectedStatus != widget.inquiry.status;
+
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: Colors.grey.shade300),
+        ),
         color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey[200]!)),
       ),
       child: SizedBox(
         width: double.infinity,
-        height: 50,
+        height: 52,
         child: ElevatedButton(
-          onPressed: _selectedStatus != widget.inquiry.status ? _updateStatus : null,
+          onPressed: isChanged ? _updateStatus : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.redAccent,
+            disabledBackgroundColor: Colors.grey.shade400,
+            elevation: 3,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
             ),
-            elevation: 2,
           ),
-          child: Text(
+          child: const Text(
             "Update Status",
             style: TextStyle(
               fontSize: 16,

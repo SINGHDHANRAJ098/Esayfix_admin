@@ -5,7 +5,6 @@ import '../inquiry_model/inquiry.model.dart';
 import '../inquiry_model/inquiry_provider_model.dart';
 import '../inquiry_model/inquiry_status_model.dart';
 
-
 class InquiryTrackScreen extends StatefulWidget {
   final Inquiry inquiry;
   final List<ProviderModel> providers;
@@ -25,54 +24,58 @@ class InquiryTrackScreen extends StatefulWidget {
 }
 
 class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
+  // ------------------------------
+  // PROVIDER CHANGE MODAL
+  // ------------------------------
   void _showChangeProviderDialog() {
-    final availableProviders = widget.providers.where((p) => p.available).toList();
+    final availableProviders =
+    widget.providers.where((p) => p.available).toList();
 
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.8,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.75,
+        minChildSize: 0.5,
+        maxChildSize: 0.9,
+        builder: (_, controller) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
           ),
-        ),
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Change Service Provider",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
+          child: Column(
+            children: [
+              SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                itemCount: availableProviders.length,
-                itemBuilder: (context, index) {
-                  final provider = availableProviders[index];
-                  return _buildProviderOption(provider);
-                },
+              Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  "Change Service Provider",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
               ),
-            ),
-          ],
+              Expanded(
+                child: ListView.builder(
+                  controller: controller,
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: availableProviders.length,
+                  itemBuilder: (_, i) =>
+                      _buildProviderOption(availableProviders[i]),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -80,74 +83,62 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
 
   Widget _buildProviderOption(ProviderModel provider) {
     return Card(
+      elevation: 2,
+      shadowColor: Colors.black.withOpacity(0.05),
       margin: EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+      ),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Colors.redAccent,
+          radius: 22,
+          backgroundColor: Colors.redAccent.shade100,
           child: Text(
             provider.name[0],
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Colors.redAccent.shade700,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         title: Text(
           provider.name,
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(provider.specialty),
-            SizedBox(height: 4),
-            Row(
-              children: [
-                Icon(Icons.star, size: 16, color: Colors.orange),
-                SizedBox(width: 4),
-                Text(provider.rating.toStringAsFixed(1)),
-                SizedBox(width: 12),
-                Icon(Icons.phone, size: 16, color: Colors.grey),
-                SizedBox(width: 4),
-                Text(provider.phone),
-              ],
-            ),
-          ],
-        ),
+        subtitle: Text(provider.specialty),
         trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
         onTap: () {
           Navigator.pop(context);
-          widget.onUpdateProvider(provider, "Admin requested provider change");
-          _showSuccessSnackbar('Provider changed to ${provider.name}');
+          widget.onUpdateProvider(provider, "Admin changed provider");
+          _success("Provider changed to ${provider.name}");
         },
       ),
     );
   }
 
-  void _markAsCompleted() {
+  // ------------------------------
+  // STATUS UPDATE ACTIONS
+  // ------------------------------
+
+  void _complete() {
     widget.onStatusUpdate(InquiryStatus.completed);
-    _showSuccessSnackbar('Inquiry marked as completed');
+    _success("Marked as completed");
   }
 
-  void _markAsCancelled() {
+  void _cancel() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.warning, color: Colors.orange),
-            SizedBox(width: 8),
-            Text("Cancel Inquiry"),
-          ],
-        ),
-        content: Text("Are you sure you want to cancel this inquiry? This action cannot be undone."),
+      builder: (_) => AlertDialog(
+        title: Text("Cancel Inquiry"),
+        content:
+        Text("Are you sure you want to cancel this inquiry permanently?"),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text("No", style: TextStyle(color: Colors.grey[600])),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text("No")),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               widget.onStatusUpdate(InquiryStatus.cancelled);
-              _showSuccessSnackbar('Inquiry cancelled successfully');
+              _success("Inquiry cancelled");
             },
             child: Text("Yes, Cancel", style: TextStyle(color: Colors.red)),
           ),
@@ -156,291 +147,244 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
     );
   }
 
-  void _showSuccessSnackbar(String message) {
+  void _success(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
+        content: Text(msg),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.all(12),
+        backgroundColor: Colors.green,
       ),
     );
   }
+
+  // ------------------------------
+  // BUILD UI
+  // ------------------------------
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade50,
+
       appBar: AppBar(
-        title: const Text(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.black),
+        title: Text(
           "Track Inquiry",
           style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        backgroundColor: Colors.redAccent,
-        elevation: 0,
-        centerTitle: true,
       ),
-      body: SingleChildScrollView(
+
+      body: ListView(
         padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Status Overview
-            _buildStatusOverview(),
-            SizedBox(height: 20),
-            // Provider Information
-            if (widget.inquiry.provider != null) _buildProviderInfo(),
-            SizedBox(height: 20),
-            // Quick Actions
-            _buildQuickActions(),
-            SizedBox(height: 20),
-            // Status Timeline
-            _buildStatusTimeline(),
+        children: [
+          _statusOverview(),
+          if (widget.inquiry.provider != null) ...[
+            SizedBox(height: 18),
+            _providerInfo(),
           ],
-        ),
+          SizedBox(height: 18),
+          _quickActions(),
+          SizedBox(height: 18),
+          _timeline(),
+        ],
       ),
     );
   }
 
-  Widget _buildStatusOverview() {
+  // ------------------------------
+  // STATUS OVERVIEW
+  // ------------------------------
+
+  Widget _statusOverview() {
+    final status = widget.inquiry.status;
+
     return Card(
       elevation: 3,
+      shadowColor: Colors.black.withOpacity(0.07),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(22),
         child: Column(
           children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: widget.inquiry.status.color.withOpacity(0.1),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: widget.inquiry.status.color.withOpacity(0.3),
-                  width: 2,
-                ),
-              ),
-              child: Icon(
-                widget.inquiry.status.icon,
-                size: 40,
-                color: widget.inquiry.status.color,
-              ),
+            CircleAvatar(
+              radius: 35,
+              backgroundColor: status.color.withOpacity(0.15),
+              child: Icon(status.icon, color: status.color, size: 35),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 10),
             Text(
-              "Current Status",
+              status.label,
               style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: status.color,
               ),
             ),
             SizedBox(height: 8),
             Text(
-              widget.inquiry.status.label,
+              "Booking ID: ${widget.inquiry.id}",
               style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: widget.inquiry.status.color,
+                fontSize: 14,
+                color: Colors.grey[600],
               ),
-            ),
-            SizedBox(height: 16),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                "Booking ID: ${widget.inquiry.id}",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
+            )
           ],
         ),
       ),
     );
   }
 
-  Widget _buildProviderInfo() {
+  // ------------------------------
+  // PROVIDER INFO
+  // ------------------------------
+
+  Widget _providerInfo() {
+    final p = widget.inquiry.provider!;
+
     return Card(
       elevation: 3,
+      shadowColor: Colors.black.withOpacity(0.07),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: EdgeInsets.all(18),
+        child: Row(
           children: [
-            Row(
-              children: [
-                Icon(Icons.engineering, color: Colors.blue[700]),
-                SizedBox(width: 8),
-                Text(
-                  "Assigned Provider",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
+            CircleAvatar(
+              radius: 27,
+              backgroundColor: Colors.blue.shade100,
+              child: Text(
+                p.name[0],
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade700,
                 ),
-              ],
+              ),
             ),
-            SizedBox(height: 12),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: CircleAvatar(
-                backgroundColor: Colors.blue[100],
-                child: Text(
-                  widget.inquiry.provider!.name[0],
-                  style: TextStyle(color: Colors.blue[800], fontWeight: FontWeight.bold),
-                ),
-              ),
-              title: Text(
-                widget.inquiry.provider!.name,
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              subtitle: Column(
+            SizedBox(width: 14),
+            Expanded(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.inquiry.provider!.specialty),
-                  SizedBox(height: 4),
+                  Text(p.name,
+                      style:
+                      TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  SizedBox(height: 3),
+                  Text(p.specialty, style: TextStyle(color: Colors.grey[600])),
+                  SizedBox(height: 6),
                   Row(
                     children: [
-                      Icon(Icons.star, size: 16, color: Colors.orange),
+                      Icon(Icons.star, color: Colors.orange, size: 16),
                       SizedBox(width: 4),
-                      Text(widget.inquiry.provider!.rating.toStringAsFixed(1)),
+                      Text(p.rating.toStringAsFixed(1)),
                       SizedBox(width: 12),
-                      Icon(Icons.phone, size: 16, color: Colors.grey),
+                      Icon(Icons.phone, color: Colors.grey, size: 16),
                       SizedBox(width: 4),
-                      Text(widget.inquiry.provider!.phone),
+                      Text(p.phone),
                     ],
                   ),
                 ],
               ),
-              trailing: IconButton(
-                icon: Icon(Icons.swap_horiz, color: Colors.redAccent),
-                onPressed: _showChangeProviderDialog,
-              ),
             ),
+            IconButton(
+              icon: Icon(Icons.swap_horiz, color: Colors.redAccent),
+              onPressed: _showChangeProviderDialog,
+            )
           ],
         ),
       ),
     );
   }
 
-  Widget _buildQuickActions() {
+  // ------------------------------
+  // QUICK ACTION BUTTONS
+  // ------------------------------
+
+  Widget _quickActions() {
+    final disabled = widget.inquiry.status == InquiryStatus.completed ||
+        widget.inquiry.status == InquiryStatus.cancelled;
+
     return Card(
       elevation: 3,
+      shadowColor: Colors.black.withOpacity(0.07),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Quick Actions",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
-              ),
+        child: disabled
+            ? Center(
+          child: Padding(
+            padding: EdgeInsets.all(12),
+            child: Text(
+              "No actions available",
+              style: TextStyle(color: Colors.grey[600]),
             ),
-            SizedBox(height: 12),
-            if (widget.inquiry.status != InquiryStatus.completed &&
-                widget.inquiry.status != InquiryStatus.cancelled) ...[
-              _buildActionButton(
-                "Change Provider",
-                Icons.swap_horiz,
-                Colors.blue,
-                _showChangeProviderDialog,
-              ),
-              SizedBox(height: 8),
-              _buildActionButton(
-                "Mark as Completed",
-                Icons.check_circle,
-                Colors.green,
-                _markAsCompleted,
-              ),
-              SizedBox(height: 8),
-              _buildActionButton(
-                "Cancel Inquiry",
-                Icons.cancel,
-                Colors.red,
-                _markAsCancelled,
-              ),
-            ] else ...[
-              Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.grey[50],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: Text(
-                    "No actions available for ${widget.inquiry.status.label.toLowerCase()} inquiries",
-                    style: TextStyle(color: Colors.grey[600]),
-                  ),
-                ),
-              ),
-            ],
+          ),
+        )
+            : Column(
+          children: [
+            _bigButton(
+                "Change Provider", Icons.swap_horiz, Colors.blue, _showChangeProviderDialog),
+            SizedBox(height: 10),
+            _bigButton(
+                "Mark Completed", Icons.check_circle, Colors.green, _complete),
+            SizedBox(height: 10),
+            _bigButton(
+                "Cancel Inquiry", Icons.cancel, Colors.red, _cancel),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildActionButton(String text, IconData icon, Color color, VoidCallback onPressed) {
+  Widget _bigButton(String title, IconData icon, Color color, VoidCallback onTap) {
     return SizedBox(
       width: double.infinity,
       height: 50,
       child: ElevatedButton.icon(
-        icon: Icon(icon, color: Colors.white, size: 20),
-        label: Text(
-          text,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-        onPressed: onPressed,
+        icon: Icon(icon, size: 20),
+        label: Text(title),
+        onPressed: onTap,
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildStatusTimeline() {
-    final statusHistory = [
-      _StatusHistoryItem("Inquiry Created", "System", "Today, ${widget.inquiry.time}"),
-      _StatusHistoryItem("Under Review", "Admin", "Today, ${widget.inquiry.time}"),
+  // ------------------------------
+  // TIMELINE
+  // ------------------------------
+
+  Widget _timeline() {
+    List<_StatusHistory> items = [
+      _StatusHistory("Inquiry Created", "System", "Today"),
       if (widget.inquiry.provider != null)
-        _StatusHistoryItem("Assigned to Provider", "Admin", "Today, ${widget.inquiry.time}"),
+        _StatusHistory("Assigned", "Admin", "Today"),
       if (widget.inquiry.status == InquiryStatus.inProgress)
-        _StatusHistoryItem("Work In Progress", widget.inquiry.provider?.name ?? "Provider", "Today"),
+        _StatusHistory("Work In Progress", "Provider", "Today"),
       if (widget.inquiry.status == InquiryStatus.completed)
-        _StatusHistoryItem("Service Completed", widget.inquiry.provider?.name ?? "Provider", "Today"),
+        _StatusHistory("Completed", "Provider", "Today"),
       if (widget.inquiry.status == InquiryStatus.cancelled)
-        _StatusHistoryItem("Inquiry Cancelled", "Admin", "Today"),
+        _StatusHistory("Cancelled", "Admin", "Today"),
     ];
 
     return Card(
       elevation: 3,
+      shadowColor: Colors.black.withOpacity(0.07),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -448,89 +392,61 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
                 SizedBox(width: 8),
                 Text(
                   "Status History",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             SizedBox(height: 16),
-            Column(
-              children: statusHistory.asMap().entries.map((entry) {
-                final index = entry.key;
-                final item = entry.value;
-                final isLast = index == statusHistory.length - 1;
-
-                return _buildTimelineItem(item, index, isLast);
-              }).toList(),
-            ),
+            ...items.map(_buildTimelineItem),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTimelineItem(_StatusHistoryItem item, int index, bool isLast) {
-    return Container(
-      margin: EdgeInsets.only(bottom: isLast ? 0 : 8),
+  Widget _buildTimelineItem(_StatusHistory item) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Timeline line and dot
-          Column(
-            children: [
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              if (!isLast)
-                Container(
-                  width: 2,
-                  height: 40,
-                  color: Colors.grey[300],
-                ),
-            ],
+          // Circle
+          Container(
+            width: 12,
+            height: 12,
+            margin: EdgeInsets.only(top: 4),
+            decoration: BoxDecoration(
+              color: Colors.green,
+              shape: BoxShape.circle,
+            ),
           ),
-          SizedBox(width: 16),
-          // Content
+          SizedBox(width: 12),
+          // Details
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  item.status,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[800],
-                  ),
-                ),
+                Text(item.title,
+                    style:
+                    TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
                 SizedBox(height: 2),
                 Text(
                   "By ${item.by} • ${item.time}",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                )
               ],
             ),
-          ),
+          )
         ],
       ),
     );
   }
 }
 
-class _StatusHistoryItem {
-  final String status;
+class _StatusHistory {
+  final String title;
   final String by;
   final String time;
 
-  _StatusHistoryItem(this.status, this.by, this.time);
+  _StatusHistory(this.title, this.by, this.time);
 }

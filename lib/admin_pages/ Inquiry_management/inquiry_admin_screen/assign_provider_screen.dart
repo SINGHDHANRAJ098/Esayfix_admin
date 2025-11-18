@@ -1,8 +1,6 @@
-
 import 'package:flutter/material.dart';
 import '../inquiry_model/inquiry.model.dart';
 import '../inquiry_model/inquiry_provider_model.dart';
-
 
 class AssignInquiryScreen extends StatefulWidget {
   final Inquiry inquiry;
@@ -28,357 +26,304 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateTime.now().add(Duration(days: 1));
-    _selectedTime = TimeOfDay(hour: 10, minute: 0);
+    _selectedDate = DateTime.now().add(const Duration(days: 1));
+    _selectedTime = const TimeOfDay(hour: 10, minute: 0);
   }
 
-  Future<void> _selectDateTime() async {
-    final DateTime? pickedDate = await showDatePicker(
+  Future<void> _pickDateTime() async {
+    final date = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
+      initialDate: _selectedDate!,
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
     );
 
-    if (pickedDate != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
+    if (date != null) {
+      final time = await showTimePicker(
         context: context,
-        initialTime: _selectedTime ?? TimeOfDay.now(),
+        initialTime: _selectedTime!,
       );
 
-      if (pickedTime != null) {
+      if (time != null) {
         setState(() {
-          _selectedDate = pickedDate;
-          _selectedTime = pickedTime;
+          _selectedDate = date;
+          _selectedTime = time;
         });
       }
     }
   }
 
-  void _confirmAssignment() {
-    if (_selectedProvider != null) {
-      widget.onAssign(_selectedProvider!);
-      _showSuccessSnackbar('Successfully assigned to ${_selectedProvider!.name}');
-      Navigator.pop(context);
-    } else {
-      _showErrorSnackbar('Please select a service provider');
+  void _confirm() {
+    if (_selectedProvider == null) {
+      _error("Please select a service provider");
+      return;
     }
+
+    widget.onAssign(_selectedProvider!);
+    Navigator.pop(context);
+    _success("Assigned to ${_selectedProvider!.name}");
   }
 
-  void _showSuccessSnackbar(String message) {
+  void _success(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(msg),
         backgroundColor: Colors.green,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(12),
       ),
     );
   }
 
-  void _showErrorSnackbar(String message) {
+  void _error(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(msg),
         backgroundColor: Colors.red,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(12),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final availableProviders = widget.providers.where((p) => p.available).toList();
+    final providers = widget.providers.where((e) => e.available).toList();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade100,
+
+      // Light Admin AppBar
       appBar: AppBar(
-        title: const Text(
-          "Assign Provider",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Colors.redAccent,
+        backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: const Text(
+          "Assign Provider",
+          style: TextStyle(fontWeight: FontWeight.w700,fontSize: 18, color: Colors.black),
+        ),
       ),
+
       body: Column(
         children: [
-          // Inquiry Summary
-          _buildInquirySummary(),
-          SizedBox(height: 16),
-          // Provider Selection
-          Expanded(
-            child: _buildProviderSelection(availableProviders),
-          ),
-          // Deadline & Confirm
-          _buildBottomActions(),
+          _summaryCard(),
+          const SizedBox(height: 12),
+          Expanded(child: _providerList(providers)),
+          _bottomPanel(),
         ],
       ),
     );
   }
 
-  Widget _buildInquirySummary() {
-    return Container(
-      margin: EdgeInsets.all(16),
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Booking Summary",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.redAccent,
+
+  Widget _summaryCard() {
+    return Card(
+      elevation: 3,
+      shadowColor: Colors.black.withOpacity(.08),
+      margin: const EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 28,
+              backgroundColor: Colors.redAccent.withOpacity(.15),
+              child: const Icon(Icons.build, size: 26, color: Colors.redAccent),
             ),
-          ),
-          SizedBox(height: 12),
-          Row(
-            children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.redAccent.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.build, color: Colors.redAccent),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.inquiry.service,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 17,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text("Customer: ${widget.inquiry.customer}",
+                      style: TextStyle(color: Colors.grey.shade200)),
+                  Text("Location: ${widget.inquiry.location}",
+                      style: TextStyle(color: Colors.grey.shade200)),
+                ],
               ),
-              SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.inquiry.service,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[800],
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      "Customer: ${widget.inquiry.customer}",
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                    Text(
-                      "Location: ${widget.inquiry.location}",
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildProviderSelection(List<ProviderModel> availableProviders) {
+  // -------------------------------
+  // AVAILABLE PROVIDERS LIST
+  // -------------------------------
+  Widget _providerList(List<ProviderModel> providers) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             "Available Providers",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.grey[800],
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
-            "Select a service provider to assign this inquiry",
-            style: TextStyle(
-              color: Colors.grey[600],
-            ),
+            "Select a provider to assign",
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
+
+          // Provider List
           Expanded(
             child: ListView.builder(
-              itemCount: availableProviders.length,
-              itemBuilder: (context, index) {
-                final provider = availableProviders[index];
-                return _buildProviderCard(provider);
-              },
+              itemCount: providers.length,
+              itemBuilder: (_, i) => _providerCard(providers[i]),
             ),
-          ),
+          )
         ],
       ),
     );
   }
 
-  Widget _buildProviderCard(ProviderModel provider) {
-    final isSelected = _selectedProvider?.id == provider.id;
+  Widget _providerCard(ProviderModel p) {
+    final selected = _selectedProvider?.id == p.id;
 
     return Card(
-      margin: EdgeInsets.only(bottom: 12),
       elevation: 2,
+      shadowColor: Colors.black.withOpacity(.05),
+      margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         side: BorderSide(
-          color: isSelected ? Colors.blue : Colors.transparent,
-          width: isSelected ? 2 : 0,
+          color: selected ? Colors.blue : Colors.transparent,
+          width: selected ? 2 : 0,
         ),
       ),
       child: ListTile(
-        contentPadding: EdgeInsets.all(16),
+        contentPadding: const EdgeInsets.all(16),
+
         leading: CircleAvatar(
-          radius: 25,
-          backgroundColor: Colors.blue[100],
+          radius: 24,
+          backgroundColor: Colors.blue.shade100,
           child: Text(
-            provider.name[0],
+            p.name[0],
             style: TextStyle(
-              color: Colors.blue[800],
-              fontWeight: FontWeight.bold,
               fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue.shade700,
             ),
           ),
         ),
+
         title: Text(
-          provider.name,
+          p.name,
           style: TextStyle(
-            fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: isSelected ? Colors.blue[800] : Colors.grey[800],
+            color: selected ? Colors.blue.shade700 : Colors.black,
           ),
         ),
+
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(provider.specialty),
-            SizedBox(height: 4),
+            Text(p.specialty),
+            const SizedBox(height: 4),
             Row(
               children: [
-                Icon(Icons.star, size: 16, color: Colors.orange),
-                SizedBox(width: 4),
-                Text(provider.rating.toStringAsFixed(1)),
-                SizedBox(width: 12),
-                Icon(Icons.phone, size: 16, color: Colors.grey),
-                SizedBox(width: 4),
-                Text(provider.phone),
+                const Icon(Icons.star, color: Colors.orange, size: 16),
+                const SizedBox(width: 3),
+                Text(p.rating.toStringAsFixed(1)),
+                const SizedBox(width: 10),
+                const Icon(Icons.phone, size: 15, color: Colors.grey),
+                const SizedBox(width: 4),
+                Text(p.phone),
               ],
             ),
           ],
         ),
-        trailing: isSelected
-            ? Container(
-          width: 24,
-          height: 24,
-          decoration: BoxDecoration(
-            color: Colors.green,
-            shape: BoxShape.circle,
-          ),
+
+        trailing: selected
+            ? const CircleAvatar(
+          radius: 13,
+          backgroundColor: Colors.green,
           child: Icon(Icons.check, size: 16, color: Colors.white),
         )
-            : Container(
-          width: 24,
-          height: 24,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            shape: BoxShape.circle,
-          ),
+            : const CircleAvatar(
+          radius: 13,
+          backgroundColor: Colors.transparent,
+          child: Icon(Icons.circle, size: 14, color: Colors.grey),
         ),
-        onTap: () {
-          setState(() {
-            _selectedProvider = provider;
-          });
-        },
+
+        onTap: () => setState(() => _selectedProvider = p),
       ),
     );
   }
 
-  Widget _buildBottomActions() {
+  // -------------------------------
+  // BOTTOM PANEL
+  // -------------------------------
+  Widget _bottomPanel() {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey[200]!)),
+        border: Border(top: BorderSide(color: Colors.grey.shade300)),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Deadline Selection
-          Card(
-            elevation: 2,
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          // Date & Time Selector
+          GestureDetector(
+            onTap: _pickDateTime,
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.event, color: Colors.redAccent),
-                      SizedBox(width: 8),
-                      Text(
-                        "Expected Completion",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                  const Icon(Icons.calendar_today, color: Colors.redAccent),
+                  const SizedBox(width: 12),
+                  Text(
+                    "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}  •  ${_selectedTime!.format(context)}",
+                    style: const TextStyle(fontSize: 15),
                   ),
-                  SizedBox(height: 12),
-                  InkWell(
-                    onTap: _selectDateTime,
-                    child: Container(
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.calendar_today, color: Colors.redAccent),
-                          SizedBox(width: 12),
-                          Text(
-                            _selectedDate != null && _selectedTime != null
-                                ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year} ${_selectedTime!.format(context)}'
-                                : 'Select date and time',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          Spacer(),
-                          Icon(Icons.arrow_drop_down, color: Colors.grey),
-                        ],
-                      ),
-                    ),
-                  ),
+                  const Spacer(),
+                  const Icon(Icons.keyboard_arrow_down),
                 ],
               ),
             ),
           ),
-          SizedBox(height: 16),
+
+          const SizedBox(height: 16),
+
           // Confirm Button
           SizedBox(
             width: double.infinity,
-            height: 50,
+            height: 52,
             child: ElevatedButton(
-              onPressed: _selectedProvider != null ? _confirmAssignment : null,
+              onPressed: _selectedProvider != null ? _confirm : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.redAccent,
+                disabledBackgroundColor: Colors.grey.shade400,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                elevation: 2,
               ),
-              child: Text(
+              child: const Text(
                 "Confirm Assignment",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
           ),

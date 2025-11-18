@@ -9,12 +9,19 @@ import 'inquiry_details_screen.dart';
 class InquiryListScreen extends StatefulWidget {
   final List<Inquiry> inquiries;
   final List<ProviderModel> providers;
-  final Function(String, InquiryStatus)
-  onStatusUpdate; // Changed parameter order
-  final Function(String, ProviderModel)
-  onAssignProvider; // Changed parameter order
-  final Function(String, ProviderModel, String)
-  onUpdateProvider; // Changed parameter order
+  final Function(String, InquiryStatus) onStatusUpdate;
+  final Function(String, ProviderModel) onAssignProvider;
+  final Function(String, ProviderModel, String) onUpdateProvider;
+  final Function(String, PaymentStatus, PaymentMethod?) onPaymentUpdate;
+  final Function(String, String) onUpdateAdminNotes;
+  final Function(String, String) onAddAdminNote;
+  final Function(String, double) onUpdateInquiryPrice;
+  final String searchQuery;
+  final InquiryStatus? currentFilter;
+  final Function(String) onSearch;
+  final Function(InquiryStatus?) onFilterChange;
+  final VoidCallback onRefresh;
+  final Map<String, dynamic> statistics;
 
   const InquiryListScreen({
     super.key,
@@ -23,6 +30,16 @@ class InquiryListScreen extends StatefulWidget {
     required this.onStatusUpdate,
     required this.onAssignProvider,
     required this.onUpdateProvider,
+    required this.onPaymentUpdate,
+    required this.onUpdateAdminNotes,
+    required this.onAddAdminNote,
+    required this.onUpdateInquiryPrice,
+    required this.searchQuery,
+    required this.currentFilter,
+    required this.onSearch,
+    required this.onFilterChange,
+    required this.onRefresh,
+    required this.statistics,
   });
 
   @override
@@ -30,6 +47,28 @@ class InquiryListScreen extends StatefulWidget {
 }
 
 class _InquiryListScreenState extends State<InquiryListScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.text = widget.searchQuery;
+  }
+
+  @override
+  void didUpdateWidget(covariant InquiryListScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.searchQuery != widget.searchQuery) {
+      _searchController.text = widget.searchQuery;
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   // Helper method to get icon for status
   IconData _getStatusIcon(InquiryStatus status) {
     switch (status) {
@@ -48,65 +87,146 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: InquiryStatus.values.length,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: const Text(
-            "Inquiry Management",
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.redAccent,
-          bottom: TabBar(
-            isScrollable: true,
-            indicatorColor: Colors.white,
-            labelStyle: const TextStyle(fontWeight: FontWeight.w500),
-            tabs: InquiryStatus.values.map((status) {
-              final count = widget.inquiries
-                  .where((e) => e.status == status)
-                  .length;
-              return Tab(text: "${status.label} ($count)");
-            }).toList(),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          "Inquiry Management",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
-        body: TabBarView(
-          children: InquiryStatus.values.map((status) {
-            final filtered = widget.inquiries
-                .where((e) => e.status == status)
-                .toList();
-            return _buildInquiryList(filtered, status);
-          }).toList(),
+        centerTitle: true,
+        backgroundColor: Colors.redAccent,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(100),
+          child: _buildAppBarContent(),
         ),
       ),
+      body: _buildInquiryList(),
     );
   }
 
-  Widget _buildInquiryList(List<Inquiry> inquiries, InquiryStatus status) {
-    if (inquiries.isEmpty) {
+  Widget _buildAppBarContent() {
+    return Column(
+      children: [
+        // Search Bar
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search by customer, service, ID...',
+              prefixIcon: const Icon(Icons.search, color: Colors.grey),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                icon: const Icon(Icons.clear, color: Colors.grey),
+                onPressed: () {
+                  _searchController.clear();
+                  widget.onSearch('');
+                },
+              )
+                  : null,
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            ),
+            onChanged: widget.onSearch,
+          ),
+        ),
+        // Filter Chips
+        Container(
+          height: 50,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _buildFilterChip('All', null),
+              const SizedBox(width: 8),
+              ...InquiryStatus.values.map((status) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: _buildFilterChip(status.label, status),
+                );
+              }).toList(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterChip(String label, InquiryStatus? status) {
+    final isSelected = widget.currentFilter == status;
+    return FilterChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (selected) {
+        widget.onFilterChange(selected ? status : null);
+      },
+      backgroundColor: Colors.white,
+      selectedColor: Colors.redAccent,
+      checkmarkColor: Colors.white,
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : Colors.redAccent,
+        fontWeight: FontWeight.w500,
+      ),
+      side: BorderSide(color: Colors.redAccent),
+    );
+  }
+
+  Widget _buildInquiryList() {
+    if (widget.inquiries.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inbox_outlined, size: 64, color: Colors.grey[400]),
+            Icon(
+              Icons.inbox_outlined,
+              size: 64,
+              color: Colors.grey[400],
+            ),
             const SizedBox(height: 16),
             Text(
-              'No ${status.label.toLowerCase()} inquiries',
-              style: TextStyle(color: Colors.grey[600], fontSize: 16),
+              widget.currentFilter != null
+                  ? 'No ${widget.currentFilter!.label.toLowerCase()} inquiries'
+                  : 'No inquiries found',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 16,
+              ),
             ),
+            const SizedBox(height: 8),
+            if (widget.searchQuery.isNotEmpty)
+              Text(
+                'Try adjusting your search criteria',
+                style: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 14,
+                ),
+              ),
           ],
         ),
       );
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: inquiries.length,
-      itemBuilder: (context, index) {
-        final inquiry = inquiries[index];
-        return _buildInquiryCard(inquiry);
+    return RefreshIndicator(
+      onRefresh: () async {
+        widget.onRefresh();
       },
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: widget.inquiries.length,
+        itemBuilder: (context, index) {
+          final inquiry = widget.inquiries[index];
+          return _buildInquiryCard(inquiry);
+        },
+      ),
     );
   }
 
@@ -123,12 +243,13 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
               builder: (_) => InquiryDetailsScreen(
                 inquiry: inquiry,
                 providers: widget.providers,
-                onStatusUpdate: (newStatus) =>
-                    widget.onStatusUpdate(inquiry.id, newStatus),
-                onAssignProvider: (provider) =>
-                    widget.onAssignProvider(inquiry.id, provider),
-                onUpdateProvider: (newProvider, reason) =>
-                    widget.onUpdateProvider(inquiry.id, newProvider, reason),
+                onStatusUpdate: (newStatus) => widget.onStatusUpdate(inquiry.id, newStatus),
+                onAssignProvider: (provider) => widget.onAssignProvider(inquiry.id, provider),
+                onUpdateProvider: (newProvider, reason) => widget.onUpdateProvider(inquiry.id, newProvider, reason),
+                onPaymentUpdate: (status, method) => widget.onPaymentUpdate(inquiry.id, status, method),
+                onUpdateAdminNotes: (notes) => widget.onUpdateAdminNotes(inquiry.id, notes),
+                onAddAdminNote: (note) => widget.onAddAdminNote(inquiry.id, note),
+                onUpdateInquiryPrice: (newPrice) => widget.onUpdateInquiryPrice(inquiry.id, newPrice),
               ),
             ),
           );
@@ -143,10 +264,7 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.grey[100],
                       borderRadius: BorderRadius.circular(6),
@@ -161,16 +279,11 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: inquiry.status.color.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: inquiry.status.color.withOpacity(0.3),
-                      ),
+                      border: Border.all(color: inquiry.status.color.withOpacity(0.3)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -232,9 +345,34 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
               _buildInfoRow(Icons.location_on, inquiry.location),
               const SizedBox(height: 6),
               // Date & Time
-              _buildInfoRow(
-                Icons.calendar_today,
-                "${inquiry.date} • ${inquiry.time}",
+              _buildInfoRow(Icons.calendar_today, "${inquiry.date} • ${inquiry.time}"),
+              // Payment Status
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: inquiry.paymentStatus.color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      inquiry.paymentStatus.icon,
+                      size: 12,
+                      color: inquiry.paymentStatus.color,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      inquiry.paymentStatus.label,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: inquiry.paymentStatus.color,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               // Assigned Provider
               if (inquiry.provider != null) ...[
@@ -247,11 +385,7 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.engineering,
-                        size: 16,
-                        color: Colors.blue[700],
-                      ),
+                      Icon(Icons.engineering, size: 16, color: Colors.blue[700]),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -264,10 +398,7 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: Colors.blue[100],
                           borderRadius: BorderRadius.circular(10),
@@ -306,7 +437,10 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
         Expanded(
           child: Text(
             text,
-            style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[700],
+            ),
           ),
         ),
       ],
