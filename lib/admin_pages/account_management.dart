@@ -12,6 +12,7 @@ class _AccountManagementState extends State<AccountManagement> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.yellow,
+      appBar: AppBar(),
     );
   }
 }

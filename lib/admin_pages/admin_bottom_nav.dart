@@ -1,5 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:easyfix_admin/admin_pages/Inquiry_management.dart';
+import 'package:easyfix_admin/admin_pages/%20Inquiry_management/inquiry_management.dart';
+
 import 'package:easyfix_admin/admin_pages/account_management.dart';
 import 'package:easyfix_admin/admin_pages/dashboard.dart';
 import 'package:easyfix_admin/admin_pages/service_pricing_management.dart';
@@ -30,6 +31,7 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
     serviceProviderManagement = ServiceProviderManagement();
     servicePricingManagement = ServicePricingManagement();
     accountManagement = AccountManagement();
+
     pages = [
       dashboard,
       inquiryManagement,

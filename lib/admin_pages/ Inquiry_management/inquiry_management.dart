@@ -11,7 +11,7 @@ class _InquiryManagementState extends State<InquiryManagement> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
+
     );
   }
 }

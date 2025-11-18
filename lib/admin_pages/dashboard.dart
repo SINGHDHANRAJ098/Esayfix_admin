@@ -122,9 +122,9 @@ class _DashboardState extends State<Dashboard> {
                         gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 1.10,
+                          crossAxisSpacing: 11,
+                          mainAxisSpacing: 11,
+                          childAspectRatio: 1.05,
                         ),
                         itemBuilder: (_, index) {
                           final items = [

@@ -1,5 +1,6 @@
 import 'package:easyfix_admin/admin_auth/admin_otp.dart';
 import 'package:easyfix_admin/admin_pages/admin_bottom_nav.dart';
+
 import 'package:easyfix_admin/try.dart';
 import 'package:flutter/material.dart';
 import 'admin_auth/splash_screen.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const AdminBottomNav(),
+      home: AdminBottomNav(),
     );
   }
 }
