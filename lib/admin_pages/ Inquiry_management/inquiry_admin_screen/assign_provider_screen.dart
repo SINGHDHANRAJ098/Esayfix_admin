@@ -69,9 +69,9 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
       SnackBar(
         content: Text(msg),
         backgroundColor: Colors.green,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -81,9 +81,9 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
       SnackBar(
         content: Text(msg),
         backgroundColor: Colors.red,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -94,23 +94,25 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
-
-      // Light Admin AppBar
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 0.8,
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           "Assign Provider",
-          style: TextStyle(fontWeight: FontWeight.w700,fontSize: 18, color: Colors.black),
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+            color: Colors.black,
+          ),
         ),
       ),
 
       body: Column(
         children: [
           _summaryCard(),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Expanded(child: _providerList(providers)),
           _bottomPanel(),
         ],
@@ -118,51 +120,56 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
     );
   }
 
+  // SUMMARY CARD — MINIMAL UI
 
   Widget _summaryCard() {
-    return Card(
-      elevation: 3,
-      shadowColor: Colors.black.withOpacity(.08),
+    return Container(
       margin: const EdgeInsets.all(16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 28,
-              backgroundColor: Colors.redAccent.withOpacity(.15),
-              child: const Icon(Icons.build, size: 26, color: Colors.redAccent),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.inquiry.service,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 17,
-                    ),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 26,
+            backgroundColor: Colors.redAccent.withOpacity(.12),
+            child: const Icon(Icons.build, size: 24, color: Colors.redAccent),
+          ),
+          const SizedBox(width: 14),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.inquiry.service,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 17,
                   ),
-                  const SizedBox(height: 6),
-                  Text("Customer: ${widget.inquiry.customer}",
-                      style: TextStyle(color: Colors.grey.shade200)),
-                  Text("Location: ${widget.inquiry.location}",
-                      style: TextStyle(color: Colors.grey.shade200)),
-                ],
-              ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  "Customer: ${widget.inquiry.customer}",
+                  style: TextStyle(color: Colors.grey.shade600),
+                ),
+                Text(
+                  "Location: ${widget.inquiry.location}",
+                  style: TextStyle(color: Colors.grey.shade600),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  // -------------------------------
   // AVAILABLE PROVIDERS LIST
-  // -------------------------------
+
   Widget _providerList(List<ProviderModel> providers) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -171,54 +178,50 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
         children: [
           const Text(
             "Available Providers",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 6),
           Text(
-            "Select a provider to assign",
+            "Select a provider",
             style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
-          // Provider List
           Expanded(
             child: ListView.builder(
               itemCount: providers.length,
               itemBuilder: (_, i) => _providerCard(providers[i]),
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
+  // PROVIDER CARD — CLEAN & MINIMAL
+
   Widget _providerCard(ProviderModel p) {
     final selected = _selectedProvider?.id == p.id;
 
-    return Card(
-      elevation: 2,
-      shadowColor: Colors.black.withOpacity(.05),
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        side: BorderSide(
-          color: selected ? Colors.blue : Colors.transparent,
-          width: selected ? 2 : 0,
+        border: Border.all(
+          color: selected ? Colors.blue : Colors.grey.shade300,
+          width: selected ? 2 : 1,
         ),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
+        contentPadding: const EdgeInsets.all(14),
 
         leading: CircleAvatar(
           radius: 24,
-          backgroundColor: Colors.blue.shade100,
+          backgroundColor: Colors.blue.shade50,
           child: Text(
             p.name[0],
             style: TextStyle(
-              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.blue.shade700,
             ),
@@ -236,15 +239,11 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(p.specialty),
+            Text(p.specialty, style: TextStyle(color: Colors.grey.shade600)),
             const SizedBox(height: 4),
             Row(
               children: [
-                const Icon(Icons.star, color: Colors.orange, size: 16),
-                const SizedBox(width: 3),
-                Text(p.rating.toStringAsFixed(1)),
-                const SizedBox(width: 10),
-                const Icon(Icons.phone, size: 15, color: Colors.grey),
+                Icon(Icons.phone, size: 14, color: Colors.grey.shade600),
                 const SizedBox(width: 4),
                 Text(p.phone),
               ],
@@ -253,25 +252,16 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
         ),
 
         trailing: selected
-            ? const CircleAvatar(
-          radius: 13,
-          backgroundColor: Colors.green,
-          child: Icon(Icons.check, size: 16, color: Colors.white),
-        )
-            : const CircleAvatar(
-          radius: 13,
-          backgroundColor: Colors.transparent,
-          child: Icon(Icons.circle, size: 14, color: Colors.grey),
-        ),
+            ? const Icon(Icons.check_circle, color: Colors.green, size: 20)
+            : const Icon(Icons.radio_button_unchecked, color: Colors.grey),
 
         onTap: () => setState(() => _selectedProvider = p),
       ),
     );
   }
 
-  // -------------------------------
-  // BOTTOM PANEL
-  // -------------------------------
+  // BOTTOM PANEL — MINIMAL + WHITE TEXT BUTTON
+
   Widget _bottomPanel() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -282,14 +272,15 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Date & Time Selector
+          //Date & Time Picker
           GestureDetector(
             onTap: _pickDateTime,
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
               ),
               child: Row(
                 children: [
@@ -308,7 +299,7 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
 
           const SizedBox(height: 16),
 
-          // Confirm Button
+          //Confirm Button
           SizedBox(
             width: double.infinity,
             height: 52,
@@ -320,10 +311,15 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
+                elevation: 0,
               ),
               child: const Text(
                 "Confirm Assignment",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white, // WHITE TEXT
+                  fontSize: 16,
+                ),
               ),
             ),
           ),

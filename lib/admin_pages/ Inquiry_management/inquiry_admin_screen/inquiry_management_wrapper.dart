@@ -11,7 +11,8 @@ class InquiryManagementWrapper extends StatefulWidget {
   const InquiryManagementWrapper({super.key});
 
   @override
-  State<InquiryManagementWrapper> createState() => _InquiryManagementWrapperState();
+  State<InquiryManagementWrapper> createState() =>
+      _InquiryManagementWrapperState();
 }
 
 class _InquiryManagementWrapperState extends State<InquiryManagementWrapper> {
@@ -41,14 +42,22 @@ class _InquiryManagementWrapperState extends State<InquiryManagementWrapper> {
     });
   }
 
-  void _onUpdateProvider(String inquiryId, ProviderModel newProvider, String reason) {
+  void _onUpdateProvider(
+    String inquiryId,
+    ProviderModel newProvider,
+    String reason,
+  ) {
     setState(() {
       _dataService.updateProvider(inquiryId, newProvider, reason);
       _applyFilters();
     });
   }
 
-  void _onPaymentUpdate(String inquiryId, PaymentStatus status, PaymentMethod? method) {
+  void _onPaymentUpdate(
+    String inquiryId,
+    PaymentStatus status,
+    PaymentMethod? method,
+  ) {
     setState(() {
       _dataService.updatePaymentStatus(inquiryId, status, method);
       _applyFilters();
@@ -88,7 +97,9 @@ class _InquiryManagementWrapperState extends State<InquiryManagementWrapper> {
 
       // Apply status filter
       if (_currentFilter != null) {
-        results = results.where((inquiry) => inquiry.status == _currentFilter).toList();
+        results = results
+            .where((inquiry) => inquiry.status == _currentFilter)
+            .toList();
       }
 
       _filteredInquiries.addAll(results);

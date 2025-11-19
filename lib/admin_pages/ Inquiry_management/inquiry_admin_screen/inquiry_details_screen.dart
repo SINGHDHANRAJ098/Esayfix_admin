@@ -1,11 +1,9 @@
 // screens/inquiry_details_screen.dart
 import 'package:flutter/material.dart';
 import '../inquiry_model/inquiry.model.dart';
-
 import '../inquiry_model/inquiry_provider_model.dart';
 import '../inquiry_model/inquiry_status_model.dart';
 import 'assign_provider_screen.dart';
-import 'update_status_screen.dart';
 import 'inquiry_track_screen.dart';
 
 class InquiryDetailsScreen extends StatefulWidget {
@@ -17,7 +15,6 @@ class InquiryDetailsScreen extends StatefulWidget {
   final Function(ProviderModel, String) onUpdateProvider;
   final Function(PaymentStatus, PaymentMethod?) onPaymentUpdate;
 
-  final Function(String) onUpdateAdminNotes;
   final Function(String) onAddAdminNote;
   final Function(double) onUpdateInquiryPrice;
 
@@ -29,7 +26,6 @@ class InquiryDetailsScreen extends StatefulWidget {
     required this.onAssignProvider,
     required this.onUpdateProvider,
     required this.onPaymentUpdate,
-    required this.onUpdateAdminNotes,
     required this.onAddAdminNote,
     required this.onUpdateInquiryPrice,
   });
@@ -40,67 +36,22 @@ class InquiryDetailsScreen extends StatefulWidget {
 
 class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
   late Inquiry inquiry;
-  final TextEditingController _adminNotesController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     inquiry = widget.inquiry;
-    _adminNotesController.text = inquiry.adminNotes ?? '';
-  }
-
-  void _assignProvider(ProviderModel provider) {
-    setState(() {
-      inquiry.provider = provider;
-      inquiry.status = InquiryStatus.assigned;
-      inquiry.assignedAt = DateTime.now();
-    });
-
-    widget.onAssignProvider(provider);
-    _showSuccess("Assigned to ${provider.name}");
   }
 
   void _updateStatus(InquiryStatus newStatus) {
-    setState(() {
-      inquiry.status = newStatus;
-
-      // Update timestamps based on status
-      if (newStatus == InquiryStatus.completed) {
-        inquiry.completedAt = DateTime.now();
-      } else if (newStatus == InquiryStatus.cancelled) {
-        inquiry.cancelledAt = DateTime.now();
-      }
-    });
-
+    setState(() => inquiry.status = newStatus);
     widget.onStatusUpdate(newStatus);
-    _showSuccess("Status updated to ${newStatus.label}");
-  }
 
-  void _updatePayment(PaymentStatus status, PaymentMethod? method) {
-    setState(() {
-      inquiry.paymentStatus = status;
-      inquiry.paymentMethod = method;
-    });
-
-    widget.onPaymentUpdate(status, method);
-    _showSuccess("Payment status updated to ${status.label}");
-  }
-
-  void _updateAdminNotes() {
-    setState(() {
-      inquiry.adminNotes = _adminNotesController.text;
-    });
-    _showSuccess("Admin notes updated");
-  }
-
-  void _showSuccess(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(msg),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        content: Text("Service ${newStatus.label}"),
+        backgroundColor: Colors.redAccent,
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.green,
-        margin: const EdgeInsets.all(12),
       ),
     );
   }
@@ -108,88 +59,443 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            size: 18,
-            color: Colors.black,
-          ),
-        ),
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        title: const Text(
-          "Service Details",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
-        ),
-        actions: [
-          if (inquiry.status != InquiryStatus.completed &&
-              inquiry.status != InquiryStatus.cancelled)
-            PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == 'cancel') {
-                  _showCancelConfirmation();
-                }
-              },
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 'cancel',
-                  child: Row(
-                    children: [
-                      Icon(Icons.cancel, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('Cancel Service'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-        ],
-      ),
+      backgroundColor: const Color(0xfff7f7f7),
+      appBar: _appBar(),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _statusCard(),
-          const SizedBox(height: 16),
-          _bookingInfoCard(),
-          const SizedBox(height: 16),
-          _customerInfoCard(),
-          const SizedBox(height: 16),
-          _paymentCard(),
-          const SizedBox(height: 16),
-          if (inquiry.userNotes != null) _userNotesCard(),
-          const SizedBox(height: 16),
-          _adminNotesCard(),
-          const SizedBox(height: 16),
+          _topDetailsCard(),
+          const SizedBox(height: 20),
+
+          _paymentInfoCard(),
+          const SizedBox(height: 20),
+
           if (inquiry.provider != null) _providerCard(),
-          const SizedBox(height: 16),
-          _actionSection(),
+
+          const SizedBox(height: 20),
+          _actionButtons(),
         ],
       ),
     );
   }
 
-  void _showCancelConfirmation() {
+  // APP BAR
+
+  AppBar _appBar() {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: Colors.white,
+      iconTheme: const IconThemeData(color: Colors.black),
+      centerTitle: true,
+      title: const Text(
+        "Service Details",
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w700,
+          fontSize: 18,
+          letterSpacing: 0.3,
+        ),
+      ),
+    );
+  }
+
+  // TOP SERVICE INFO CARD — Minimal, Clean
+
+  Widget _topDetailsCard() {
+    final status = inquiry.status;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: _cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title + Status Badge
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                inquiry.service,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: status.color, width: 1),
+                ),
+                child: Text(
+                  status.label,
+                  style: TextStyle(
+                    color: status.color,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          _infoRow("Booking ID", inquiry.id),
+          _infoRow("User Name", inquiry.customer),
+          _infoRow("User Number", inquiry.customerPhone ?? "N/A"),
+
+          if (inquiry.price != null)
+            _infoRow("Price", "₹${inquiry.price!.toStringAsFixed(2)}"),
+
+          Row(
+            children: [
+              Expanded(child: _infoRow("Date", inquiry.date)),
+              Expanded(child: _infoRow("Time", inquiry.time)),
+            ],
+          ),
+
+          if (inquiry.userNotes != null) ...[
+            const SizedBox(height: 14),
+            const Text(
+              "User Note",
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.orange.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.orange.shade100),
+              ),
+              child: Text(
+                inquiry.userNotes!,
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // Info Row — clean alignment
+  Widget _infoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontSize: 13.5,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // PAYMENT INFORMATION — Minimal Clean
+
+  Widget _paymentInfoCard() {
+    final isPaid = inquiry.paymentStatus == PaymentStatus.paid;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: _cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Payment Information",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+          ),
+
+          const SizedBox(height: 20),
+
+          _paymentRow(
+            title: "Total Amount",
+            value: "₹${(inquiry.price ?? 0).toStringAsFixed(2)}",
+          ),
+
+          const SizedBox(height: 14),
+
+          _paymentRow(
+            title: "Payment Status",
+            value: isPaid ? "Paid" : "Unpaid",
+            valueColor: isPaid ? Colors.green : Colors.redAccent,
+          ),
+
+          const SizedBox(height: 14),
+
+          _paymentRow(
+            title: "Payment Method",
+            value: _paymentMethodLabel(inquiry.paymentMethod),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _paymentRow({
+    required String title,
+    required String value,
+    Color valueColor = Colors.black,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            color: Colors.grey.shade700,
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            color: valueColor,
+            fontWeight: FontWeight.w800,
+            fontSize: 15,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _paymentMethodLabel(PaymentMethod? method) {
+    if (method == null) return "N/A";
+    if (method == PaymentMethod.cash) return "Cash";
+    if (method == PaymentMethod.online) return "Online";
+    return "N/A";
+  }
+
+  // PROVIDER CARD
+
+  Widget _providerCard() {
+    final p = inquiry.provider!;
+    final canReassign =
+        inquiry.status == InquiryStatus.assigned ||
+        inquiry.status == InquiryStatus.inProgress;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: _cardDecoration(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Row
+          Row(
+            children: [
+              const Icon(Icons.engineering, color: Colors.redAccent),
+              const SizedBox(width: 8),
+              const Text(
+                "Assigned Provider",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              ),
+              const Spacer(),
+
+              if (canReassign)
+                TextButton.icon(
+                  onPressed: _handleReassign,
+                  icon: const Icon(Icons.swap_horiz, color: Colors.redAccent),
+                  label: const Text(
+                    "Reassign",
+                    style: TextStyle(
+                      color: Colors.redAccent,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 26,
+                backgroundColor: Colors.redAccent.withOpacity(.15),
+                child: Text(
+                  p.name[0],
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.redAccent,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      p.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.phone, size: 16, color: Colors.grey),
+                        const SizedBox(width: 6),
+                        Text(
+                          p.phone,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          if (inquiry.assignedAt != null) ...[
+            const SizedBox(height: 16),
+            Text(
+              "Assigned on: ${_formatDateTime(inquiry.assignedAt!)}",
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 13.2),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  void _handleReassign() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AssignInquiryScreen(
+          inquiry: inquiry,
+          providers: widget.providers,
+          onAssign: (provider) {
+            widget.onAssignProvider(provider);
+            setState(() {
+              inquiry.provider = provider;
+              inquiry.assignedAt = DateTime.now();
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  // ACTION BUTTONS
+
+  Widget _actionButtons() {
+    if (inquiry.status == InquiryStatus.completed ||
+        inquiry.status == InquiryStatus.cancelled) {
+      return const SizedBox();
+    }
+
+    return Column(
+      children: [
+        if (inquiry.status == InquiryStatus.pending)
+          _actionBtn(
+            label: "Assign Provider",
+            icon: Icons.person_add,
+            color: Colors.redAccent,
+            onTap: () => _handleAssignProvider(),
+          ),
+
+        if (inquiry.status == InquiryStatus.pending) const SizedBox(height: 12),
+
+        _actionBtn(
+          label: "Track Inquiry",
+          icon: Icons.track_changes,
+          color: Colors.green,
+          onTap: _handleTrack,
+        ),
+
+        const SizedBox(height: 12),
+
+        _actionBtn(
+          label: "Cancel Service",
+          icon: Icons.cancel,
+          color: Colors.redAccent,
+          onTap: _showCancelDialog,
+        ),
+      ],
+    );
+  }
+
+  void _handleAssignProvider() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AssignInquiryScreen(
+          inquiry: inquiry,
+          providers: widget.providers,
+          onAssign: (provider) {
+            widget.onAssignProvider(provider);
+            setState(() {
+              inquiry.provider = provider;
+              inquiry.status = InquiryStatus.assigned;
+              inquiry.assignedAt = DateTime.now();
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  void _handleTrack() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => InquiryTrackScreen(
+          inquiry: inquiry,
+          providers: widget.providers,
+          onStatusUpdate: widget.onStatusUpdate,
+          onUpdateProvider: widget.onUpdateProvider,
+        ),
+      ),
+    );
+  }
+
+  // CANCEL DIALOG
+
+  void _showCancelDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.warning, color: Colors.orange),
-            SizedBox(width: 8),
-            Text('Cancel Service'),
-          ],
+      builder: (_) => AlertDialog(
+        title: const Text(
+          "Cancel Service",
+          style: TextStyle(fontWeight: FontWeight.w800),
         ),
         content: const Text(
-          'Are you sure you want to cancel this service? This action cannot be undone.',
+          "Are you sure? This action cannot be undone.",
+          style: TextStyle(fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('No', style: TextStyle(color: Colors.grey)),
+            child: const Text("No"),
           ),
           TextButton(
             onPressed: () {
@@ -197,8 +503,8 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
               _updateStatus(InquiryStatus.cancelled);
             },
             child: const Text(
-              'Yes, Cancel',
-              style: TextStyle(color: Colors.red),
+              "Yes, Cancel",
+              style: TextStyle(color: Colors.redAccent),
             ),
           ),
         ],
@@ -206,646 +512,30 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
     );
   }
 
-  // STATUS CARD
-  Widget _statusCard() {
-    final s = inquiry.status;
+  // ACTION BUTTON WIDGET
 
-    return Card(
-      elevation: 3,
-      color: Colors.white,
-      shadowColor: Colors.black.withOpacity(.08),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: s.color.withOpacity(.15),
-                  child: Icon(s.icon, color: s.color, size: 28),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Current Status",
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        s.label,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: s.color,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Booking ID: ${inquiry.id}",
-                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                  ),
-                  if (inquiry.price != null)
-                    Text(
-                      "\$${inquiry.price!.toStringAsFixed(2)}",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.redAccent,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // BOOKING INFO CARD
-  Widget _bookingInfoCard() {
-    return Card(
-      elevation: 2,
-      color: Colors.white,
-      shadowColor: Colors.black.withOpacity(.05),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _title(Icons.build, "Service Information"),
-            const SizedBox(height: 16),
-            _info(Icons.build, "Service Type", inquiry.service),
-            _info(Icons.calendar_today, "Date", inquiry.date),
-            _info(Icons.access_time, "Time", inquiry.time),
-            _info(Icons.location_on, "Service Location", inquiry.location),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // CUSTOMER INFO CARD
-  Widget _customerInfoCard() {
-    return Card(
-      elevation: 2,
-      color: Colors.white,
-      shadowColor: Colors.black.withOpacity(.05),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _title(Icons.person, "Customer Information"),
-            const SizedBox(height: 16),
-            _info(Icons.person, "Customer Name", inquiry.customer),
-            if (inquiry.customerPhone != null)
-              _info(Icons.phone, "Phone Number", inquiry.customerPhone!),
-            if (inquiry.customerAddress != null)
-              _info(Icons.home, "Address", inquiry.customerAddress!),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // PAYMENT CARD
-  Widget _paymentCard() {
-    return Card(
-      elevation: 2,
-      color: Colors.white,
-      shadowColor: Colors.black.withOpacity(.05),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _title(Icons.payment, "Payment Information"),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Payment Status",
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: inquiry.paymentStatus.color.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: inquiry.paymentStatus.color.withOpacity(0.3),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              inquiry.paymentStatus.icon,
-                              size: 14,
-                              color: inquiry.paymentStatus.color,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              inquiry.paymentStatus.label,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: inquiry.paymentStatus.color,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (inquiry.paymentMethod != null) ...[
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Payment Method",
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.blue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Colors.blue.withOpacity(0.3),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                inquiry.paymentMethod!.icon,
-                                size: 14,
-                                color: Colors.blue,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                inquiry.paymentMethod!.label,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.blue,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
-            ),
-            const SizedBox(height: 12),
-            if (inquiry.status != InquiryStatus.cancelled)
-              _buttonSmall("Update Payment", Icons.payment, Colors.purple, () {
-                _showPaymentDialog();
-              }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // USER NOTES CARD
-  Widget _userNotesCard() {
-    return Card(
-      elevation: 2,
-      color: Colors.white,
-      shadowColor: Colors.black.withOpacity(.05),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _title(Icons.note, "Customer Notes"),
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.orange[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.orange[100]!),
-              ),
-              child: Text(
-                inquiry.userNotes!,
-                style:  TextStyle(fontSize: 14, color: Colors.grey[700]),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ADMIN NOTES CARD
-  Widget _adminNotesCard() {
-    return Card(
-      elevation: 2,
-      color: Colors.white,
-      shadowColor: Colors.black.withOpacity(.05),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _title(Icons.admin_panel_settings, "Admin Notes"),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _adminNotesController,
-              maxLines: 3,
-              decoration: InputDecoration(
-                hintText: 'Add internal notes or instructions...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey[300]!),
-                ),
-                contentPadding: const EdgeInsets.all(12),
-              ),
-            ),
-            const SizedBox(height: 12),
-            _buttonSmall(
-              "Save Notes",
-              Icons.save,
-              Colors.blue,
-              _updateAdminNotes,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // PROVIDER CARD
-  Widget _providerCard() {
-    final p = inquiry.provider!;
-
-    return Card(
-      elevation: 2,
-      color: Colors.white,
-      shadowColor: Colors.black.withOpacity(.05),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                _title(Icons.engineering, "Assigned Provider"),
-                const Spacer(),
-                if (inquiry.status == InquiryStatus.assigned ||
-                    inquiry.status == InquiryStatus.inProgress)
-                  _buttonSmall("Reassign", Icons.swap_horiz, Colors.orange, () {
-                    _showReassignDialog();
-                  }),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 26,
-                  backgroundColor: Colors.blue.shade100,
-                  child: Text(
-                    p.name[0],
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade700,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        p.name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        p.specialty,
-                        style: TextStyle(color: Colors.grey[600]),
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Icon(Icons.star, color: Colors.orange, size: 16),
-                          const SizedBox(width: 4),
-                          Text(p.rating.toStringAsFixed(1)),
-                          const SizedBox(width: 12),
-                          Icon(Icons.phone, size: 16, color: Colors.grey),
-                          const SizedBox(width: 4),
-                          Text(p.phone),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            if (inquiry.assignedAt != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                "Assigned on: ${_formatDateTime(inquiry.assignedAt!)}",
-                style: TextStyle(color: Colors.grey[500], fontSize: 12),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ACTION SECTION
-  Widget _actionSection() {
-    return Card(
-      elevation: 3,
-      color: Colors.white,
-      shadowColor: Colors.black.withOpacity(.08),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const Text(
-              "Service Actions",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-            const SizedBox(height: 18),
-
-            // ASSIGN PROVIDER BUTTON
-            if (inquiry.status == InquiryStatus.pending)
-              _button("Assign Provider", Icons.person_add, Colors.blue, () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => AssignInquiryScreen(
-                      inquiry: inquiry,
-                      providers: widget.providers,
-                      onAssign: _assignProvider,
-                    ),
-                  ),
-                );
-              }),
-
-            if (inquiry.status == InquiryStatus.pending)
-              const SizedBox(height: 12),
-
-            // UPDATE STATUS BUTTON
-            _button("Update Status", Icons.update, Colors.orange, () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => UpdateStatusScreen(
-                    inquiry: inquiry,
-                    onStatusUpdate: _updateStatus,
-                  ),
-                ),
-              );
-            }),
-
-            const SizedBox(height: 12),
-
-            // TRACK INQUIRY BUTTON
-            _button("Track Service", Icons.track_changes, Colors.green, () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => InquiryTrackScreen(
-                    inquiry: inquiry,
-                    providers: widget.providers,
-                    onStatusUpdate: _updateStatus,
-                    onUpdateProvider: widget.onUpdateProvider,
-                  ),
-                ),
-              );
-            }),
-
-            // CANCEL BUTTON
-            if (inquiry.status != InquiryStatus.completed &&
-                inquiry.status != InquiryStatus.cancelled)
-              const SizedBox(height: 12),
-
-            if (inquiry.status != InquiryStatus.completed &&
-                inquiry.status != InquiryStatus.cancelled)
-              _button(
-                "Cancel Service",
-                Icons.cancel,
-                Colors.red,
-                _showCancelConfirmation,
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showPaymentDialog() {
-    PaymentStatus selectedStatus = inquiry.paymentStatus;
-    PaymentMethod? selectedMethod = inquiry.paymentMethod;
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text('Update Payment Status'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Payment Status
-                const Text(
-                  'Payment Status:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  children: PaymentStatus.values.map((status) {
-                    return ChoiceChip(
-                      label: Text(status.label),
-                      selected: selectedStatus == status,
-                      onSelected: (selected) {
-                        setState(() => selectedStatus = status);
-                      },
-                      selectedColor: status.color.withOpacity(0.2),
-                      labelStyle: TextStyle(
-                        color: selectedStatus == status
-                            ? status.color
-                            : Colors.grey,
-                        fontWeight: selectedStatus == status
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    );
-                  }).toList(),
-                ),
-
-                const SizedBox(height: 16),
-
-                // Payment Method (only show if paid or partially paid)
-                if (selectedStatus == PaymentStatus.paid ||
-                    selectedStatus == PaymentStatus.partiallyPaid) ...[
-                  const Text(
-                    'Payment Method:',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    children: PaymentMethod.values.map((method) {
-                      return ChoiceChip(
-                        label: Text(method.label),
-                        selected: selectedMethod == method,
-                        onSelected: (selected) {
-                          setState(() => selectedMethod = method);
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _updatePayment(selectedStatus, selectedMethod);
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                child: const Text(
-                  'Update',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  void _showReassignDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Reassign Provider'),
-        content: const Text(
-          'Are you sure you want to reassign this service to a different provider?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => AssignInquiryScreen(
-                    inquiry: inquiry,
-                    providers: widget.providers,
-                    onAssign: _assignProvider,
-                  ),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-            child: const Text(
-              'Reassign',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _button(String text, IconData icon, Color color, VoidCallback onTap) {
+  Widget _actionBtn({
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
     return SizedBox(
-      width: double.infinity,
       height: 52,
+      width: double.infinity,
       child: ElevatedButton.icon(
-        icon: Icon(icon, color: Colors.white, size: 20),
-        onPressed: onTap,
+        icon: Icon(icon, color: Colors.white),
         label: Text(
-          text,
-          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 15.5,
+            color: Colors.white,
+          ),
         ),
+        onPressed: onTap,
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
-          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -854,81 +544,28 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
     );
   }
 
-  Widget _buttonSmall(
-    String text,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
-    return SizedBox(
-      height: 40,
-      child: ElevatedButton.icon(
-        icon: Icon(icon, color: Colors.white, size: 16),
-        onPressed: onTap,
-        label: Text(
-          text,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
-    );
-  }
+  // DECORATION FOR CARDS — Minimal Clean
 
-  Widget _info(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: Colors.redAccent),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _title(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, color: Colors.redAccent),
-        const SizedBox(width: 8),
-        Text(
-          text,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  BoxDecoration _cardDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.03),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
         ),
       ],
     );
   }
 
-  String _formatDateTime(DateTime dateTime) {
-    return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+  // Format date-time
+  String _formatDateTime(DateTime dt) {
+    return "${dt.day.toString().padLeft(2, '0')}/"
+        "${dt.month.toString().padLeft(2, '0')}/"
+        "${dt.year}   "
+        "${dt.hour.toString().padLeft(2, '0')}:"
+        "${dt.minute.toString().padLeft(2, '0')}";
   }
 }

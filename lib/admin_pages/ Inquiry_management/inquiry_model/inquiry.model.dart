@@ -139,7 +139,7 @@ extension PaymentStatusX on PaymentStatus {
 enum PaymentMethod {
   cash,
   card,
-  upi,
+  online,
   bankTransfer,
 }
 
@@ -150,8 +150,8 @@ extension PaymentMethodX on PaymentMethod {
         return "Cash";
       case PaymentMethod.card:
         return "Card";
-      case PaymentMethod.upi:
-        return "UPI";
+      case PaymentMethod.online:
+        return "online";
       case PaymentMethod.bankTransfer:
         return "Bank Transfer";
     }
@@ -163,7 +163,7 @@ extension PaymentMethodX on PaymentMethod {
         return Icons.money;
       case PaymentMethod.card:
         return Icons.credit_card;
-      case PaymentMethod.upi:
+      case PaymentMethod.online:
         return Icons.phone_android;
       case PaymentMethod.bankTransfer:
         return Icons.account_balance;

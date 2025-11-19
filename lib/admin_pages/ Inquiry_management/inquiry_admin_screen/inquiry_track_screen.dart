@@ -1,6 +1,5 @@
 // screens/inquiry_track_screen.dart
 import 'package:flutter/material.dart';
-
 import '../inquiry_model/inquiry.model.dart';
 import '../inquiry_model/inquiry_provider_model.dart';
 import '../inquiry_model/inquiry_status_model.dart';
@@ -25,53 +24,64 @@ class InquiryTrackScreen extends StatefulWidget {
 
 class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
   // ------------------------------
-  // PROVIDER CHANGE MODAL
+  // SNACKBAR SUCCESS MESSAGE
   // ------------------------------
-  void _showChangeProviderDialog() {
-    final availableProviders =
-    widget.providers.where((p) => p.available).toList();
+  void _success(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  // ------------------------------
+  // CHANGE PROVIDER BOTTOM SHEET
+  // ------------------------------
+  void _showChangeProviderSheet() {
+    final available = widget.providers.where((p) => p.available).toList();
 
     showModalBottomSheet(
-      context: context,
       backgroundColor: Colors.transparent,
+      context: context,
       isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.75,
-        minChildSize: 0.5,
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.65,
         maxChildSize: 0.9,
+        minChildSize: 0.4,
         builder: (_, controller) => Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Column(
             children: [
-              SizedBox(height: 12),
+              const SizedBox(height: 10),
               Container(
                 width: 40,
-                height: 5,
+                height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.all(16),
-                child: Text(
-                  "Change Service Provider",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
+
+              const SizedBox(height: 20),
+              const Text(
+                "Change Provider",
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
               ),
+              const SizedBox(height: 10),
+
               Expanded(
                 child: ListView.builder(
                   controller: controller,
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: availableProviders.length,
-                  itemBuilder: (_, i) =>
-                      _buildProviderOption(availableProviders[i]),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: available.length,
+                  itemBuilder: (_, i) => _providerOption(available[i]),
                 ),
               ),
             ],
@@ -81,372 +91,374 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
     );
   }
 
-  Widget _buildProviderOption(ProviderModel provider) {
-    return Card(
-      elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.05),
-      margin: EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
+  Widget _providerOption(ProviderModel p) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.grey.shade300),
       ),
       child: ListTile(
+        contentPadding: EdgeInsets.zero,
         leading: CircleAvatar(
-          radius: 22,
-          backgroundColor: Colors.redAccent.shade100,
+          radius: 24,
+          backgroundColor: Colors.redAccent.withOpacity(.12),
           child: Text(
-            provider.name[0],
-            style: TextStyle(
-              color: Colors.redAccent.shade700,
+            p.name[0],
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
+              color: Colors.redAccent,
             ),
           ),
         ),
         title: Text(
-          provider.name,
-          style: TextStyle(fontWeight: FontWeight.w600),
+          p.name,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
         ),
-        subtitle: Text(provider.specialty),
-        trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+        subtitle: Text(
+          p.specialty,
+          style: TextStyle(color: Colors.grey.shade600),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
         onTap: () {
           Navigator.pop(context);
-          widget.onUpdateProvider(provider, "Admin changed provider");
-          _success("Provider changed to ${provider.name}");
+          widget.onUpdateProvider(p, "Admin updated provider");
+          _success("Provider changed to ${p.name}");
         },
       ),
     );
   }
 
   // ------------------------------
-  // STATUS UPDATE ACTIONS
+  // CANCEL INQUIRY
   // ------------------------------
-
-  void _complete() {
-    widget.onStatusUpdate(InquiryStatus.completed);
-    _success("Marked as completed");
-  }
-
-  void _cancel() {
+  void _cancelInquiry() {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text("Cancel Inquiry"),
-        content:
-        Text("Are you sure you want to cancel this inquiry permanently?"),
+        title: const Text("Cancel Inquiry"),
+        content: const Text("Are you sure you want to cancel this inquiry?"),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text("No")),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("No"),
+          ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               widget.onStatusUpdate(InquiryStatus.cancelled);
-              _success("Inquiry cancelled");
+              _success("Inquiry canceled");
             },
-            child: Text("Yes, Cancel", style: TextStyle(color: Colors.red)),
+            child: const Text("Cancel", style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
     );
   }
 
-  void _success(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(msg),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        behavior: SnackBarBehavior.floating,
-        margin: EdgeInsets.all(12),
-        backgroundColor: Colors.green,
-      ),
-    );
-  }
-
   // ------------------------------
-  // BUILD UI
+  // MAIN UI
   // ------------------------------
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Colors.grey.shade100,
 
       appBar: AppBar(
-        elevation: 0,
+        elevation: 1,
         backgroundColor: Colors.white,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.black),
-        title: Text(
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: const Text(
           "Track Inquiry",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w700,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w700, color: Colors.black),
         ),
       ),
 
       body: ListView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         children: [
-          _statusOverview(),
+          _statusCard(),
           if (widget.inquiry.provider != null) ...[
-            SizedBox(height: 18),
-            _providerInfo(),
+            const SizedBox(height: 16),
+            _providerCard(),
           ],
-          SizedBox(height: 18),
-          _quickActions(),
-          SizedBox(height: 18),
-          _timeline(),
+          const SizedBox(height: 16),
+          _actionCard(),
+          const SizedBox(height: 16),
+          _timelineCard(),
         ],
       ),
     );
   }
 
   // ------------------------------
-  // STATUS OVERVIEW
+  // MINIMAL STATUS CARD
   // ------------------------------
-
-  Widget _statusOverview() {
+  Widget _statusCard() {
     final status = widget.inquiry.status;
 
-    return Card(
-      elevation: 3,
-      shadowColor: Colors.black.withOpacity(0.07),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: EdgeInsets.all(22),
-        child: Column(
-          children: [
-            CircleAvatar(
-              radius: 35,
-              backgroundColor: status.color.withOpacity(0.15),
-              child: Icon(status.icon, color: status.color, size: 35),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: _box(),
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 32,
+            backgroundColor: status.color.withOpacity(.12),
+            child: Icon(status.icon, color: status.color, size: 28),
+          ),
+
+          const SizedBox(height: 12),
+
+          Text(
+            status.label,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: status.color,
             ),
-            SizedBox(height: 10),
-            Text(
-              status.label,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: status.color,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              "Booking ID: ${widget.inquiry.id}",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
-            )
-          ],
-        ),
+          ),
+
+          const SizedBox(height: 6),
+
+          Text(
+            "Booking ID: ${widget.inquiry.id}",
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+          ),
+        ],
       ),
     );
   }
 
   // ------------------------------
-  // PROVIDER INFO
+  // PROVIDER CARD — MINIMAL LOOK
   // ------------------------------
-
-  Widget _providerInfo() {
+  Widget _providerCard() {
     final p = widget.inquiry.provider!;
 
-    return Card(
-      elevation: 3,
-      shadowColor: Colors.black.withOpacity(0.07),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: EdgeInsets.all(18),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 27,
-              backgroundColor: Colors.blue.shade100,
-              child: Text(
-                p.name[0],
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade700,
-                ),
-              ),
-            ),
-            SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(p.name,
-                      style:
-                      TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  SizedBox(height: 3),
-                  Text(p.specialty, style: TextStyle(color: Colors.grey[600])),
-                  SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: Colors.orange, size: 16),
-                      SizedBox(width: 4),
-                      Text(p.rating.toStringAsFixed(1)),
-                      SizedBox(width: 12),
-                      Icon(Icons.phone, color: Colors.grey, size: 16),
-                      SizedBox(width: 4),
-                      Text(p.phone),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              icon: Icon(Icons.swap_horiz, color: Colors.redAccent),
-              onPressed: _showChangeProviderDialog,
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ------------------------------
-  // QUICK ACTION BUTTONS
-  // ------------------------------
-
-  Widget _quickActions() {
-    final disabled = widget.inquiry.status == InquiryStatus.completed ||
-        widget.inquiry.status == InquiryStatus.cancelled;
-
-    return Card(
-      elevation: 3,
-      shadowColor: Colors.black.withOpacity(0.07),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: disabled
-            ? Center(
-          child: Padding(
-            padding: EdgeInsets.all(12),
-            child: Text(
-              "No actions available",
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-          ),
-        )
-            : Column(
-          children: [
-            _bigButton(
-                "Change Provider", Icons.swap_horiz, Colors.blue, _showChangeProviderDialog),
-            SizedBox(height: 10),
-            _bigButton(
-                "Mark Completed", Icons.check_circle, Colors.green, _complete),
-            SizedBox(height: 10),
-            _bigButton(
-                "Cancel Inquiry", Icons.cancel, Colors.red, _cancel),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _bigButton(String title, IconData icon, Color color, VoidCallback onTap) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton.icon(
-        icon: Icon(icon, size: 20),
-        label: Text(title),
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ------------------------------
-  // TIMELINE
-  // ------------------------------
-
-  Widget _timeline() {
-    List<_StatusHistory> items = [
-      _StatusHistory("Inquiry Created", "System", "Today"),
-      if (widget.inquiry.provider != null)
-        _StatusHistory("Assigned", "Admin", "Today"),
-      if (widget.inquiry.status == InquiryStatus.inProgress)
-        _StatusHistory("Work In Progress", "Provider", "Today"),
-      if (widget.inquiry.status == InquiryStatus.completed)
-        _StatusHistory("Completed", "Provider", "Today"),
-      if (widget.inquiry.status == InquiryStatus.cancelled)
-        _StatusHistory("Cancelled", "Admin", "Today"),
-    ];
-
-    return Card(
-      elevation: 3,
-      shadowColor: Colors.black.withOpacity(0.07),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Icon(Icons.history, color: Colors.redAccent),
-                SizedBox(width: 8),
-                Text(
-                  "Status History",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-            ...items.map(_buildTimelineItem),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTimelineItem(_StatusHistory item) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 14),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: _box(),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Circle
-          Container(
-            width: 12,
-            height: 12,
-            margin: EdgeInsets.only(top: 4),
-            decoration: BoxDecoration(
-              color: Colors.green,
-              shape: BoxShape.circle,
+          CircleAvatar(
+            radius: 26,
+            backgroundColor: Colors.blue.shade50,
+            child: Text(
+              p.name[0],
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.blue.shade700,
+                fontSize: 18,
+              ),
             ),
           ),
-          SizedBox(width: 12),
-          // Details
+
+          const SizedBox(width: 14),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.title,
-                    style:
-                    TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                SizedBox(height: 2),
                 Text(
-                  "By ${item.by} • ${item.time}",
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  p.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  p.specialty,
+                  style: TextStyle(color: Colors.grey.shade600),
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Icon(Icons.phone, size: 14, color: Colors.grey.shade600),
+                    const SizedBox(width: 4),
+                    Text(p.phone),
+                  ],
                 )
               ],
             ),
+          ),
+
+          IconButton(
+            icon: const Icon(Icons.swap_horiz, color: Colors.redAccent),
+            onPressed: _showChangeProviderSheet,
           )
         ],
       ),
     );
   }
+
+  // ------------------------------
+  // ACTION CARD (NO COMPLETE BUTTON)
+  // ------------------------------
+  Widget _actionCard() {
+    final disabled =
+        widget.inquiry.status == InquiryStatus.completed ||
+            widget.inquiry.status == InquiryStatus.cancelled;
+
+    if (disabled) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: _box(),
+        child: const Center(
+          child: Text(
+            "No actions available",
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: _box(),
+      child: Column(
+        children: [
+          _actionBtn("Change Provider", Icons.swap_horiz, Colors.blue,
+              _showChangeProviderSheet),
+          const SizedBox(height: 12),
+
+          _actionBtn("Cancel Inquiry", Icons.cancel, Colors.red, _cancelInquiry),
+        ],
+      ),
+    );
+  }
+
+  Widget _actionBtn(
+      String title,
+      IconData icon,
+      Color color,
+      VoidCallback onTap,
+      ) {
+    return SizedBox(
+      height: 48,
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: onTap,
+        icon: Icon(icon, size: 18, color: Colors.white),
+        label: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 15,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ------------------------------
+  // TIMELINE — MINIMAL STYLE
+  // ------------------------------
+  Widget _timelineCard() {
+    final items = [
+      _History("Inquiry Created", "System", "Today"),
+      if (widget.inquiry.provider != null)
+        _History("Assigned", "Admin", "Today"),
+      if (widget.inquiry.status == InquiryStatus.inProgress)
+        _History("Work in Progress", "Provider", "Today"),
+      if (widget.inquiry.status == InquiryStatus.completed)
+        _History("Completed", "Provider", "Today"),
+      if (widget.inquiry.status == InquiryStatus.cancelled)
+        _History("Cancelled", "Admin", "Today"),
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: _box(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: const [
+              Icon(Icons.history, color: Colors.redAccent),
+              SizedBox(width: 8),
+              Text(
+                "Status History",
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...items.map(_timelineItem),
+        ],
+      ),
+    );
+  }
+
+  Widget _timelineItem(_History item) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: const BoxDecoration(
+              color: Colors.redAccent,
+              shape: BoxShape.circle,
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  "By ${item.by} • ${item.time}",
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  BoxDecoration _box() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: Colors.grey.shade300),
+    );
+  }
 }
 
-class _StatusHistory {
+class _History {
   final String title;
   final String by;
   final String time;
 
-  _StatusHistory(this.title, this.by, this.time);
+  _History(this.title, this.by, this.time);
 }
+

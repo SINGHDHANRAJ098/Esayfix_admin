@@ -26,7 +26,7 @@ class InquiryDataService {
         name: "Amit Kumar",
         phone: "+91 9876543210",
         specialty: "AC Repair",
-        rating: 4.8,
+
         available: true,
       ),
       ProviderModel(
@@ -34,7 +34,7 @@ class InquiryDataService {
         name: "Rohan Singh",
         phone: "+91 9123456789",
         specialty: "Electrical Work",
-        rating: 4.6,
+
         available: true,
       ),
       ProviderModel(
@@ -42,7 +42,7 @@ class InquiryDataService {
         name: "Deepak Jain",
         phone: "+91 9988776655",
         specialty: "Plumbing",
-        rating: 4.9,
+
         available: false,
       ),
       ProviderModel(
@@ -50,7 +50,7 @@ class InquiryDataService {
         name: "Rajesh Patel",
         phone: "+91 9876543211",
         specialty: "Carpentry",
-        rating: 4.7,
+
         available: true,
       ),
     ];
@@ -103,7 +103,7 @@ class InquiryDataService {
         price: 50.00,
         userNotes: "LED light fitting required in kitchen area.",
         paymentStatus: PaymentStatus.partiallyPaid,
-        paymentMethod: PaymentMethod.upi,
+        paymentMethod: PaymentMethod.online,
         assignedAt: DateTime.now().subtract(Duration(days: 1)),
         adminNotes: "Customer requested premium quality LED lights.",
       ),

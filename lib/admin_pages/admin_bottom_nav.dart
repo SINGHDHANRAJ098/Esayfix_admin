@@ -1,5 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:easyfix_admin/admin_pages/account_management.dart';
+import 'package:easyfix_admin/admin_pages/account_management/account_screen/account_management.dart';
+
 import 'package:easyfix_admin/admin_pages/dashboard.dart';
 import 'package:easyfix_admin/admin_pages/service_pricing_management.dart';
 import 'package:easyfix_admin/admin_pages/service_provider_management.dart';
