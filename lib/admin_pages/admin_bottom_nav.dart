@@ -4,6 +4,7 @@ import 'package:easyfix_admin/admin_pages/dashboard.dart';
 import 'package:easyfix_admin/admin_pages/service_pricing_management.dart';
 import 'package:flutter/material.dart';
 import ' Inquiry_management/inquiry_admin_screen/inquiry_management_wrapper.dart';
+import 'Provider_management/provider_screen/provider_list_screen.dart';
 
 class AdminBottomNav extends StatefulWidget {
   const AdminBottomNav({super.key});
@@ -24,7 +25,7 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
     pages = [
       const Dashboard(),
       const InquiryManagementWrapper(),
-     // const ServiceProviderManagement(),
+      const ProviderListScreen(),
       const ServicePricingManagement(),
       const AccountManagement(),
     ];
