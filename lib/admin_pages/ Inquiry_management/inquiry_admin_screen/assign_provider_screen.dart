@@ -1,3 +1,4 @@
+// screens/assign_inquiry_screen.dart
 import 'package:flutter/material.dart';
 import '../inquiry_model/inquiry.model.dart';
 import '../inquiry_model/inquiry_provider_model.dart';
@@ -53,15 +54,17 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
     }
   }
 
+  // FIXED: Show success BEFORE pop()
   void _confirm() {
     if (_selectedProvider == null) {
       _error("Please select a service provider");
       return;
     }
 
+    _success("Assigned to ${_selectedProvider!.name}");
+
     widget.onAssign(_selectedProvider!);
     Navigator.pop(context);
-    _success("Assigned to ${_selectedProvider!.name}");
   }
 
   void _success(String msg) {
@@ -90,7 +93,7 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final providers = widget.providers.where((e) => e.available).toList();
+    final providers = widget.providers; // If filtering needed, apply here.
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
@@ -120,8 +123,7 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
     );
   }
 
-  // SUMMARY CARD — MINIMAL UI
-
+  // SUMMARY CARD
   Widget _summaryCard() {
     return Container(
       margin: const EdgeInsets.all(16),
@@ -168,8 +170,7 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
     );
   }
 
-  // AVAILABLE PROVIDERS LIST
-
+  // PROVIDERS LIST
   Widget _providerList(List<ProviderModel> providers) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -198,8 +199,7 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
     );
   }
 
-  // PROVIDER CARD — CLEAN & MINIMAL
-
+  // PROVIDER CARD
   Widget _providerCard(ProviderModel p) {
     final selected = _selectedProvider?.id == p.id;
 
@@ -260,8 +260,7 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
     );
   }
 
-  // BOTTOM PANEL — MINIMAL + WHITE TEXT BUTTON
-
+  // BOTTOM PANEL
   Widget _bottomPanel() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -272,7 +271,7 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          //Date & Time Picker
+          // Date-Time Picker
           GestureDetector(
             onTap: _pickDateTime,
             child: Container(
@@ -299,7 +298,7 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
 
           const SizedBox(height: 16),
 
-          //Confirm Button
+          // Confirm Button
           SizedBox(
             width: double.infinity,
             height: 52,
@@ -317,7 +316,7 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
                 "Confirm Assignment",
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  color: Colors.white, // WHITE TEXT
+                  color: Colors.white,
                   fontSize: 16,
                 ),
               ),

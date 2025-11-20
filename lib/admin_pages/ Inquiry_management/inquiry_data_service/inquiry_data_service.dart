@@ -1,4 +1,5 @@
-// services/inquiry_data_service.dart
+// lib/admin_pages/Inquiry_management/inquiry_data_service/inquiry_data_service.dart
+
 import '../inquiry_model/inquiry.model.dart';
 import '../inquiry_model/inquiry_provider_model.dart';
 import '../inquiry_model/inquiry_status_model.dart';
@@ -19,6 +20,8 @@ class InquiryDataService {
     _loadInquiries();
   }
 
+  // ---------------- PROVIDERS ----------------
+
   void _loadProviders() {
     _providers = [
       ProviderModel(
@@ -26,7 +29,6 @@ class InquiryDataService {
         name: "Amit Kumar",
         phone: "+91 9876543210",
         specialty: "AC Repair",
-
         available: true,
       ),
       ProviderModel(
@@ -34,7 +36,6 @@ class InquiryDataService {
         name: "Rohan Singh",
         phone: "+91 9123456789",
         specialty: "Electrical Work",
-
         available: true,
       ),
       ProviderModel(
@@ -42,7 +43,6 @@ class InquiryDataService {
         name: "Deepak Jain",
         phone: "+91 9988776655",
         specialty: "Plumbing",
-
         available: false,
       ),
       ProviderModel(
@@ -50,14 +50,16 @@ class InquiryDataService {
         name: "Rajesh Patel",
         phone: "+91 9876543211",
         specialty: "Carpentry",
-
         available: true,
       ),
     ];
   }
 
+  // ---------------- INQUIRIES ----------------
+
   void _loadInquiries() {
     _inquiries = [
+      // ---------------- Inquiry 1 (Pending) ----------------
       Inquiry(
         id: "BZ4001",
         customer: "Rahul Sharma",
@@ -65,13 +67,21 @@ class InquiryDataService {
         location: "Pune, Maharashtra",
         date: "21 Nov",
         time: "11:30 AM",
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
         status: InquiryStatus.pending,
         customerPhone: "+91 9876543210",
-        customerAddress: "123 Main Street, Pune, Maharashtra - 411001",
-        price: 45.00,
+        customerAddress: "123 Main Street, Pune - 411001",
+        price: 200, // Booking amount
         userNotes: "AC not cooling properly. Need urgent repair.",
         paymentStatus: PaymentStatus.unpaid,
+        items: [
+          ServiceItem(name: "AC Inspection", qty: 1, price: 500),
+          ServiceItem(name: "Outdoor Unit Cleaning", qty: 1, price: 280),
+        ],
+        additionalAmount: 0,
       ),
+
+      // ---------------- Inquiry 2 (Assigned) ----------------
       Inquiry(
         id: "BZ4002",
         customer: "Pooja Verma",
@@ -79,16 +89,24 @@ class InquiryDataService {
         location: "Mumbai, Maharashtra",
         date: "22 Nov",
         time: "12:00 PM",
+        createdAt: DateTime.now().subtract(const Duration(days: 2)),
         status: InquiryStatus.assigned,
         provider: _providers[0],
         customerPhone: "+91 9123456789",
-        customerAddress: "456 Oak Avenue, Mumbai, Maharashtra - 400001",
-        price: 30.00,
+        customerAddress: "456 Oak Avenue, Mumbai",
+        price: 150,
         userNotes: "Need ceiling fan installation in living room.",
         paymentStatus: PaymentStatus.paid,
         paymentMethod: PaymentMethod.cash,
-        assignedAt: DateTime.now().subtract(Duration(hours: 2)),
+        assignedAt: DateTime.now().subtract(const Duration(hours: 2)),
+        items: [
+          ServiceItem(name: "Fan Installation", qty: 1, price: 300),
+          ServiceItem(name: "Wiring Check", qty: 1, price: 100),
+        ],
+        additionalAmount: 0,
       ),
+
+      // ---------------- Inquiry 3 (In Progress) ----------------
       Inquiry(
         id: "BZ4003",
         customer: "Amit Kumar",
@@ -96,17 +114,24 @@ class InquiryDataService {
         location: "Delhi",
         date: "23 Nov",
         time: "10:00 AM",
+        createdAt: DateTime.now().subtract(const Duration(days: 3)),
         status: InquiryStatus.inProgress,
         provider: _providers[1],
         customerPhone: "+91 9988776655",
-        customerAddress: "789 Pine Road, Delhi - 110001",
-        price: 50.00,
+        customerAddress: "789 Pine Road, Delhi",
+        price: 100, // booking
         userNotes: "LED light fitting required in kitchen area.",
         paymentStatus: PaymentStatus.partiallyPaid,
         paymentMethod: PaymentMethod.online,
-        assignedAt: DateTime.now().subtract(Duration(days: 1)),
+        assignedAt: DateTime.now().subtract(const Duration(days: 1)),
         adminNotes: "Customer requested premium quality LED lights.",
+        items: [
+          ServiceItem(name: "LED Light Fitting", qty: 2, price: 350),
+        ],
+        additionalAmount: 150, // extra onsite charge
       ),
+
+      // ---------------- Inquiry 4 (Completed) ----------------
       Inquiry(
         id: "BZ4004",
         customer: "Neha Gupta",
@@ -114,18 +139,26 @@ class InquiryDataService {
         location: "Bangalore",
         date: "20 Nov",
         time: "09:00 AM",
+        createdAt: DateTime.now().subtract(const Duration(days: 4)),
         status: InquiryStatus.completed,
         provider: _providers[0],
         customerPhone: "+91 9876543210",
-        customerAddress: "321 Elm Street, Bangalore, Karnataka - 560001",
-        price: 55.00,
+        customerAddress: "321 Elm Street, Bangalore",
+        price: 300,
         userNotes: "AC gas refill and servicing required.",
         paymentStatus: PaymentStatus.paid,
         paymentMethod: PaymentMethod.card,
-        assignedAt: DateTime.now().subtract(Duration(days: 2)),
-        completedAt: DateTime.now().subtract(Duration(hours: 5)),
+        assignedAt: DateTime.now().subtract(const Duration(days: 2)),
+        completedAt: DateTime.now().subtract(const Duration(hours: 5)),
         adminNotes: "Service completed successfully. Customer satisfied.",
+        items: [
+          ServiceItem(name: "AC Gas Refill", qty: 1, price: 550),
+          ServiceItem(name: "Full Service", qty: 1, price: 350),
+        ],
+        additionalAmount: 0,
       ),
+
+      // ---------------- Inquiry 5 (Cancelled) ----------------
       Inquiry(
         id: "BZ4005",
         customer: "Sanjay Mehta",
@@ -133,204 +166,187 @@ class InquiryDataService {
         location: "Chennai",
         date: "19 Nov",
         time: "02:00 PM",
+        createdAt: DateTime.now().subtract(const Duration(days: 5)),
         status: InquiryStatus.cancelled,
         customerPhone: "+91 9123456780",
-        customerAddress: "654 Maple Lane, Chennai, Tamil Nadu - 600001",
-        price: 40.00,
+        customerAddress: "654 Maple Lane, Chennai",
+        price: 100,
         userNotes: "Bathroom tap leakage repair.",
         paymentStatus: PaymentStatus.refunded,
-        cancelledAt: DateTime.now().subtract(Duration(days: 1)),
-        adminNotes: "Customer cancelled due to personal reasons. Full refund processed.",
+        cancelledAt: DateTime.now().subtract(const Duration(days: 1)),
+        adminNotes: "Customer cancelled. Full refund processed.",
+        items: [
+          ServiceItem(name: "Tap Leakage Repair", qty: 1, price: 300),
+        ],
+        additionalAmount: 0,
       ),
     ];
   }
 
+  // ---------------- UPDATE METHODS ----------------
+
   void updateInquiryStatus(String inquiryId, InquiryStatus newStatus) {
-    final index = _inquiries.indexWhere((inq) => inq.id == inquiryId);
-    if (index != -1) {
-      // Update timestamps based on status
-      DateTime? completedAt;
-      DateTime? cancelledAt;
+    final i = _find(inquiryId);
+    if (i == -1) return;
 
-      if (newStatus == InquiryStatus.completed) {
-        completedAt = DateTime.now();
-      } else if (newStatus == InquiryStatus.cancelled) {
-        cancelledAt = DateTime.now();
-      }
+    DateTime? completedAt;
+    DateTime? cancelledAt;
 
-      _inquiries[index] = _inquiries[index].copyWith(
-        status: newStatus,
-        completedAt: completedAt,
-        cancelledAt: cancelledAt,
-      );
+    if (newStatus == InquiryStatus.completed) {
+      completedAt = DateTime.now();
+    } else if (newStatus == InquiryStatus.cancelled) {
+      cancelledAt = DateTime.now();
     }
+
+    _inquiries[i] = _inquiries[i].copyWith(
+      status: newStatus,
+      completedAt: completedAt,
+      cancelledAt: cancelledAt,
+    );
   }
 
   void assignProvider(String inquiryId, ProviderModel provider) {
-    final index = _inquiries.indexWhere((inq) => inq.id == inquiryId);
-    if (index != -1) {
-      _inquiries[index] = _inquiries[index].copyWith(
-        provider: provider,
-        status: InquiryStatus.assigned,
-        assignedAt: DateTime.now(),
-      );
-    }
+    final i = _find(inquiryId);
+    if (i == -1) return;
+
+    _inquiries[i] = _inquiries[i].copyWith(
+      provider: provider,
+      status: InquiryStatus.assigned,
+      assignedAt: DateTime.now(),
+    );
   }
 
   void updateProvider(String inquiryId, ProviderModel newProvider, String reason) {
-    final index = _inquiries.indexWhere((inq) => inq.id == inquiryId);
-    if (index != -1) {
-      // Add reassignment note
-      final currentNotes = _inquiries[index].adminNotes;
-      final reassignmentNote = "[Reassigned] $reason - ${DateTime.now().toString()}";
-      final updatedNotes = currentNotes != null
-          ? "$currentNotes\n\n$reassignmentNote"
-          : reassignmentNote;
+    final i = _find(inquiryId);
+    if (i == -1) return;
 
-      _inquiries[index] = _inquiries[index].copyWith(
-        provider: newProvider,
-        adminNotes: updatedNotes,
-      );
-    }
+    final old = _inquiries[i].adminNotes;
+    final note = "[Reassigned] $reason - ${DateTime.now()}";
+
+    _inquiries[i] = _inquiries[i].copyWith(
+      provider: newProvider,
+      adminNotes: old != null ? "$old\n\n$note" : note,
+    );
   }
 
   void updatePaymentStatus(String inquiryId, PaymentStatus status, PaymentMethod? method) {
-    final index = _inquiries.indexWhere((inq) => inq.id == inquiryId);
-    if (index != -1) {
-      // Add payment update note
-      final currentNotes = _inquiries[index].adminNotes;
-      final paymentNote = "[Payment Updated] Status: ${status.label}${method != null ? ', Method: ${method.label}' : ''} - ${DateTime.now().toString()}";
-      final updatedNotes = currentNotes != null
-          ? "$currentNotes\n\n$paymentNote"
-          : paymentNote;
+    final i = _find(inquiryId);
+    if (i == -1) return;
 
-      _inquiries[index] = _inquiries[index].copyWith(
-        paymentStatus: status,
-        paymentMethod: method,
-        adminNotes: updatedNotes,
-      );
-    }
+    final old = _inquiries[i].adminNotes;
+    final note =
+        "[Payment Updated] Status: ${status.label}${method != null ? ', Method: ${method.label}' : ''} - ${DateTime.now()}";
+
+    _inquiries[i] = _inquiries[i].copyWith(
+      paymentStatus: status,
+      paymentMethod: method,
+      adminNotes: old != null ? "$old\n\n$note" : note,
+    );
   }
 
   void updateAdminNotes(String inquiryId, String notes) {
-    final index = _inquiries.indexWhere((inq) => inq.id == inquiryId);
-    if (index != -1) {
-      _inquiries[index] = _inquiries[index].copyWith(
-        adminNotes: notes,
-      );
-    }
+    final i = _find(inquiryId);
+    if (i == -1) return;
+
+    _inquiries[i] = _inquiries[i].copyWith(adminNotes: notes);
   }
 
   void addAdminNote(String inquiryId, String note) {
-    final index = _inquiries.indexWhere((inq) => inq.id == inquiryId);
-    if (index != -1) {
-      final currentNotes = _inquiries[index].adminNotes;
-      final timestamp = DateTime.now().toString();
-      final updatedNotes = currentNotes != null
-          ? "$currentNotes\n\n$note - $timestamp"
-          : "$note - $timestamp";
+    final i = _find(inquiryId);
+    if (i == -1) return;
 
-      _inquiries[index] = _inquiries[index].copyWith(
-        adminNotes: updatedNotes,
-      );
-    }
+    final old = _inquiries[i].adminNotes;
+    final timestamp = DateTime.now();
+
+    _inquiries[i] = _inquiries[i].copyWith(
+      adminNotes: old != null ? "$old\n\n$note - $timestamp" : "$note - $timestamp",
+    );
   }
 
   void updateInquiryPrice(String inquiryId, double newPrice) {
-    final index = _inquiries.indexWhere((inq) => inq.id == inquiryId);
-    if (index != -1) {
-      _inquiries[index] = _inquiries[index].copyWith(
-        price: newPrice,
-      );
-    }
+    final i = _find(inquiryId);
+    if (i == -1) return;
+
+    _inquiries[i] = _inquiries[i].copyWith(price: newPrice);
   }
 
-  // Get inquiries by status
-  List<Inquiry> getInquiriesByStatus(InquiryStatus status) {
-    return _inquiries.where((inquiry) => inquiry.status == status).toList();
+  void updateAdditionalAmount(String inquiryId, double amount) {
+    final i = _find(inquiryId);
+    if (i == -1) return;
+
+    _inquiries[i] = _inquiries[i].copyWith(additionalAmount: amount);
   }
 
-  // Get inquiries by provider
-  List<Inquiry> getInquiriesByProvider(String providerId) {
-    return _inquiries.where((inquiry) => inquiry.provider?.id == providerId).toList();
-  }
+  // ---------------- SEARCH ----------------
 
-  // Get available providers for a service type
-  List<ProviderModel> getAvailableProviders(String serviceType) {
-    return _providers.where((provider) =>
-    provider.available &&
-        provider.specialty.toLowerCase().contains(serviceType.toLowerCase())
-    ).toList();
-  }
-
-  // Get provider by ID
-  ProviderModel? getProviderById(String providerId) {
-    try {
-      return _providers.firstWhere((provider) => provider.id == providerId);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  // Get inquiry by ID
-  Inquiry? getInquiryById(String inquiryId) {
-    try {
-      return _inquiries.firstWhere((inquiry) => inquiry.id == inquiryId);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  // Add new inquiry
-  void addInquiry(Inquiry inquiry) {
-    _inquiries.add(inquiry);
-  }
-
-  // Remove inquiry
-  void removeInquiry(String inquiryId) {
-    _inquiries.removeWhere((inq) => inq.id == inquiryId);
-  }
-
-  // Get statistics
-  Map<String, dynamic> getStatistics() {
-    final total = _inquiries.length;
-    final pending = _inquiries.where((i) => i.status == InquiryStatus.pending).length;
-    final assigned = _inquiries.where((i) => i.status == InquiryStatus.assigned).length;
-    final inProgress = _inquiries.where((i) => i.status == InquiryStatus.inProgress).length;
-    final completed = _inquiries.where((i) => i.status == InquiryStatus.completed).length;
-    final cancelled = _inquiries.where((i) => i.status == InquiryStatus.cancelled).length;
-
-    final totalRevenue = _inquiries
-        .where((i) => i.price != null && i.paymentStatus == PaymentStatus.paid)
-        .fold(0.0, (sum, inquiry) => sum + inquiry.price!);
-
-    final unpaidAmount = _inquiries
-        .where((i) => i.price != null && i.paymentStatus != PaymentStatus.paid)
-        .fold(0.0, (sum, inquiry) => sum + inquiry.price!);
-
-    return {
-      'total': total,
-      'pending': pending,
-      'assigned': assigned,
-      'inProgress': inProgress,
-      'completed': completed,
-      'cancelled': cancelled,
-      'totalRevenue': totalRevenue,
-      'unpaidAmount': unpaidAmount,
-    };
-  }
-
-  // Search inquiries
   List<Inquiry> searchInquiries(String query) {
     if (query.isEmpty) return _inquiries;
 
-    final lowerQuery = query.toLowerCase();
-    return _inquiries.where((inquiry) =>
-    inquiry.id.toLowerCase().contains(lowerQuery) ||
-        inquiry.customer.toLowerCase().contains(lowerQuery) ||
-        inquiry.service.toLowerCase().contains(lowerQuery) ||
-        inquiry.location.toLowerCase().contains(lowerQuery) ||
-        (inquiry.customerPhone?.toLowerCase().contains(lowerQuery) ?? false)
-    ).toList();
+    final q = query.toLowerCase();
+
+    return _inquiries.where((inquiry) {
+      return inquiry.id.toLowerCase().contains(q) ||
+          inquiry.customer.toLowerCase().contains(q) ||
+          inquiry.service.toLowerCase().contains(q) ||
+          inquiry.location.toLowerCase().contains(q) ||
+          (inquiry.customerPhone?.toLowerCase().contains(q) ?? false);
+    }).toList();
+  }
+
+  // ---------------- STATISTICS ----------------
+
+  Map<String, dynamic> getStatistics() {
+    final total = _inquiries.length;
+
+    final pending =
+        _inquiries.where((i) => i.status == InquiryStatus.pending).length;
+    final assigned =
+        _inquiries.where((i) => i.status == InquiryStatus.assigned).length;
+    final inProgress =
+        _inquiries.where((i) => i.status == InquiryStatus.inProgress).length;
+    final completed =
+        _inquiries.where((i) => i.status == InquiryStatus.completed).length;
+    final cancelled =
+        _inquiries.where((i) => i.status == InquiryStatus.cancelled).length;
+
+    double totalRevenue = 0;
+    double unpaidAmount = 0;
+
+    for (var inq in _inquiries) {
+      double itemTotal = 0;
+
+      // Items total
+      if (inq.items != null) {
+        for (var item in inq.items!) {
+          itemTotal += item.price * item.qty;
+        }
+      }
+
+      // Additional
+      itemTotal += inq.additionalAmount ?? 0;
+
+      if (inq.paymentStatus == PaymentStatus.paid) {
+        totalRevenue += itemTotal;
+      } else {
+        unpaidAmount += itemTotal;
+      }
+    }
+
+    return {
+      "total": total,
+      "pending": pending,
+      "assigned": assigned,
+      "inProgress": inProgress,
+      "completed": completed,
+      "cancelled": cancelled,
+      "totalRevenue": totalRevenue,
+      "unpaidAmount": unpaidAmount,
+    };
+  }
+
+  // ---------------- UTILS ----------------
+
+  int _find(String id) {
+    return _inquiries.indexWhere((inq) => inq.id == id);
   }
 }

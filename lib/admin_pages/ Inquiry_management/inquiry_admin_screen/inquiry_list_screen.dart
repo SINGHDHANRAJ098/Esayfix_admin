@@ -1,8 +1,9 @@
-// screens/inquiry_list_screen.dart
 import 'package:flutter/material.dart';
 import '../inquiry_model/inquiry.model.dart';
 import '../inquiry_model/inquiry_provider_model.dart';
 import '../inquiry_model/inquiry_status_model.dart';
+
+import 'assign_provider_screen.dart';
 import 'inquiry_details_screen.dart';
 
 class InquiryListScreen extends StatefulWidget {
@@ -77,7 +78,19 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: _buildAppBar(),
+      appBar: AppBar(
+        elevation: 0.3,
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: const Text(
+          "Inquiry Management",
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: Colors.black,
+            fontSize: 18,
+          ),
+        ),
+      ),
       body: Column(
         children: [
           _buildTopBar(),
@@ -88,24 +101,7 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
     );
   }
 
-  // --------------------- APP BAR ---------------------
-  AppBar _buildAppBar() {
-    return AppBar(
-      elevation: 0.5,
-      backgroundColor: Colors.white,
-      centerTitle: true,
-      title: const Text(
-        "Inquiry Management",
-        style: TextStyle(
-          fontWeight: FontWeight.w700,
-          color: Colors.black,
-          fontSize: 18,
-        ),
-      ),
-    );
-  }
-
-  // --------------------- SEARCH + FILTERS ---------------------
+  // SEARCH + FILTER
   Widget _buildTopBar() {
     return Container(
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
@@ -114,8 +110,8 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
-            blurRadius: 6,
-            offset: Offset(0, 1),
+            blurRadius: 5,
+            offset: Offset(0, 2),
           )
         ],
       ),
@@ -123,19 +119,20 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
         children: [
           const SizedBox(height: 8),
 
-          // Search Bar
+          // Search Box
           Container(
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(12),
             ),
             child: TextField(
               controller: _searchController,
               decoration: const InputDecoration(
-                hintText: 'Search by ID, name, phone…',
                 prefixIcon: Icon(Icons.search, color: Colors.grey),
+                hintText: "Search by ID, name, phone…",
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding:
+                EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               ),
               onChanged: widget.onSearch,
             ),
@@ -143,62 +140,57 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
 
           const SizedBox(height: 12),
 
-          // Filter Chips
+          // Filters
           SizedBox(
             height: 40,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                _buildFilterChip("All", null),
+                _filterChip("All", null),
                 const SizedBox(width: 10),
                 ...InquiryStatus.values.map(
-                      (status) => Padding(
+                      (s) => Padding(
                     padding: const EdgeInsets.only(right: 10),
-                    child: _buildFilterChip(status.label, status),
+                    child: _filterChip(s.label, s),
                   ),
                 ),
               ],
             ),
-          ),
+          )
         ],
       ),
     );
   }
 
-  Widget _buildFilterChip(String label, InquiryStatus? status) {
-    final bool isSelected = widget.currentFilter == status;
+  Widget _filterChip(String label, InquiryStatus? status) {
+    final selected = widget.currentFilter == status;
 
     return ChoiceChip(
       label: Text(
         label,
         style: TextStyle(
+          color: selected ? Colors.white : Colors.black,
           fontWeight: FontWeight.w600,
-          color: isSelected ? Colors.white : Colors.black,
         ),
       ),
-      selected: isSelected,
+      selected: selected,
       selectedColor: Colors.redAccent,
-      backgroundColor: Colors.grey[200],
-      onSelected: (value) => widget.onFilterChange(value ? status : null),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      backgroundColor: Colors.grey.shade200,
+      onSelected: (_) => widget.onFilterChange(status),
     );
   }
 
-  // --------------------- LIST ---------------------
+  // LIST
   Widget _buildInquiryList() {
     if (widget.inquiries.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inbox, size: 60, color: Colors.grey[400]),
+            Icon(Icons.inbox, size: 60, color: Colors.grey.shade400),
             const SizedBox(height: 12),
-            const Text(
-              "No inquiries found",
-              style: TextStyle(color: Colors.black54, fontSize: 16),
-            )
+            const Text("No inquiries found",
+                style: TextStyle(color: Colors.black54))
           ],
         ),
       );
@@ -209,14 +201,23 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: widget.inquiries.length,
-        itemBuilder: (context, index) =>
-            _buildInquiryCard(widget.inquiries[index]),
+        itemBuilder: (_, i) => _inquiryCard(widget.inquiries[i]),
       ),
     );
   }
 
-  // --------------------- CARD UI (Option A Minimal) ---------------------
-  Widget _buildInquiryCard(Inquiry inquiry) {
+  // CARD
+  Widget _inquiryCard(Inquiry inquiry) {
+    String formattedCreatedAt() {
+      final d = inquiry.createdAt;
+      final day = d.day.toString().padLeft(2, '0');
+      final month = d.month.toString().padLeft(2, '0');
+      final year = d.year.toString();
+      final hour = d.hour.toString().padLeft(2, '0');
+      final minute = d.minute.toString().padLeft(2, '0');
+      return "$day-$month-$year • $hour:$minute";
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 18),
       decoration: BoxDecoration(
@@ -231,7 +232,6 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
         ],
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(18),
         onTap: () {
           Navigator.push(
             context,
@@ -239,22 +239,23 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
               builder: (_) => InquiryDetailsScreen(
                 inquiry: inquiry,
                 providers: widget.providers,
-                onStatusUpdate: (newStatus) =>
-                    widget.onStatusUpdate(inquiry.id, newStatus),
-                onAssignProvider: (provider) =>
-                    widget.onAssignProvider(inquiry.id, provider),
-                onUpdateProvider: (provider, reason) =>
-                    widget.onUpdateProvider(inquiry.id, provider, reason),
-                onPaymentUpdate: (status, method) =>
-                    widget.onPaymentUpdate(inquiry.id, status, method),
-                onAddAdminNote: (note) =>
-                    widget.onAddAdminNote(inquiry.id, note),
-                onUpdateInquiryPrice: (newPrice) =>
-                    widget.onUpdateInquiryPrice(inquiry.id, newPrice),
+                onStatusUpdate: (s) =>
+                    widget.onStatusUpdate(inquiry.id, s),
+                onAssignProvider: (p) =>
+                    widget.onAssignProvider(inquiry.id, p),
+                onUpdateProvider: (p, r) =>
+                    widget.onUpdateProvider(inquiry.id, p, r),
+                onPaymentUpdate: (s, m) =>
+                    widget.onPaymentUpdate(inquiry.id, s, m),
+                onAddAdminNote: (n) =>
+                    widget.onAddAdminNote(inquiry.id, n),
+                onUpdateInquiryPrice: (p) =>
+                    widget.onUpdateInquiryPrice(inquiry.id, p),
               ),
             ),
           );
         },
+        borderRadius: BorderRadius.circular(18),
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Column(
@@ -266,35 +267,120 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
                 children: [
                   Text(
                     inquiry.id,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey.shade700,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w700),
                   ),
                   _statusChip(inquiry.status),
                 ],
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
 
-              _infoLine(Icons.person, inquiry.customer),
-              const SizedBox(height: 6),
+              // CREATED AT (Order date & time)
+              _info(Icons.access_time, formattedCreatedAt()),
 
-              if (inquiry.customerPhone != null)
-                _infoLine(Icons.phone, inquiry.customerPhone!),
+              const SizedBox(height: 12),
 
-              const SizedBox(height: 6),
+              _info(Icons.person, inquiry.customer),
+              const SizedBox(height: 8),
+              _info(Icons.phone, inquiry.customerPhone ?? "-"),
+              const SizedBox(height: 8),
+              _info(Icons.location_on,
+                  inquiry.customerAddress ?? inquiry.location),
+              const SizedBox(height: 8),
+              _info(Icons.calendar_month, inquiry.date),
+              const SizedBox(height: 8),
+              _info(Icons.schedule, inquiry.time),
 
-              _infoLine(Icons.location_on, inquiry.location),
-              const SizedBox(height: 6),
+              const SizedBox(height: 14),
 
-              _infoLine(Icons.calendar_today,
-                  "${inquiry.date} • ${inquiry.time}"),
+              // ---------------- PROVIDER INFO ONLY IF ASSIGNED ----------------
+              if (inquiry.status == InquiryStatus.assigned &&
+                  inquiry.provider != null) ...[
+                Row(
+                  children: [
+                    const Icon(Icons.handshake,
+                        size: 18, color: Colors.green),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Provider: ${inquiry.provider!.name}",
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(Icons.phone,
+                        size: 18, color: Colors.blueAccent),
+                    const SizedBox(width: 8),
+                    Text(
+                      inquiry.provider!.phone,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ],
 
-              const SizedBox(height: 16),
+              // ---------------- BUTTONS ONLY WHEN PENDING ----------------
+              if (inquiry.status == InquiryStatus.pending) ...[
+                const SizedBox(height: 20),
 
-              if (inquiry.provider != null) _providerChip(inquiry.provider!),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => AssignInquiryScreen(
+                                inquiry: inquiry,
+                                providers: widget.providers,
+                                onAssign: (provider) {
+                                  widget.onAssignProvider(
+                                      inquiry.id, provider);
+                                },
+                              ),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: const Text(
+                          "Assign Provider",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () =>
+                            widget.onStatusUpdate(inquiry.id,
+                                InquiryStatus.cancelled),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
             ],
           ),
         ),
@@ -302,37 +388,8 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
     );
   }
 
-  // --------------------- MINIMAL PROVIDER CHIP ---------------------
-  Widget _providerChip(ProviderModel provider) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.redAccent.withOpacity(.12),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.engineering, size: 16, color: Colors.redAccent),
-              const SizedBox(width: 6),
-              Text(
-                provider.name,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.redAccent,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  // --------------------- SMALL INFO ROW ---------------------
-  Widget _infoLine(IconData icon, String text) {
+  // UI HELPERS
+  Widget _info(IconData icon, String text) {
     return Row(
       children: [
         Icon(icon, size: 16, color: Colors.grey.shade600),
@@ -340,14 +397,13 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
         Expanded(
           child: Text(
             text,
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
+            style: TextStyle(color: Colors.grey.shade800, fontSize: 14),
           ),
-        ),
+        )
       ],
     );
   }
 
-  // --------------------- STATUS CHIP ---------------------
   Widget _statusChip(InquiryStatus status) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -358,9 +414,9 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
       child: Text(
         status.label,
         style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
           color: status.color,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
         ),
       ),
     );

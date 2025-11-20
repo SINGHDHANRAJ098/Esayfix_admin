@@ -1,7 +1,40 @@
 // models/inquiry_model.dart
+import 'package:easyfix_admin/admin_pages/%20Inquiry_management/inquiry_model/additional_services.dart';
 import 'package:flutter/material.dart';
 import 'inquiry_provider_model.dart';
 import 'inquiry_status_model.dart';
+
+
+
+
+// SERVICE ITEM MODEL (for multiple main services)
+
+class ServiceItem {
+  final String name;
+  final int qty;
+  final double price;
+
+  ServiceItem({
+    required this.name,
+    required this.qty,
+    required this.price,
+  });
+
+  ServiceItem copyWith({
+    String? name,
+    int? qty,
+    double? price,
+  }) {
+    return ServiceItem(
+      name: name ?? this.name,
+      qty: qty ?? this.qty,
+      price: price ?? this.price,
+    );
+  }
+}
+
+
+//INQUIRY MODEL
 
 class Inquiry {
   final String id;
@@ -10,15 +43,35 @@ class Inquiry {
   final String location;
   final String date;
   final String time;
+  final DateTime createdAt;
+
   InquiryStatus status;
   ProviderModel? provider;
+
   final String? customerPhone;
   final String? customerAddress;
-  double? price;
+
+  //MULTIPLE MAIN SERVICES LIST
+
+  List<ServiceItem> items;
+
+  /// ----------------------------------------
+  /// ADDITIONAL SERVICES (⭐ NEW)
+  /// ----------------------------------------
+  List<AdditionalService> additionalServices;
+
+  /// ----------------------------------------
+  /// PRICING
+  /// ----------------------------------------
+  double? price;             // booking / advance amount
+  double additionalAmount;   // manual extra charge
+
   final String? userNotes;
   String? adminNotes;
+
   PaymentStatus paymentStatus;
   PaymentMethod? paymentMethod;
+
   DateTime? assignedAt;
   DateTime? completedAt;
   DateTime? cancelledAt;
@@ -31,10 +84,15 @@ class Inquiry {
     required this.date,
     required this.time,
     required this.status,
+    required this.createdAt,
+    required this.items,
+
+    this.additionalServices = const [],       // ⭐ DEFAULT EMPTY LIST
     this.provider,
     this.customerPhone,
     this.customerAddress,
     this.price,
+    this.additionalAmount = 0,
     this.userNotes,
     this.adminNotes,
     this.paymentStatus = PaymentStatus.unpaid,
@@ -44,7 +102,21 @@ class Inquiry {
     this.cancelledAt,
   });
 
-  // Add copyWith method to create updated instances
+  /// ----------------------------------------
+  /// TOTAL CALCULATIONS
+  /// ----------------------------------------
+  double get serviceTotal =>
+      items.fold(0.0, (sum, item) => sum + (item.qty * item.price));
+
+  double get additionalServiceTotal =>
+      additionalServices.fold(0.0, (sum, item) => sum + item.total);
+
+  double get payableAmount =>
+      serviceTotal + additionalServiceTotal + additionalAmount - (price ?? 0);
+
+  /// ----------------------------------------
+  /// COPY-WITH
+  /// ----------------------------------------
   Inquiry copyWith({
     String? id,
     String? customer,
@@ -52,11 +124,15 @@ class Inquiry {
     String? location,
     String? date,
     String? time,
+    DateTime? createdAt,
     InquiryStatus? status,
     ProviderModel? provider,
     String? customerPhone,
     String? customerAddress,
+    List<ServiceItem>? items,
+    List<AdditionalService>? additionalServices,
     double? price,
+    double? additionalAmount,
     String? userNotes,
     String? adminNotes,
     PaymentStatus? paymentStatus,
@@ -72,11 +148,15 @@ class Inquiry {
       location: location ?? this.location,
       date: date ?? this.date,
       time: time ?? this.time,
+      createdAt: createdAt ?? this.createdAt,
       status: status ?? this.status,
       provider: provider ?? this.provider,
       customerPhone: customerPhone ?? this.customerPhone,
       customerAddress: customerAddress ?? this.customerAddress,
+      items: items ?? this.items,
+      additionalServices: additionalServices ?? this.additionalServices, // ⭐ REQUIRED
       price: price ?? this.price,
+      additionalAmount: additionalAmount ?? this.additionalAmount,
       userNotes: userNotes ?? this.userNotes,
       adminNotes: adminNotes ?? this.adminNotes,
       paymentStatus: paymentStatus ?? this.paymentStatus,
@@ -88,12 +168,11 @@ class Inquiry {
   }
 }
 
-enum PaymentStatus {
-  unpaid,
-  paid,
-  partiallyPaid,
-  refunded,
-}
+
+/// ----------------------------------------------------------
+/// PAYMENT STATUS ENUM
+/// ----------------------------------------------------------
+enum PaymentStatus { unpaid, paid, partiallyPaid, refunded }
 
 extension PaymentStatusX on PaymentStatus {
   String get label {
@@ -121,27 +200,13 @@ extension PaymentStatusX on PaymentStatus {
         return Colors.blue;
     }
   }
-
-  IconData get icon {
-    switch (this) {
-      case PaymentStatus.unpaid:
-        return Icons.money_off;
-      case PaymentStatus.paid:
-        return Icons.attach_money;
-      case PaymentStatus.partiallyPaid:
-        return Icons.money;
-      case PaymentStatus.refunded:
-        return Icons.refresh;
-    }
-  }
 }
 
-enum PaymentMethod {
-  cash,
-  card,
-  online,
-  bankTransfer,
-}
+
+/// ----------------------------------------------------------
+/// PAYMENT METHOD ENUM
+/// ----------------------------------------------------------
+enum PaymentMethod { cash, card, online, bankTransfer }
 
 extension PaymentMethodX on PaymentMethod {
   String get label {
@@ -151,7 +216,7 @@ extension PaymentMethodX on PaymentMethod {
       case PaymentMethod.card:
         return "Card";
       case PaymentMethod.online:
-        return "online";
+        return "Online";
       case PaymentMethod.bankTransfer:
         return "Bank Transfer";
     }
