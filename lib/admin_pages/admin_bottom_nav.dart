@@ -1,12 +1,8 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:easyfix_admin/admin_pages/account_management/account_screen/account_management.dart';
-
 import 'package:easyfix_admin/admin_pages/dashboard.dart';
 import 'package:easyfix_admin/admin_pages/service_pricing_management.dart';
-import 'package:easyfix_admin/admin_pages/service_provider_management.dart';
-
 import 'package:flutter/material.dart';
-
 import ' Inquiry_management/inquiry_admin_screen/inquiry_management_wrapper.dart';
 
 class AdminBottomNav extends StatefulWidget {
@@ -28,7 +24,7 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
     pages = [
       const Dashboard(),
       const InquiryManagementWrapper(),
-      const ServiceProviderManagement(),
+     // const ServiceProviderManagement(),
       const ServicePricingManagement(),
       const AccountManagement(),
     ];

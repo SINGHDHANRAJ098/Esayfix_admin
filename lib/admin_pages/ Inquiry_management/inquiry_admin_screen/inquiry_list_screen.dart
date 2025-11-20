@@ -294,7 +294,7 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
 
               const SizedBox(height: 14),
 
-              // ---------------- PROVIDER INFO ONLY IF ASSIGNED ----------------
+              //  PROVIDER INFO ONLY IF ASSIGNED
               if (inquiry.status == InquiryStatus.assigned &&
                   inquiry.provider != null) ...[
                 Row(
@@ -323,7 +323,7 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
                 ),
               ],
 
-              // ---------------- BUTTONS ONLY WHEN PENDING ----------------
+              //  BUTTONS ONLY WHEN PENDING
               if (inquiry.status == InquiryStatus.pending) ...[
                 const SizedBox(height: 20),
 
