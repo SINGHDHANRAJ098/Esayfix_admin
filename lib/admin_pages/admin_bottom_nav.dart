@@ -27,7 +27,7 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
       const InquiryManagementWrapper(),
       const ProviderListScreen(),
       const ServicePricingManagement(),
-      const AccountManagement(),
+      const AccountManagementScreen(),
     ];
   }
 
