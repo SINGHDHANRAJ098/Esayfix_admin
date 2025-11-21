@@ -1,16 +1,16 @@
-// lib/account_widget/account_widget.dart
-
 import 'package:flutter/material.dart';
 
 class SectionCard extends StatelessWidget {
   final String title;
   final Widget child;
+  final Widget? trailing;
   final EdgeInsetsGeometry? padding;
 
   const SectionCard({
     super.key,
     required this.title,
     required this.child,
+    this.trailing,
     this.padding,
   });
 
@@ -19,13 +19,19 @@ class SectionCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
+        Row(
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+            const Spacer(),
+            if (trailing != null) trailing!,
+          ],
         ),
         const SizedBox(height: 10),
         Card(
@@ -47,11 +53,13 @@ class SectionCard extends StatelessWidget {
 class ProfileInfoRow extends StatelessWidget {
   final String label;
   final String value;
+  final VoidCallback? onEdit;
 
   const ProfileInfoRow({
     super.key,
     required this.label,
     required this.value,
+    this.onEdit,
   });
 
   @override
@@ -72,16 +80,41 @@ class ProfileInfoRow extends StatelessWidget {
         ),
         Expanded(
           flex: 3,
-          child: Text(
-            value,
-            style: const TextStyle(
-              fontWeight: FontWeight.w400,
-              color: Colors.black87,
-              fontSize: 14,
-            ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  value,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black87,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              if (onEdit != null) ...[
+                const SizedBox(width: 8),
+                _buildEditIcon(onEdit!),
+              ],
+            ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildEditIcon(VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(40),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.grey.shade200,
+        ),
+        child: const Icon(Icons.edit, size: 16, color: Colors.redAccent),
+      ),
     );
   }
 }
@@ -134,12 +167,14 @@ class ContactInfoRow extends StatelessWidget {
   final String label;
   final String value;
   final IconData icon;
+  final VoidCallback? onEdit;
 
   const ContactInfoRow({
     super.key,
     required this.label,
     required this.value,
     required this.icon,
+    this.onEdit,
   });
 
   @override
@@ -179,7 +214,51 @@ class ContactInfoRow extends StatelessWidget {
             ],
           ),
         ),
+        if (onEdit != null) _buildEditIcon(onEdit!),
       ],
+    );
+  }
+
+  Widget _buildEditIcon(VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(40),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.grey.shade200,
+        ),
+        child: const Icon(Icons.edit, size: 16, color: Colors.redAccent),
+      ),
+    );
+  }
+}
+
+// New reusable edit icon widget
+class EditIconButton extends StatelessWidget {
+  final VoidCallback onTap;
+  final double size;
+
+  const EditIconButton({
+    super.key,
+    required this.onTap,
+    this.size = 16,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(40),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.grey.shade200,
+        ),
+        child: Icon(Icons.edit, size: size, color: Colors.redAccent),
+      ),
     );
   }
 }
