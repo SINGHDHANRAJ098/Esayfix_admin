@@ -172,7 +172,7 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
         child: ListView(
           padding: const EdgeInsets.all(14),
           children: [
-            // ---------------- BOOKING ID ----------------
+            //  BOOKING ID
             Container(
               padding: const EdgeInsets.all(14),
               decoration: box(),
@@ -202,7 +202,7 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
 
             const SizedBox(height: 12),
 
-            // ---------------- SERVICES ----------------
+            //  SERVICES
             Container(
               padding: const EdgeInsets.all(14),
               decoration: box(),
@@ -246,7 +246,7 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
 
             const SizedBox(height: 12),
 
-            // ---------------- ADDITIONAL SERVICES ----------------
+            //  ADDITIONAL SERVICES
             if (inquiry.additionalServices.isNotEmpty)
               Container(
                 padding: const EdgeInsets.all(14),
@@ -291,7 +291,7 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
 
             if (inquiry.additionalServices.isNotEmpty) const SizedBox(height: 12),
 
-            // ---------------- CUSTOMER NOTE (RESTORED) ----------------
+            //  CUSTOMER NOTE (RESTORED)
             if ((inquiry.userNotes ?? "").isNotEmpty)
               Container(
                 padding: const EdgeInsets.all(14),
@@ -315,7 +315,7 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
 
             const SizedBox(height: 12),
 
-            // ---------------- TOTALS ----------------
+            //  TOTALS
             Container(
               padding: const EdgeInsets.all(14),
               decoration: box(),
@@ -336,7 +336,7 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
 
             const SizedBox(height: 14),
 
-            // ---------------- PAYMENT DETAILS ----------------
+            //  PAYMENT DETAILS
             Container(
               padding: const EdgeInsets.all(14),
               decoration: box(),
@@ -447,7 +447,7 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
 
             const SizedBox(height: 14),
 
-            // ---------------- PROVIDER CARD ----------------
+            //  PROVIDER CARD
             if (inquiry.provider != null)
               Container(
                 padding: const EdgeInsets.all(14),
@@ -481,7 +481,7 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
 
             const SizedBox(height: 14),
 
-            // ---------------- ACTION BUTTONS ----------------
+            //  ACTION BUTTONS
             Container(
               margin: const EdgeInsets.only(bottom: 20),
               child: Row(
@@ -574,7 +574,7 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
     );
   }
 
-  // ------------------ HELPERS ------------------
+  //  HELPERS
   BoxDecoration box() => BoxDecoration(
     color: Colors.white,
     borderRadius: BorderRadius.circular(12),

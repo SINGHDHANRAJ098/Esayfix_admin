@@ -340,7 +340,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Edit Profile',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700,fontSize: 18),
         ),
       ),
       body: SafeArea(

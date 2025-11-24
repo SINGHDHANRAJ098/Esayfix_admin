@@ -1,4 +1,5 @@
-import 'package:easyfix_admin/admin_pages/admin_bottom_nav.dart';
+
+import 'package:easyfix_admin/admin_pages/admin_bottom_navigation/admin_bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -63,7 +64,7 @@ class _AdminOtpState extends State<AdminOtp> {
         SnackBar(content: Text("Admin OTP Verified: $otp")),
       );
 
-     Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminBottomNav()));
+     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AdminBottomNav()));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter all 6 digits")),

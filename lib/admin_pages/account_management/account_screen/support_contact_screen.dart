@@ -392,7 +392,6 @@ class _SupportTicketDialogState extends State<SupportTicketDialog> {
 
 //  EDIT SUPPORT DETAILS (SIMPLIFIED RED & WHITE)
 
-
 class EditSupportDetailsScreen extends StatefulWidget {
   final SupportContact contact;
 
@@ -517,7 +516,11 @@ class _EditSupportDetailsScreenState extends State<EditSupportDetailsScreen> {
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Edit Support Details',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
         ),
       ),
       body: SafeArea(

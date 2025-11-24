@@ -93,7 +93,7 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final providers = widget.providers; // If filtering needed, apply here.
+    final providers = widget.providers;
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,

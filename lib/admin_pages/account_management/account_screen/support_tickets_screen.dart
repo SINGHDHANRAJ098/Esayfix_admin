@@ -12,10 +12,7 @@ class SupportTicketListScreen extends StatelessWidget {
     final service = AccountService();
 
     return Scaffold(
-      appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Support Tickets')
-      ),
+      appBar: AppBar(centerTitle: true, title: const Text('Support Tickets')),
       body: FutureBuilder<List<SupportTicket>>(
         future: service.getAllTickets(),
         builder: (context, snapshot) {

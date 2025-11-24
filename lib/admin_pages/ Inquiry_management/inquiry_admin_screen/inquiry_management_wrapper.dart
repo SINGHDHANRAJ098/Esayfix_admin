@@ -31,7 +31,7 @@ class _InquiryManagementWrapperState extends State<InquiryManagementWrapper> {
     _filteredInquiries.addAll(_dataService.inquiries);
   }
 
-  // -------------------- CALLBACK UPDATES --------------------
+  //  CALLBACK UPDATES
 
   void _onStatusUpdate(String inquiryId, InquiryStatus newStatus) {
     setState(() {
@@ -90,7 +90,7 @@ class _InquiryManagementWrapperState extends State<InquiryManagementWrapper> {
     });
   }
 
-  // -------------------- FILTER + SEARCH --------------------
+  // FILTER + SEARCH
 
   void _applyFilters() {
     List<Inquiry> results = _dataService.inquiries;
@@ -128,7 +128,7 @@ class _InquiryManagementWrapperState extends State<InquiryManagementWrapper> {
     return _dataService.getStatistics();
   }
 
-  // -------------------- UI --------------------
+  //  UI
 
   @override
   Widget build(BuildContext context) {

@@ -1,10 +1,11 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:easyfix_admin/admin_pages/account_management/account_screen/account_management.dart';
-import 'package:easyfix_admin/admin_pages/dashboard.dart';
-import 'package:easyfix_admin/admin_pages/service_pricing_management.dart';
+
 import 'package:flutter/material.dart';
-import ' Inquiry_management/inquiry_admin_screen/inquiry_management_wrapper.dart';
-import 'Provider_management/provider_screen/provider_list_screen.dart';
+
+import '../ Inquiry_management/inquiry_admin_screen/inquiry_management_wrapper.dart';
+import '../Provider_management/provider_screen/provider_list_screen.dart';
+import '../dashboard_management/dashboard.dart';
 
 class AdminBottomNav extends StatefulWidget {
   const AdminBottomNav({super.key});
@@ -26,7 +27,7 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
       const Dashboard(),
       const InquiryManagementWrapper(),
       const ProviderListScreen(),
-      const ServicePricingManagement(),
+      //const ServicePricingManagement(),
       const AccountManagementScreen(),
     ];
   }

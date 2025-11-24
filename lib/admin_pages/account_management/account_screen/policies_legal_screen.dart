@@ -411,7 +411,7 @@ class _EditPolicyScreenState extends State<EditPolicyScreen> {
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Edit Policy',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700,fontSize: 18),
         ),
       ),
       body: SafeArea(

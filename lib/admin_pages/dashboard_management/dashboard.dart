@@ -1,5 +1,8 @@
-import 'package:easyfix_admin/admin_pages/notification.dart';
+
 import 'package:flutter/material.dart';
+
+import '../notification_screen/notification.dart';
+
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
