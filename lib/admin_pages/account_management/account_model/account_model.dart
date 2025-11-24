@@ -1,4 +1,3 @@
-// lib/account_model/account_model.dart
 
 class AdminProfile {
   final String name;
@@ -133,7 +132,6 @@ class SupportContact {
       'workingHours': workingHours,
     };
   }
-
   factory SupportContact.fromMap(Map<String, dynamic> map) {
     return SupportContact(
       phone: map['phone'] ?? '',

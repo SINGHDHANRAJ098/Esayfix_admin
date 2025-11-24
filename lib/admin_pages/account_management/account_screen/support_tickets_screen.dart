@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import '../account_model/account_model.dart';
 import '../account_service/account_service.dart';
 
-//
 //  SUPPORT TICKET LIST + DETAIL
-//
 
 class SupportTicketListScreen extends StatelessWidget {
   const SupportTicketListScreen({super.key});

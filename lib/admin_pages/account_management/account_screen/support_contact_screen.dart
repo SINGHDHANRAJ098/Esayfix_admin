@@ -4,9 +4,7 @@ import '../account_service/account_service.dart';
 import '../account_widget/account_widget.dart';
 import 'support_tickets_screen.dart';
 
-//
 //  SUPPORT & CONTACT (SIMPLIFIED RED & WHITE)
-//
 
 class SupportContactSection extends StatelessWidget {
   const SupportContactSection({super.key});
@@ -179,9 +177,7 @@ class SupportContactSection extends StatelessWidget {
   }
 }
 
-//
 //  SUPPORT TICKET DIALOG (SIMPLIFIED RED & WHITE)
-//
 
 class SupportTicketDialog extends StatefulWidget {
   const SupportTicketDialog({super.key});
@@ -394,9 +390,8 @@ class _SupportTicketDialogState extends State<SupportTicketDialog> {
   }
 }
 
-//
 //  EDIT SUPPORT DETAILS (SIMPLIFIED RED & WHITE)
-//
+
 
 class EditSupportDetailsScreen extends StatefulWidget {
   final SupportContact contact;
@@ -516,6 +511,7 @@ class _EditSupportDetailsScreenState extends State<EditSupportDetailsScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),

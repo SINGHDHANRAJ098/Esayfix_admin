@@ -85,7 +85,6 @@ class _AdminNotificationState extends State<AdminNotification> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
-
       // Header AppBar
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -165,7 +164,6 @@ class _AdminNotificationState extends State<AdminNotification> {
                           size: 22,
                         ),
                       ),
-
                       const SizedBox(width: 12),
 
                       // Text Inner

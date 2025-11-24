@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../account_service/account_service.dart';
-import '../account_widget/account_widget.dart';
+
 import 'admin_profile_screen.dart';
 import 'policies_legal_screen.dart';
 import 'support_contact_screen.dart';

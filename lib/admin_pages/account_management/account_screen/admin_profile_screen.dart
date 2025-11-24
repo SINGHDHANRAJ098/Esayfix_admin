@@ -61,7 +61,6 @@ class _AdminProfileSectionState extends State<AdminProfileSection> {
             ),
           );
         }
-
         if (snapshot.hasError || !snapshot.hasData) {
           return SectionCard(
             title: 'Admin Profile',
@@ -74,7 +73,7 @@ class _AdminProfileSectionState extends State<AdminProfileSection> {
                     color: Colors.redAccent,
                     size: 40,
                   ),
-                  const SizedBox(height: 8),
+
                   const Text(
                     'Failed to load profile',
                     style: TextStyle(color: Colors.black54),
@@ -111,56 +110,7 @@ class _AdminProfileSectionState extends State<AdminProfileSection> {
           child: Column(
             children: [
               const SizedBox(height: 8),
-              // Profile header
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.redAccent.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.redAccent,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.person_rounded,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            profile.name,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Administrator',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.redAccent,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
               const SizedBox(height: 16),
               _buildProfileInfoRow(
                 icon: Icons.person_outline_rounded,
@@ -200,11 +150,7 @@ class _AdminProfileSectionState extends State<AdminProfileSection> {
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: Colors.redAccent,
-          ),
+          Icon(icon, size: 20, color: Colors.redAccent),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -212,10 +158,7 @@ class _AdminProfileSectionState extends State<AdminProfileSection> {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -245,19 +188,13 @@ class _AdminProfileSectionState extends State<AdminProfileSection> {
           color: Colors.redAccent.withOpacity(0.1),
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Icon(
-          Icons.edit_rounded,
-          size: 18,
-          color: Colors.redAccent,
-        ),
+        child: Icon(Icons.edit_rounded, size: 18, color: Colors.redAccent),
       ),
     );
   }
 }
 
-//
 //  EDIT PROFILE SCREEN (SIMPLIFIED RED & WHITE)
-//
 
 class EditProfileScreen extends StatefulWidget {
   final AdminProfile profile;
@@ -369,11 +306,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     bottomLeft: Radius.circular(8),
                   ),
                 ),
-                child: Icon(
-                  icon,
-                  size: 20,
-                  color: Colors.redAccent,
-                ),
+                child: Icon(icon, size: 20, color: Colors.redAccent),
               ),
               Expanded(
                 child: TextFormField(
@@ -387,7 +320,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                   ),
                   validator: (value) =>
-                  value == null || value.isEmpty ? 'Required' : null,
+                      value == null || value.isEmpty ? 'Required' : null,
                 ),
               ),
             ],
@@ -407,10 +340,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Edit Profile',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
         ),
       ),
       body: SafeArea(
@@ -446,9 +376,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       const SizedBox(width: 12),
                       Text(
                         'Edit your profile information',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(color: Colors.grey[600]),
                       ),
                     ],
                   ),
@@ -496,20 +424,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     child: _isLoading
                         ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation(Colors.white),
-                      ),
-                    )
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation(Colors.white),
+                            ),
+                          )
                         : const Text(
-                      'Save Changes',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                            'Save Changes',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 8),
