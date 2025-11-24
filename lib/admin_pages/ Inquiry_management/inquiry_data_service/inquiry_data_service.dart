@@ -20,7 +20,7 @@ class InquiryDataService {
     _loadInquiries();
   }
 
-  // ---------------- PROVIDERS ----------------
+  //  PROVIDERS
 
   void _loadProviders() {
     _providers = [
@@ -55,11 +55,11 @@ class InquiryDataService {
     ];
   }
 
-  // ---------------- INQUIRIES ----------------
+  //  INQUIRIES
 
   void _loadInquiries() {
     _inquiries = [
-      // ---------------- Inquiry 1 (Pending) ----------------
+      //  Inquiry 1 (Pending)
       Inquiry(
         id: "BZ4001",
         customer: "Rahul Sharma",
@@ -81,7 +81,7 @@ class InquiryDataService {
         additionalAmount: 0,
       ),
 
-      // ---------------- Inquiry 2 (Assigned) ----------------
+      //  Inquiry 2 (Assigned)
       Inquiry(
         id: "BZ4002",
         customer: "Pooja Verma",
@@ -106,7 +106,7 @@ class InquiryDataService {
         additionalAmount: 0,
       ),
 
-      // ---------------- Inquiry 3 (In Progress) ----------------
+      //  Inquiry 3 (In Progress)
       Inquiry(
         id: "BZ4003",
         customer: "Amit Kumar",
@@ -131,7 +131,7 @@ class InquiryDataService {
         additionalAmount: 150, // extra onsite charge
       ),
 
-      // ---------------- Inquiry 4 (Completed) ----------------
+      //  Inquiry 4 (Completed)
       Inquiry(
         id: "BZ4004",
         customer: "Neha Gupta",
@@ -158,7 +158,7 @@ class InquiryDataService {
         additionalAmount: 0,
       ),
 
-      // ---------------- Inquiry 5 (Cancelled) ----------------
+      //  Inquiry 5 (Cancelled)
       Inquiry(
         id: "BZ4005",
         customer: "Sanjay Mehta",
@@ -183,7 +183,7 @@ class InquiryDataService {
     ];
   }
 
-  // ---------------- UPDATE METHODS ----------------
+  //  UPDATE METHODS
 
   void updateInquiryStatus(String inquiryId, InquiryStatus newStatus) {
     final i = _find(inquiryId);
@@ -277,7 +277,7 @@ class InquiryDataService {
     _inquiries[i] = _inquiries[i].copyWith(additionalAmount: amount);
   }
 
-  // ---------------- SEARCH ----------------
+  //  SEARCH
 
   List<Inquiry> searchInquiries(String query) {
     if (query.isEmpty) return _inquiries;
@@ -293,7 +293,7 @@ class InquiryDataService {
     }).toList();
   }
 
-  // ---------------- STATISTICS ----------------
+  //  STATISTICS
 
   Map<String, dynamic> getStatistics() {
     final total = _inquiries.length;
@@ -344,7 +344,7 @@ class InquiryDataService {
     };
   }
 
-  // ---------------- UTILS ----------------
+  //  UTILS
 
   int _find(String id) {
     return _inquiries.indexWhere((inq) => inq.id == id);

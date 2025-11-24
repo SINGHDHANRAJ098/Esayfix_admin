@@ -23,9 +23,8 @@ class InquiryTrackScreen extends StatefulWidget {
 }
 
 class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
-  // ------------------------------
   // SNACKBAR SUCCESS MESSAGE
-  // ------------------------------
+
   void _success(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -38,9 +37,8 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
     );
   }
 
-  // ------------------------------
   // CHANGE PROVIDER BOTTOM SHEET
-  // ------------------------------
+
   void _showChangeProviderSheet() {
     final available = widget.providers.where((p) => p.available).toList();
 
@@ -115,10 +113,7 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
         ),
         title: Text(
           p.name,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
         ),
         subtitle: Text(
           p.specialty,
@@ -134,9 +129,8 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
     );
   }
 
-  // ------------------------------
   // CANCEL INQUIRY
-  // ------------------------------
+
   void _cancelInquiry() {
     showDialog(
       context: context,
@@ -161,9 +155,8 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
     );
   }
 
-  // ------------------------------
   // MAIN UI
-  // ------------------------------
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,9 +190,8 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
     );
   }
 
-  // ------------------------------
   // MINIMAL STATUS CARD
-  // ------------------------------
+
   Widget _statusCard() {
     final status = widget.inquiry.status;
 
@@ -236,9 +228,8 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
     );
   }
 
-  // ------------------------------
-  // PROVIDER CARD — MINIMAL LOOK
-  // ------------------------------
+  // PROVIDER CARD
+
   Widget _providerCard() {
     final p = widget.inquiry.provider!;
 
@@ -285,7 +276,7 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
                     const SizedBox(width: 4),
                     Text(p.phone),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -293,19 +284,18 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
           IconButton(
             icon: const Icon(Icons.swap_horiz, color: Colors.redAccent),
             onPressed: _showChangeProviderSheet,
-          )
+          ),
         ],
       ),
     );
   }
 
-  // ------------------------------
-  // ACTION CARD (NO COMPLETE BUTTON)
-  // ------------------------------
+  // ACTION CARD
+
   Widget _actionCard() {
     final disabled =
         widget.inquiry.status == InquiryStatus.completed ||
-            widget.inquiry.status == InquiryStatus.cancelled;
+        widget.inquiry.status == InquiryStatus.cancelled;
 
     if (disabled) {
       return Container(
@@ -325,22 +315,31 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
       decoration: _box(),
       child: Column(
         children: [
-          _actionBtn("Change Provider", Icons.swap_horiz, Colors.blue,
-              _showChangeProviderSheet),
+          _actionBtn(
+            "Change Provider",
+            Icons.swap_horiz,
+            Colors.blue,
+            _showChangeProviderSheet,
+          ),
           const SizedBox(height: 12),
 
-          _actionBtn("Cancel Inquiry", Icons.cancel, Colors.red, _cancelInquiry),
+          _actionBtn(
+            "Cancel Inquiry",
+            Icons.cancel,
+            Colors.red,
+            _cancelInquiry,
+          ),
         ],
       ),
     );
   }
 
   Widget _actionBtn(
-      String title,
-      IconData icon,
-      Color color,
-      VoidCallback onTap,
-      ) {
+    String title,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return SizedBox(
       height: 48,
       width: double.infinity,
@@ -366,9 +365,8 @@ class _InquiryTrackScreenState extends State<InquiryTrackScreen> {
     );
   }
 
-  // ------------------------------
   // TIMELINE — MINIMAL STYLE
-  // ------------------------------
+
   Widget _timelineCard() {
     final items = [
       _History("Inquiry Created", "System", "Today"),
@@ -461,4 +459,3 @@ class _History {
 
   _History(this.title, this.by, this.time);
 }
-

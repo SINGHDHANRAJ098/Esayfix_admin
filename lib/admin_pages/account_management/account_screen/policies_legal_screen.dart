@@ -148,6 +148,7 @@ class _PolicyDetailScreenState extends State<PolicyDetailScreen> {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         backgroundColor: Colors.white,
+        centerTitle: true,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
         title: FutureBuilder<Policy>(
@@ -157,7 +158,8 @@ class _PolicyDetailScreenState extends State<PolicyDetailScreen> {
               snapshot.data?.title ?? 'Policy',
               style: const TextStyle(
                 color: Colors.black,
-                fontWeight: FontWeight.w600,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
               ),
             );
           },
@@ -406,12 +408,17 @@ class _EditPolicyScreenState extends State<EditPolicyScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Edit Policy',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700,fontSize: 18),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
         ),
       ),
       body: SafeArea(

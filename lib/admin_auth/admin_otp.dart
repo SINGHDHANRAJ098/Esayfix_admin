@@ -1,4 +1,3 @@
-
 import 'package:easyfix_admin/admin_pages/admin_bottom_navigation/admin_bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,10 +5,7 @@ import 'package:flutter/services.dart';
 class AdminOtp extends StatefulWidget {
   final String phone;
 
-  const AdminOtp({
-    super.key,
-    required this.phone,
-  });
+  const AdminOtp({super.key, required this.phone});
 
   @override
   State<AdminOtp> createState() => _AdminOtpState();
@@ -17,8 +13,10 @@ class AdminOtp extends StatefulWidget {
 
 class _AdminOtpState extends State<AdminOtp> {
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
-  final List<TextEditingController> _controllers =
-  List.generate(6, (_) => TextEditingController());
+  final List<TextEditingController> _controllers = List.generate(
+    6,
+    (_) => TextEditingController(),
+  );
 
   final Color redAccent = Colors.redAccent;
   final Color backgroundColor = Colors.white;
@@ -60,11 +58,14 @@ class _AdminOtpState extends State<AdminOtp> {
   void _verifyOtp() {
     final otp = _controllers.map((e) => e.text).join();
     if (otp.length == 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Admin OTP Verified: $otp")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Admin OTP Verified: $otp")));
 
-     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AdminBottomNav()));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => AdminBottomNav()),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter all 6 digits")),
@@ -155,12 +156,12 @@ class _AdminOtpState extends State<AdminOtp> {
                       ),
                       boxShadow: isFocused
                           ? [
-                        BoxShadow(
-                          color: redAccent.withOpacity(0.2),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ]
+                              BoxShadow(
+                                color: redAccent.withOpacity(0.2),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ]
                           : [],
                     ),
                     child: TextField(
@@ -183,11 +184,13 @@ class _AdminOtpState extends State<AdminOtp> {
                       ),
                       onChanged: (value) {
                         if (value.isNotEmpty && index < 5) {
-                          FocusScope.of(context)
-                              .requestFocus(_focusNodes[index + 1]);
+                          FocusScope.of(
+                            context,
+                          ).requestFocus(_focusNodes[index + 1]);
                         } else if (value.isEmpty && index > 0) {
-                          FocusScope.of(context)
-                              .requestFocus(_focusNodes[index - 1]);
+                          FocusScope.of(
+                            context,
+                          ).requestFocus(_focusNodes[index - 1]);
                         }
                       },
                     ),
@@ -238,7 +241,9 @@ class _AdminOtpState extends State<AdminOtp> {
                   GestureDetector(
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("OTP sent again to ${widget.phone}")),
+                        SnackBar(
+                          content: Text("OTP sent again to ${widget.phone}"),
+                        ),
                       );
                     },
                     child: Text(

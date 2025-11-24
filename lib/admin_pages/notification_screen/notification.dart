@@ -196,7 +196,6 @@ class _AdminNotificationState extends State<AdminNotification> {
                         ],
                       ),
                       const SizedBox(height: 6),
-
                       // Message
                       Text(
                         notif["message"] ?? "",

@@ -94,7 +94,6 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
   @override
   Widget build(BuildContext context) {
     final providers = widget.providers;
-
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
