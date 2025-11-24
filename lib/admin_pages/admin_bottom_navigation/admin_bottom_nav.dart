@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../ Inquiry_management/inquiry_admin_screen/inquiry_management_wrapper.dart';
 import '../Provider_management/provider_screen/provider_list_screen.dart';
 import '../dashboard_management/dashboard.dart';
+import '../service_price_management/service_screen/service_price_screen.dart';
 
 class AdminBottomNav extends StatefulWidget {
   const AdminBottomNav({super.key});
@@ -27,7 +28,7 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
       const Dashboard(),
       const InquiryManagementWrapper(),
       const ProviderListScreen(),
-      //const ServicePricingManagement(),
+      const ServicePriceScreen(),
       const AccountManagementScreen(),
     ];
   }
