@@ -1,716 +1,368 @@
+// lib/screens/service_management_screen.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../service_model/service_category.dart';
+import '../service_widget/categories_tab.dart';
+import '../service_widget/category_form.dart';
+import '../service_widget/custom_fav.dart';
+import '../service_widget/sub_categories_tab.dart';
+import '../service_widget/sub_category_form.dart';
 
-class ServicePriceScreen extends StatefulWidget {
-  const ServicePriceScreen({Key? key}) : super(key: key);
+
+class ServiceManagementScreen extends StatefulWidget {
+  const ServiceManagementScreen({super.key});
 
   @override
-  State<ServicePriceScreen> createState() => _ServicePriceScreenState();
+  State<ServiceManagementScreen> createState() =>
+      _ServiceManagementScreenState();
 }
 
-class _ServicePriceScreenState extends State<ServicePriceScreen> {
+class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
   final List<ServiceCategory> _categories = [];
   final ImagePicker _picker = ImagePicker();
 
+  // Color scheme
+  final Color _primaryColor = Colors.redAccent;
+  final Color _backgroundColor = const Color(0xFFF4F5F7);
+  final Color _cardColor = Colors.white;
+  final Color _textColor = Colors.black87;
+  final Color _hintColor = Colors.grey;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xfff0f0f0), // light grey
-      appBar: AppBar(
-        title: const Text(
-          'Service & Pricing Management',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: Colors.black,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        centerTitle: true,
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.redAccent,
-        foregroundColor: Colors.white,
-        onPressed: () => _openCategoryForm(),
-        icon: const Icon(Icons.add),
-        label: const Text("Add Category"),
-      ),
-      body: _categories.isEmpty
-          ? const Center(
-              child: Text(
-                "No categories added yet.\nTap 'Add Category' to create one.",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey, fontSize: 16),
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _categories.length,
-              itemBuilder: (context, index) =>
-                  _buildCategoryCard(_categories[index]),
-            ),
-    );
-  }
-
-  // CATEGORY CARD — clean, white, modern UI
-
-  Widget _buildCategoryCard(ServiceCategory c) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 18),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Top Section
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildCategoryImage(c.imagePath, c.name),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        c.name,
-                        style: const TextStyle(
-                          fontSize: 19,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        "Fixed Price: ₹${c.fixedPrice.toStringAsFixed(2)}",
-                        style: const TextStyle(
-                          fontSize: 14.5,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        "Visit Price: ₹${c.visitPrice.toStringAsFixed(2)}",
-                        style: const TextStyle(
-                          fontSize: 14.5,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                      onPressed: () => _openCategoryForm(editing: c),
-                      icon: const Icon(Icons.edit, size: 22),
-                      color: Colors.blueAccent,
-                    ),
-                    IconButton(
-                      onPressed: () => _deleteCategory(c),
-                      icon: const Icon(Icons.delete, size: 22),
-                      color: Colors.redAccent,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // Sub-category header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Sub-categories (${c.subCategories.length})",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => _openSubCategoryForm(parent: c),
-                  child: const Text(
-                    "Add",
-                    style: TextStyle(color: Colors.redAccent, fontSize: 14.5),
-                  ),
-                ),
-              ],
-            ),
-            if (c.subCategories.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Text(
-                  "No sub-categories added yet",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              )
-            else
-              Column(
-                children: c.subCategories
-                    .map((s) => _buildSubCategoryTile(c, s))
-                    .toList(),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryImage(String? path, String name) {
-    return CircleAvatar(
-      radius: 30,
-      backgroundColor: Colors.redAccent.withOpacity(0.15),
-      backgroundImage: (path != null && path.isNotEmpty)
-          ? FileImage(File(path))
-          : null,
-      child: (path == null || path.isEmpty)
-          ? Text(
-              name.isNotEmpty ? name[0].toUpperCase() : "?",
-              style: const TextStyle(
-                fontSize: 22,
-                color: Colors.redAccent,
-                fontWeight: FontWeight.bold,
-              ),
-            )
-          : null,
-    );
-  }
-
-
-  // SUB CATEGORY CARD — clean white tile
-
-  Widget _buildSubCategoryTile(ServiceCategory parent, SubCategory s) {
-    return Container(
-      margin: const EdgeInsets.only(top: 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          _buildSubImage(s.imagePath, s.name),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  s.name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  "Fixed: ₹${s.fixedPrice}",
-                  style: const TextStyle(fontSize: 14, color: Colors.black87),
-                ),
-                Text(
-                  "Visit: ₹${s.visitPrice}",
-                  style: const TextStyle(fontSize: 14, color: Colors.black87),
-                ),
-              ],
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: _backgroundColor,
+        appBar: AppBar(
+          elevation: 0.5,
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: Colors.black87),
+          title: const Text(
+            'Service Management',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
+              color: Colors.black87,
             ),
           ),
-          Column(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.edit, size: 20),
-                color: Colors.blueAccent,
-                onPressed: () =>
-                    _openSubCategoryForm(parent: parent, editing: s),
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete, size: 20),
-                color: Colors.redAccent,
-                onPressed: () => _deleteSub(parent, s),
-              ),
+          bottom: const TabBar(
+            labelColor: Colors.redAccent,
+            unselectedLabelColor: Colors.black54,
+            indicatorColor: Colors.redAccent,
+            indicatorWeight: 3,
+            labelStyle: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+            unselectedLabelStyle: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+            tabs: [
+              Tab(text: 'Categories'),
+              Tab(text: 'Sub-categories'),
             ],
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSubImage(String? path, String name) {
-    return CircleAvatar(
-      radius: 22,
-      backgroundColor: Colors.redAccent.withOpacity(0.12),
-      backgroundImage: (path != null && path.isNotEmpty)
-          ? FileImage(File(path))
-          : null,
-      child: (path == null || path.isEmpty)
-          ? Text(
-              name.isNotEmpty ? name[0].toUpperCase() : "?",
-              style: const TextStyle(
-                color: Colors.redAccent,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            )
-          : null,
-    );
-  }
-
-  // -------------------------------------------------------------
-  // CATEGORY FORM  (DraggableScrollableSheet)
-  // -------------------------------------------------------------
-  Future<void> _openCategoryForm({ServiceCategory? editing}) async {
-    final name = TextEditingController(text: editing?.name ?? "");
-    final fixed = TextEditingController(
-      text: editing != null ? "${editing.fixedPrice}" : "",
-    );
-    final visit = TextEditingController(
-      text: editing != null ? "${editing.visitPrice}" : "",
-    );
-
-    String? imagePath = editing?.imagePath;
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.75,
-          minChildSize: 0.45,
-          maxChildSize: 0.95,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
-              ),
-              child: SingleChildScrollView(
-                controller: scrollController,
-                padding: EdgeInsets.only(
-                  left: 18,
-                  right: 18,
-                  top: 18,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 18,
-                ),
-                child: _bottomSheet(
-                  title: editing == null ? "Add Category" : "Edit Category",
-                  name: name,
-                  fixed: fixed,
-                  visit: visit,
-                  imagePath: imagePath,
-                  onPickImage: () async {
-                    final img = await _pickImageChoice();
-                    if (img != null) {
-                      setState(() => imagePath = img);
-                    }
-                  },
-                  buttonText: editing == null ? "Add Category" : "Save",
-                  onSubmit: () {
-                    final n = name.text.trim();
-                    final f = double.tryParse(fixed.text.trim());
-                    final v = double.tryParse(visit.text.trim());
-
-                    if (n.isEmpty || f == null || v == null) {
-                      _error("Please fill all fields");
-                      return;
-                    }
-
-                    if (editing == null) {
-                      setState(() {
-                        _categories.add(
-                          ServiceCategory(
-                            id: DateTime.now().millisecondsSinceEpoch
-                                .toString(),
-                            name: n,
-                            fixedPrice: f,
-                            visitPrice: v,
-                            imagePath: imagePath,
-                            createdAt: DateTime.now(),
-                          ),
-                        );
-                      });
-                    } else {
-                      setState(() {
-                        final index = _categories.indexWhere(
-                          (item) => item.id == editing.id,
-                        );
-                        _categories[index] = editing.copyWith(
-                          name: n,
-                          fixedPrice: f,
-                          visitPrice: v,
-                          imagePath: imagePath,
-                        );
-                      });
-                    }
-
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-
-  // SUB-CATEGORY FORM (DraggableScrollableSheet)
-
-  Future<void> _openSubCategoryForm({
-    required ServiceCategory parent,
-    SubCategory? editing,
-  }) async {
-    final name = TextEditingController(text: editing?.name ?? "");
-    final fixed = TextEditingController(
-      text: editing != null ? "${editing.fixedPrice}" : "",
-    );
-    final visit = TextEditingController(
-      text: editing != null ? "${editing.visitPrice}" : "",
-    );
-
-    String? imagePath = editing?.imagePath;
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.75,
-          minChildSize: 0.45,
-          maxChildSize: 0.95,
-          expand: false,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
-              ),
-              child: SingleChildScrollView(
-                controller: scrollController,
-                padding: EdgeInsets.only(
-                  left: 18,
-                  right: 18,
-                  top: 18,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 18,
-                ),
-                child: _bottomSheet(
-                  title: editing == null
-                      ? "Add Sub-category"
-                      : "Edit Sub-category",
-                  name: name,
-                  fixed: fixed,
-                  visit: visit,
-                  imagePath: imagePath,
-                  onPickImage: () async {
-                    final img = await _pickImageChoice();
-                    if (img != null) {
-                      setState(() => imagePath = img);
-                    }
-                  },
-                  buttonText: editing == null ? "Add" : "Save",
-                  onSubmit: () {
-                    final n = name.text.trim();
-                    final f = double.tryParse(fixed.text.trim());
-                    final v = double.tryParse(visit.text.trim());
-
-                    if (n.isEmpty || f == null || v == null) {
-                      _error("Please fill all fields");
-                      return;
-                    }
-
-                    final index = _categories.indexWhere(
-                      (c) => c.id == parent.id,
-                    );
-                    final cat = _categories[index];
-                    final updated = List<SubCategory>.from(cat.subCategories);
-
-                    if (editing == null) {
-                      updated.add(
-                        SubCategory(
-                          id: DateTime.now().millisecondsSinceEpoch.toString(),
-                          name: n,
-                          fixedPrice: f,
-                          visitPrice: v,
-                          imagePath: imagePath,
-                          createdAt: DateTime.now(),
-                        ),
-                      );
-                    } else {
-                      final subIndex = updated.indexWhere(
-                        (s) => s.id == editing.id,
-                      );
-                      updated[subIndex] = editing.copyWith(
-                        name: n,
-                        fixedPrice: f,
-                        visitPrice: v,
-                        imagePath: imagePath,
-                      );
-                    }
-
-                    setState(() {
-                      _categories[index] = cat.copyWith(subCategories: updated);
-                    });
-
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  // -------------------------------------------------------------
-  // DELETE
-  // -------------------------------------------------------------
-  void _deleteCategory(ServiceCategory c) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Delete Category"),
-        content: const Text("This will also delete all sub-categories."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() => _categories.removeWhere((e) => e.id == c.id));
-              Navigator.pop(context);
-            },
-            child: const Text(
-              "Delete",
-              style: TextStyle(color: Colors.redAccent),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _deleteSub(ServiceCategory parent, SubCategory sub) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Delete Sub-category"),
-        content: const Text(
-          "Are you sure you want to delete this sub-category?",
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () {
-              final index = _categories.indexWhere((c) => c.id == parent.id);
-              final updated = _categories[index].subCategories
-                  .where((s) => s.id != sub.id)
-                  .toList();
-
-              setState(() {
-                _categories[index] = _categories[index].copyWith(
-                  subCategories: updated,
-                );
-              });
-
-              Navigator.pop(context);
-            },
-            child: const Text(
-              "Delete",
-              style: TextStyle(color: Colors.redAccent),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-
-  // IMAGE PICKER
-
-  Future<String?> _pickImageChoice() async {
-    String? picked;
-
-    await showModalBottomSheet(
-      context: context,
-      builder: (_) => SafeArea(
-        child: Wrap(
+        body: TabBarView(
           children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text("Choose from Gallery"),
-              onTap: () async {
-                final img = await _picker.pickImage(
-                  source: ImageSource.gallery,
-                );
-                picked = img?.path;
-                Navigator.pop(context);
-              },
+            CategoriesTab(
+              categories: _categories,
+              primaryColor: _primaryColor,
+              backgroundColor: _backgroundColor,
+              cardColor: _cardColor,
+              textColor: _textColor,
+              hintColor: _hintColor,
+              onEditCategory: (category) => _showCategoryForm(category: category),
+              onDeleteCategory: _deleteCategory,
             ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text("Take Photo"),
-              onTap: () async {
-                final img = await _picker.pickImage(source: ImageSource.camera);
-                picked = img?.path;
-                Navigator.pop(context);
-              },
+            SubCategoriesTab(
+              categories: _categories,
+              primaryColor: _primaryColor,
+              backgroundColor: _backgroundColor,
+              cardColor: _cardColor,
+              textColor: _textColor,
+              hintColor: _hintColor,
+              onEditSubCategory: (subCategory) => _showSubCategoryForm(subCategory: subCategory),
+              onDeleteSubCategory: _deleteSubCategory,
             ),
           ],
         ),
+        floatingActionButton: CustomFloatingActionButton(
+          categories: _categories,
+          onAddCategory: _showCategoryForm,
+          onAddSubCategory: _showSubCategoryForm,
+        ),
       ),
     );
-
-    return picked;
   }
 
-  // BOTTOM SHEET CONTENT (no scrolling here – Draggable handles it)
+  // ------------------------- CATEGORY FORM -------------------------
+  // In _ServiceManagementScreenState class
+  void _showCategoryForm({ServiceCategory? category}) {
+    final nameController = TextEditingController(text: category?.name ?? '');
+    final fixedPriceController = TextEditingController(
+      text: category?.fixedPrice.toString() ?? '',
+    );
+    final visitPriceController = TextEditingController(
+      text: category?.visitPrice.toString() ?? '',
+    );
+    String? imagePath = category?.imagePath;
 
-  Widget _bottomSheet({
-    required String title,
-    required TextEditingController name,
-    required TextEditingController fixed,
-    required TextEditingController visit,
-    required String? imagePath,
-    required VoidCallback onPickImage,
-    required String buttonText,
-    required VoidCallback onSubmit,
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return CategoryForm(
+          category: category,
+          nameController: nameController,
+          fixedPriceController: fixedPriceController,
+          visitPriceController: visitPriceController,
+          imagePath: imagePath,
+          primaryColor: _primaryColor,
+          onImagePick: () async {
+            final image = await _pickImage();
+            if (image != null && context.mounted) {
+              Navigator.pop(context);
+              _showCategoryForm(
+                category: category,
+              );
+            }
+          },
+          onSave: () {
+            final name = nameController.text.trim();
+            final fixedPrice = double.tryParse(fixedPriceController.text) ?? 0;
+            final visitPrice = double.tryParse(visitPriceController.text) ?? 0;
+
+            if (name.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('Please enter a category name'),
+                  backgroundColor: _primaryColor,
+                ),
+              );
+              return;
+            }
+
+            setState(() {
+              if (category == null) {
+                _categories.add(
+                  ServiceCategory(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    name: name,
+                    imagePath: imagePath,
+                    fixedPrice: fixedPrice,
+                    visitPrice: visitPrice,
+                    createdAt: DateTime.now(),
+                  ),
+                );
+              } else {
+                final index = _categories.indexWhere(
+                      (c) => c.id == category.id,
+                );
+                _categories[index] = category.copyWith(
+                  name: name,
+                  imagePath: imagePath,
+                  fixedPrice: fixedPrice,
+                  visitPrice: visitPrice,
+                );
+              }
+            });
+            Navigator.pop(context);
+          },
+        );
+      },
+    );
+  }
+
+  // ---------------------- SUB-CATEGORY FORM ----------------------
+  // In _ServiceManagementScreenState class
+  void _showSubCategoryForm({
+    SubCategory? subCategory,
+    ServiceCategory? parentCategory,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 19,
-            fontWeight: FontWeight.w700,
-            color: Colors.black,
-          ),
+    if (_categories.isEmpty && subCategory == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please create a category first'),
+          backgroundColor: _primaryColor,
         ),
-        const SizedBox(height: 18),
-        Row(
-          children: [
-            _buildCategoryImage(imagePath, name.text),
-            const SizedBox(width: 14),
-            ElevatedButton(
-              onPressed: onPickImage,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
+      );
+      return;
+    }
+
+    final nameController = TextEditingController(text: subCategory?.name ?? '');
+    final fixedPriceController = TextEditingController(
+      text: subCategory?.fixedPrice.toString() ?? '',
+    );
+    final visitPriceController = TextEditingController(
+      text: subCategory?.visitPrice.toString() ?? '',
+    );
+    String? imagePath = subCategory?.imagePath;
+
+    ServiceCategory? selectedCategory = subCategory != null
+        ? _categories.firstWhere(
+          (cat) => cat.subCategories.contains(subCategory),
+    )
+        : (_categories.isNotEmpty ? _categories.first : null);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return SubCategoryForm(
+          subCategory: subCategory,
+          categories: _categories,
+          selectedCategory: selectedCategory,
+          nameController: nameController,
+          fixedPriceController: fixedPriceController,
+          visitPriceController: visitPriceController,
+          imagePath: imagePath,
+          primaryColor: _primaryColor,
+          onCategoryChange: (category) {
+            selectedCategory = category;
+          },
+          onImagePick: () async {
+            final image = await _pickImage();
+            if (image != null && context.mounted) {
+              Navigator.pop(context);
+              _showSubCategoryForm(
+                subCategory: subCategory,
+                parentCategory: selectedCategory,
+              );
+            }
+          },
+          onSave: () {
+            final name = nameController.text.trim();
+            final fixedPrice = double.tryParse(fixedPriceController.text) ?? 0;
+            final visitPrice = double.tryParse(visitPriceController.text) ?? 0;
+
+            if (name.isEmpty || selectedCategory == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('Please fill all required fields'),
+                  backgroundColor: _primaryColor,
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Text("Pick Image"),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        TextField(
-          controller: name,
-          decoration: InputDecoration(
-            labelText: "Name",
-            labelStyle: const TextStyle(fontSize: 15),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        ),
-        const SizedBox(height: 14),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: fixed,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: "Fixed Price",
-                  prefixText: "₹ ",
-                  labelStyle: const TextStyle(fontSize: 15),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+              );
+              return;
+            }
+
+            setState(() {
+              final categoryIndex = _categories.indexWhere(
+                    (c) => c.id == selectedCategory!.id,
+              );
+              final updatedSubCategories =
+              List<SubCategory>.from(_categories[categoryIndex].subCategories);
+
+              if (subCategory == null) {
+                updatedSubCategories.add(
+                  SubCategory(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    name: name,
+                    imagePath: imagePath,
+                    fixedPrice: fixedPrice,
+                    visitPrice: visitPrice,
+                    createdAt: DateTime.now(),
                   ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: TextField(
-                controller: visit,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: "Visit Price",
-                  prefixText: "₹ ",
-                  labelStyle: const TextStyle(fontSize: 15),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 22),
-        Align(
-          alignment: Alignment.centerRight,
-          child: ElevatedButton(
-            onPressed: onSubmit,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(
-              buttonText,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ),
-        ),
-      ],
+                );
+              } else {
+                final subIndex = updatedSubCategories.indexWhere(
+                      (s) => s.id == subCategory.id,
+                );
+                updatedSubCategories[subIndex] = subCategory.copyWith(
+                  name: name,
+                  imagePath: imagePath,
+                  fixedPrice: fixedPrice,
+                  visitPrice: visitPrice,
+                );
+              }
+
+              _categories[categoryIndex] = _categories[categoryIndex].copyWith(
+                subCategories: updatedSubCategories,
+              );
+            });
+            Navigator.pop(context);
+          },
+        );
+      },
     );
   }
 
-  void _error(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  // ----------------------------- IMAGE PICKER -----------------------------
+  Future<String?> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    return image?.path;
+  }
+
+  // -------------------------- DELETE OPERATIONS --------------------------
+  void _deleteCategory(ServiceCategory category) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Category'),
+        content: const Text(
+          'This will also delete all sub-categories under this category.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _categories.removeWhere((c) => c.id == category.id);
+              });
+              Navigator.pop(context);
+            },
+            child: Text('Delete', style: TextStyle(color: _primaryColor)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteSubCategory(SubCategory subCategory) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Sub-category'),
+        content: const Text(
+          'Are you sure you want to delete this sub-category?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                for (int i = 0; i < _categories.length; i++) {
+                  final category = _categories[i];
+                  if (category.subCategories.contains(subCategory)) {
+                    final updatedSubs = category.subCategories
+                        .where((s) => s.id != subCategory.id)
+                        .toList();
+                    _categories[i] = category.copyWith(
+                      subCategories: updatedSubs,
+                    );
+                    break;
+                  }
+                }
+              });
+              Navigator.pop(context);
+            },
+            child: Text('Delete', style: TextStyle(color: _primaryColor)),
+          ),
+        ],
+      ),
+    );
   }
 }
