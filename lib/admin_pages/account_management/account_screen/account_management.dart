@@ -20,13 +20,14 @@ class AccountManagementScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Navigator.pop(context),
-        ),
+
         title: const Text(
           'Account Management',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+            color: Colors.black,
+          ),
         ),
       ),
       body: const SingleChildScrollView(
@@ -34,9 +35,9 @@ class AccountManagementScreen extends StatelessWidget {
         child: Column(
           children: [
             AdminProfileSection(),
-            SizedBox(height: 24),
+            SizedBox(height: 16),
             PoliciesLegalSection(),
-            SizedBox(height: 24),
+            SizedBox(height: 16),
             SupportContactSection(),
           ],
         ),

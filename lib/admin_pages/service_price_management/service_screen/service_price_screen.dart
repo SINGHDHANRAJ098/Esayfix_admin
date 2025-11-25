@@ -36,6 +36,8 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
       child: Scaffold(
         backgroundColor: _backgroundColor,
         appBar: AppBar(
+          leading: Container(),
+          automaticallyImplyLeading: false,
           elevation: 0.5,
           backgroundColor: Colors.white,
           centerTitle: true,
@@ -44,8 +46,8 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
             'Service Management',
             style: TextStyle(
               fontWeight: FontWeight.w700,
-              fontSize: 20,
-              color: Colors.black87,
+              fontSize: 18,
+              color: Colors.black,
             ),
           ),
           bottom: const TabBar(
@@ -53,10 +55,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
             unselectedLabelColor: Colors.black54,
             indicatorColor: Colors.redAccent,
             indicatorWeight: 3,
-            labelStyle: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            ),
+            labelStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             unselectedLabelStyle: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w500,
@@ -76,7 +75,8 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
               cardColor: _cardColor,
               textColor: _textColor,
               hintColor: _hintColor,
-              onEditCategory: (category) => _showCategoryForm(category: category),
+              onEditCategory: (category) =>
+                  _showCategoryForm(category: category),
               onDeleteCategory: _deleteCategory,
             ),
             SubCategoriesTab(
@@ -86,7 +86,8 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
               cardColor: _cardColor,
               textColor: _textColor,
               hintColor: _hintColor,
-              onEditSubCategory: (subCategory) => _showSubCategoryForm(subCategory: subCategory),
+              onEditSubCategory: (subCategory) =>
+                  _showSubCategoryForm(subCategory: subCategory),
               onDeleteSubCategory: _deleteSubCategory,
             ),
           ],
@@ -202,7 +203,9 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
     String? imagePath = subCategory?.imagePath;
 
     ServiceCategory? selectedCategory = subCategory != null
-        ? _categories.firstWhere((cat) => cat.subCategories.contains(subCategory))
+        ? _categories.firstWhere(
+            (cat) => cat.subCategories.contains(subCategory),
+          )
         : (_categories.isNotEmpty ? _categories.first : null);
 
     showModalBottomSheet(
@@ -265,8 +268,12 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
     }
 
     setState(() {
-      final categoryIndex = _categories.indexWhere((c) => c.id == selectedCategory.id);
-      final updatedSubCategories = List<SubCategory>.from(_categories[categoryIndex].subCategories);
+      final categoryIndex = _categories.indexWhere(
+        (c) => c.id == selectedCategory.id,
+      );
+      final updatedSubCategories = List<SubCategory>.from(
+        _categories[categoryIndex].subCategories,
+      );
 
       if (subCategory == null) {
         updatedSubCategories.add(
@@ -279,7 +286,9 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
           ),
         );
       } else {
-        final subIndex = updatedSubCategories.indexWhere((s) => s.id == subCategory.id);
+        final subIndex = updatedSubCategories.indexWhere(
+          (s) => s.id == subCategory.id,
+        );
         updatedSubCategories[subIndex] = subCategory.copyWith(
           name: name,
           imagePath: imagePath,
@@ -311,7 +320,9 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Category'),
-        content: const Text('This will also delete all sub-categories under this category.'),
+        content: const Text(
+          'This will also delete all sub-categories under this category.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -336,7 +347,9 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Sub-category'),
-        content: const Text('Are you sure you want to delete this sub-category?'),
+        content: const Text(
+          'Are you sure you want to delete this sub-category?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -351,7 +364,9 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
                     final updatedSubs = category.subCategories
                         .where((s) => s.id != subCategory.id)
                         .toList();
-                    _categories[i] = category.copyWith(subCategories: updatedSubs);
+                    _categories[i] = category.copyWith(
+                      subCategories: updatedSubs,
+                    );
                     break;
                   }
                 }

@@ -3,10 +3,6 @@ import '../account_model/account_model.dart';
 import '../account_service/account_service.dart';
 import '../account_widget/account_widget.dart';
 
-//
-//  ADMIN PROFILE SECTION (SIMPLIFIED RED & WHITE)
-//
-
 class AdminProfileSection extends StatefulWidget {
   const AdminProfileSection({super.key});
 
@@ -68,33 +64,19 @@ class _AdminProfileSectionState extends State<AdminProfileSection> {
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Column(
                 children: [
-                  Icon(
-                    Icons.error_outline_rounded,
-                    color: Colors.redAccent,
-                    size: 40,
-                  ),
-
-                  const Text(
-                    'Failed to load profile',
-                    style: TextStyle(color: Colors.black54),
-                  ),
+                  Icon(Icons.error_outline_rounded, size: 40, color: Colors.redAccent),
+                  const SizedBox(height: 8),
+                  const Text('Failed to load profile'),
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: _loadAdminProfile,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 8,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text(
-                      'Try Again',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    child: const Text('Try Again'),
                   ),
                 ],
               ),
@@ -109,9 +91,6 @@ class _AdminProfileSectionState extends State<AdminProfileSection> {
           trailing: _buildEditButton(() => _openEdit(profile)),
           child: Column(
             children: [
-              const SizedBox(height: 8),
-
-              const SizedBox(height: 16),
               _buildProfileInfoRow(
                 icon: Icons.person_outline_rounded,
                 label: 'Full Name',
@@ -150,7 +129,15 @@ class _AdminProfileSectionState extends State<AdminProfileSection> {
       ),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.redAccent),
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: Colors.redAccent.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, size: 20, color: Colors.redAccent),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -178,23 +165,21 @@ class _AdminProfileSectionState extends State<AdminProfileSection> {
   }
 
   Widget _buildEditButton(VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: Colors.redAccent.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Icon(Icons.edit_rounded, size: 18, color: Colors.redAccent),
+    return Container(
+      width: 36,
+      height: 36,
+      decoration: BoxDecoration(
+        color: Colors.redAccent.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: IconButton(
+        onPressed: onTap,
+        icon: Icon(Icons.edit_rounded, size: 18, color: Colors.redAccent),
+        padding: EdgeInsets.zero,
       ),
     );
   }
 }
-
-//  EDIT PROFILE SCREEN (SIMPLIFIED RED & WHITE)
 
 class EditProfileScreen extends StatefulWidget {
   final AdminProfile profile;
@@ -243,15 +228,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (mounted) {
         widget.onProfileUpdated();
         Navigator.pop(context);
-
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('Profile updated successfully'),
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
         );
       }
@@ -281,11 +263,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey[700],
-          ),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
         Container(
@@ -300,7 +278,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: Colors.redAccent.withOpacity(0.05),
+                  color: Colors.redAccent.withOpacity(0.1),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(8),
                     bottomLeft: Radius.circular(8),
@@ -314,13 +292,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   keyboardType: keyboardType,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 12,
-                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   ),
-                  validator: (value) =>
-                      value == null || value.isEmpty ? 'Required' : null,
+                  validator: (value) => value == null || value.isEmpty ? 'Required' : null,
                 ),
               ),
             ],
@@ -340,7 +314,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Edit Profile',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700,fontSize: 18),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 18),
         ),
       ),
       body: SafeArea(
@@ -350,13 +324,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             key: _formKey,
             child: Column(
               children: [
-                // Simple profile header
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: Colors.redAccent.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.redAccent.withOpacity(0.2)),
                   ),
                   child: Row(
                     children: [
@@ -367,22 +341,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           color: Colors.redAccent,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
-                          Icons.person_rounded,
-                          color: Colors.white,
-                          size: 24,
-                        ),
+                        child: const Icon(Icons.person_rounded, color: Colors.white, size: 24),
                       ),
                       const SizedBox(width: 12),
                       Text(
                         'Edit your profile information',
-                        style: TextStyle(color: Colors.grey[600]),
+                        style: TextStyle(color: Colors.redAccent.withOpacity(0.8)),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 20),
-
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
@@ -417,30 +386,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     onPressed: _isLoading ? null : _saveProfile,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent,
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                     child: _isLoading
                         ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation(Colors.white),
-                            ),
-                          )
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                      ),
+                    )
                         : const Text(
-                            'Save Changes',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                      'Save Changes',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 8),
               ],
             ),
           ),
