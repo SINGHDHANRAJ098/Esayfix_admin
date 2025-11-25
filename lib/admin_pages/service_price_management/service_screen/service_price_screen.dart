@@ -10,7 +10,6 @@ import '../service_widget/custom_fav.dart';
 import '../service_widget/sub_categories_tab.dart';
 import '../service_widget/sub_category_form.dart';
 
-
 class ServiceManagementScreen extends StatefulWidget {
   const ServiceManagementScreen({super.key});
 
@@ -101,15 +100,11 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
     );
   }
 
-  // ------------------------- CATEGORY FORM -------------------------
-  // In _ServiceManagementScreenState class
+  // ========================= CATEGORY FORM =========================
   void _showCategoryForm({ServiceCategory? category}) {
     final nameController = TextEditingController(text: category?.name ?? '');
-    final fixedPriceController = TextEditingController(
-      text: category?.fixedPrice.toString() ?? '',
-    );
-    final visitPriceController = TextEditingController(
-      text: category?.visitPrice.toString() ?? '',
+    final priceController = TextEditingController(
+      text: category?.price.toString() ?? '',
     );
     String? imagePath = category?.imagePath;
 
@@ -121,67 +116,71 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
         return CategoryForm(
           category: category,
           nameController: nameController,
-          fixedPriceController: fixedPriceController,
-          visitPriceController: visitPriceController,
+          priceController: priceController,
           imagePath: imagePath,
           primaryColor: _primaryColor,
           onImagePick: () async {
             final image = await _pickImage();
             if (image != null && context.mounted) {
               Navigator.pop(context);
-              _showCategoryForm(
-                category: category,
-              );
+              _showCategoryForm(category: category);
             }
           },
           onSave: () {
-            final name = nameController.text.trim();
-            final fixedPrice = double.tryParse(fixedPriceController.text) ?? 0;
-            final visitPrice = double.tryParse(visitPriceController.text) ?? 0;
-
-            if (name.isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Please enter a category name'),
-                  backgroundColor: _primaryColor,
-                ),
-              );
-              return;
-            }
-
-            setState(() {
-              if (category == null) {
-                _categories.add(
-                  ServiceCategory(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    name: name,
-                    imagePath: imagePath,
-                    fixedPrice: fixedPrice,
-                    visitPrice: visitPrice,
-                    createdAt: DateTime.now(),
-                  ),
-                );
-              } else {
-                final index = _categories.indexWhere(
-                      (c) => c.id == category.id,
-                );
-                _categories[index] = category.copyWith(
-                  name: name,
-                  imagePath: imagePath,
-                  fixedPrice: fixedPrice,
-                  visitPrice: visitPrice,
-                );
-              }
-            });
-            Navigator.pop(context);
+            _saveCategory(
+              category: category,
+              name: nameController.text.trim(),
+              price: double.tryParse(priceController.text) ?? 0,
+              imagePath: imagePath,
+              context: context,
+            );
           },
         );
       },
     );
   }
 
-  // ---------------------- SUB-CATEGORY FORM ----------------------
-  // In _ServiceManagementScreenState class
+  void _saveCategory({
+    ServiceCategory? category,
+    required String name,
+    required double price,
+    required String? imagePath,
+    required BuildContext context,
+  }) {
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please enter a category name'),
+          backgroundColor: _primaryColor,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      if (category == null) {
+        _categories.add(
+          ServiceCategory(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            name: name,
+            imagePath: imagePath,
+            price: price,
+            createdAt: DateTime.now(),
+          ),
+        );
+      } else {
+        final index = _categories.indexWhere((c) => c.id == category.id);
+        _categories[index] = category.copyWith(
+          name: name,
+          imagePath: imagePath,
+          price: price,
+        );
+      }
+    });
+    Navigator.pop(context);
+  }
+
+  // ========================= SUB-CATEGORY FORM =========================
   void _showSubCategoryForm({
     SubCategory? subCategory,
     ServiceCategory? parentCategory,
@@ -197,18 +196,13 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
     }
 
     final nameController = TextEditingController(text: subCategory?.name ?? '');
-    final fixedPriceController = TextEditingController(
-      text: subCategory?.fixedPrice.toString() ?? '',
-    );
-    final visitPriceController = TextEditingController(
-      text: subCategory?.visitPrice.toString() ?? '',
+    final priceController = TextEditingController(
+      text: subCategory?.price.toString() ?? '',
     );
     String? imagePath = subCategory?.imagePath;
 
     ServiceCategory? selectedCategory = subCategory != null
-        ? _categories.firstWhere(
-          (cat) => cat.subCategories.contains(subCategory),
-    )
+        ? _categories.firstWhere((cat) => cat.subCategories.contains(subCategory))
         : (_categories.isNotEmpty ? _categories.first : null);
 
     showModalBottomSheet(
@@ -221,8 +215,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
           categories: _categories,
           selectedCategory: selectedCategory,
           nameController: nameController,
-          fixedPriceController: fixedPriceController,
-          visitPriceController: visitPriceController,
+          priceController: priceController,
           imagePath: imagePath,
           primaryColor: _primaryColor,
           onCategoryChange: (category) {
@@ -239,76 +232,86 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
             }
           },
           onSave: () {
-            final name = nameController.text.trim();
-            final fixedPrice = double.tryParse(fixedPriceController.text) ?? 0;
-            final visitPrice = double.tryParse(visitPriceController.text) ?? 0;
-
-            if (name.isEmpty || selectedCategory == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Please fill all required fields'),
-                  backgroundColor: _primaryColor,
-                ),
-              );
-              return;
-            }
-
-            setState(() {
-              final categoryIndex = _categories.indexWhere(
-                    (c) => c.id == selectedCategory!.id,
-              );
-              final updatedSubCategories =
-              List<SubCategory>.from(_categories[categoryIndex].subCategories);
-
-              if (subCategory == null) {
-                updatedSubCategories.add(
-                  SubCategory(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    name: name,
-                    imagePath: imagePath,
-                    fixedPrice: fixedPrice,
-                    visitPrice: visitPrice,
-                    createdAt: DateTime.now(),
-                  ),
-                );
-              } else {
-                final subIndex = updatedSubCategories.indexWhere(
-                      (s) => s.id == subCategory.id,
-                );
-                updatedSubCategories[subIndex] = subCategory.copyWith(
-                  name: name,
-                  imagePath: imagePath,
-                  fixedPrice: fixedPrice,
-                  visitPrice: visitPrice,
-                );
-              }
-
-              _categories[categoryIndex] = _categories[categoryIndex].copyWith(
-                subCategories: updatedSubCategories,
-              );
-            });
-            Navigator.pop(context);
+            _saveSubCategory(
+              subCategory: subCategory,
+              name: nameController.text.trim(),
+              price: double.tryParse(priceController.text) ?? 0,
+              imagePath: imagePath,
+              selectedCategory: selectedCategory,
+              context: context,
+            );
           },
         );
       },
     );
   }
 
-  // ----------------------------- IMAGE PICKER -----------------------------
-  Future<String?> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    return image?.path;
+  void _saveSubCategory({
+    SubCategory? subCategory,
+    required String name,
+    required double price,
+    required String? imagePath,
+    required ServiceCategory? selectedCategory,
+    required BuildContext context,
+  }) {
+    if (name.isEmpty || selectedCategory == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please fill all required fields'),
+          backgroundColor: _primaryColor,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      final categoryIndex = _categories.indexWhere((c) => c.id == selectedCategory.id);
+      final updatedSubCategories = List<SubCategory>.from(_categories[categoryIndex].subCategories);
+
+      if (subCategory == null) {
+        updatedSubCategories.add(
+          SubCategory(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            name: name,
+            imagePath: imagePath,
+            price: price,
+            createdAt: DateTime.now(),
+          ),
+        );
+      } else {
+        final subIndex = updatedSubCategories.indexWhere((s) => s.id == subCategory.id);
+        updatedSubCategories[subIndex] = subCategory.copyWith(
+          name: name,
+          imagePath: imagePath,
+          price: price,
+        );
+      }
+
+      _categories[categoryIndex] = _categories[categoryIndex].copyWith(
+        subCategories: updatedSubCategories,
+      );
+    });
+    Navigator.pop(context);
   }
 
-  // -------------------------- DELETE OPERATIONS --------------------------
+  // ========================= IMAGE PICKER =========================
+  Future<String?> _pickImage() async {
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      return image?.path;
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+      return null;
+    }
+  }
+
+  // ========================= DELETE OPERATIONS =========================
   void _deleteCategory(ServiceCategory category) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Category'),
-        content: const Text(
-          'This will also delete all sub-categories under this category.',
-        ),
+        content: const Text('This will also delete all sub-categories under this category.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -333,9 +336,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Sub-category'),
-        content: const Text(
-          'Are you sure you want to delete this sub-category?',
-        ),
+        content: const Text('Are you sure you want to delete this sub-category?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -350,9 +351,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
                     final updatedSubs = category.subCategories
                         .where((s) => s.id != subCategory.id)
                         .toList();
-                    _categories[i] = category.copyWith(
-                      subCategories: updatedSubs,
-                    );
+                    _categories[i] = category.copyWith(subCategories: updatedSubs);
                     break;
                   }
                 }

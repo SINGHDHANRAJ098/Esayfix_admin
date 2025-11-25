@@ -1,8 +1,6 @@
-// lib/widgets/categories_tab.dart
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
 import '../service_model/service_category.dart';
 
 class CategoriesTab extends StatelessWidget {
@@ -30,12 +28,7 @@ class CategoriesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (categories.isEmpty) {
-      return _buildEmptyState(
-        icon: Icons.category_outlined,
-        title: 'No Categories Yet',
-        subtitle: 'Tap the + button to add your first category',
-        hintColor: hintColor,
-      );
+      return _buildEmptyState();
     }
 
     return ListView.builder(
@@ -50,101 +43,72 @@ class CategoriesTab extends StatelessWidget {
 
   Widget _buildCategoryCard(ServiceCategory category) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: cardColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12.withOpacity(0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(16),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Image
             _buildCategoryImage(category),
-            const SizedBox(width: 12),
+            const SizedBox(width: 16),
+
+            // Category Name and Sub-categories count
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          category.name,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: textColor,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.edit, size: 20),
-                        color: primaryColor,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        onPressed: () => onEditCategory(category),
-                      ),
-                    ],
+                  // Category Name
+                  Text(
+                    category.name,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: textColor,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
+
+                  // Total sub-categories
                   Text(
-                    '${category.subCategories.length} sub-services',
+                    '${category.subCategories.length} sub-categories',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 13,
                       color: hintColor,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF7F7F7),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _priceColumn(
-                            label: 'Fixed Price',
-                            value: '₹${category.fixedPrice.toStringAsFixed(0)}',
-                            hintColor: hintColor,
-                          ),
-                        ),
-                        Container(
-                          width: 1,
-                          height: 24,
-                          color: Colors.grey.shade300,
-                        ),
-                        Expanded(
-                          child: _priceColumn(
-                            label: 'Visit Price',
-                            value: '₹${category.visitPrice.toStringAsFixed(0)}',
-                            alignEnd: true,
-                            hintColor: hintColor,
-                          ),
-                        ),
-                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.delete_outline),
-              color: Colors.red,
-              onPressed: () => onDeleteCategory(category),
+
+            // Action Buttons
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Edit Button
+                IconButton(
+                  icon: Icon(Icons.edit_outlined, size: 22, color: primaryColor),
+                  onPressed: () => onEditCategory(category),
+                ),
+
+                // Delete Button
+                IconButton(
+                  icon: Icon(Icons.delete_outline, size: 22, color: Colors.red),
+                  onPressed: () => onDeleteCategory(category),
+                ),
+              ],
             ),
           ],
         ),
@@ -153,81 +117,58 @@ class CategoriesTab extends StatelessWidget {
   }
 
   Widget _buildCategoryImage(ServiceCategory category) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        width: 56,
-        height: 56,
-        color: primaryColor.withOpacity(0.08),
-        child: category.imagePath != null
-            ? Image.file(
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: primaryColor.withOpacity(0.1),
+      ),
+      child: category.imagePath != null
+          ? ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Image.file(
           File(category.imagePath!),
           fit: BoxFit.cover,
-        )
-            : Icon(
-          Icons.home_repair_service_rounded,
-          color: primaryColor,
-          size: 28,
         ),
+      )
+          : Icon(
+        Icons.category_rounded,
+        size: 24,
+        color: primaryColor,
       ),
     );
   }
 
-  Widget _priceColumn({
-    required String label,
-    required String value,
-    bool alignEnd = false,
-    required Color hintColor,
-  }) {
-    return Column(
-      crossAxisAlignment:
-      alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            color: hintColor,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildEmptyState({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required Color hintColor,
-  }) {
+  Widget _buildEmptyState() {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 64, color: hintColor.withOpacity(0.7)),
+            Icon(
+              Icons.category_outlined,
+              size: 64,
+              color: hintColor.withOpacity(0.5),
+            ),
             const SizedBox(height: 16),
             Text(
-              title,
-              style: const TextStyle(
-                fontSize: 17,
+              'No Categories Yet',
+              style: TextStyle(
+                fontSize: 18,
                 fontWeight: FontWeight.w600,
+                color: textColor,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
-              subtitle,
-              style: TextStyle(fontSize: 13, color: hintColor),
+              'Tap the + button to add your first category',
+              style: TextStyle(
+                fontSize: 14,
+                color: hintColor,
+              ),
               textAlign: TextAlign.center,
             ),
           ],

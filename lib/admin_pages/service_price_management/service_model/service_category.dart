@@ -1,10 +1,9 @@
-// lib/models/service_models.dart
+// lib/service_model/service_category.dart
 class ServiceCategory {
   final String id;
   final String name;
   final String? imagePath;
-  final double fixedPrice;
-  final double visitPrice;
+  final double price; // Changed from fixedPrice
   final List<SubCategory> subCategories;
   final DateTime createdAt;
 
@@ -12,8 +11,7 @@ class ServiceCategory {
     required this.id,
     required this.name,
     this.imagePath,
-    required this.fixedPrice,
-    required this.visitPrice,
+    required this.price,
     List<SubCategory>? subCategories,
     required this.createdAt,
   }) : subCategories = subCategories ?? [];
@@ -22,8 +20,7 @@ class ServiceCategory {
     String? id,
     String? name,
     String? imagePath,
-    double? fixedPrice,
-    double? visitPrice,
+    double? price,
     List<SubCategory>? subCategories,
     DateTime? createdAt,
   }) {
@@ -31,8 +28,7 @@ class ServiceCategory {
       id: id ?? this.id,
       name: name ?? this.name,
       imagePath: imagePath ?? this.imagePath,
-      fixedPrice: fixedPrice ?? this.fixedPrice,
-      visitPrice: visitPrice ?? this.visitPrice,
+      price: price ?? this.price,
       subCategories: subCategories ?? this.subCategories,
       createdAt: createdAt ?? this.createdAt,
     );
@@ -43,16 +39,14 @@ class SubCategory {
   final String id;
   final String name;
   final String? imagePath;
-  final double fixedPrice;
-  final double visitPrice;
+  final double price; // Changed from fixedPrice
   final DateTime createdAt;
 
   SubCategory({
     required this.id,
     required this.name,
     this.imagePath,
-    required this.fixedPrice,
-    required this.visitPrice,
+    required this.price,
     required this.createdAt,
   });
 
@@ -60,16 +54,14 @@ class SubCategory {
     String? id,
     String? name,
     String? imagePath,
-    double? fixedPrice,
-    double? visitPrice,
+    double? price,
     DateTime? createdAt,
   }) {
     return SubCategory(
       id: id ?? this.id,
       name: name ?? this.name,
       imagePath: imagePath ?? this.imagePath,
-      fixedPrice: fixedPrice ?? this.fixedPrice,
-      visitPrice: visitPrice ?? this.visitPrice,
+      price: price ?? this.price,
       createdAt: createdAt ?? this.createdAt,
     );
   }

@@ -1,4 +1,3 @@
-// lib/widgets/sub_category_form.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../service_model/service_category.dart';
@@ -8,8 +7,7 @@ class SubCategoryForm extends StatefulWidget {
   final List<ServiceCategory> categories;
   final ServiceCategory? selectedCategory;
   final TextEditingController nameController;
-  final TextEditingController fixedPriceController;
-  final TextEditingController visitPriceController;
+  final TextEditingController priceController; // Changed from fixedPriceController
   final String? imagePath;
   final Color primaryColor;
   final Function(ServiceCategory) onCategoryChange;
@@ -22,8 +20,7 @@ class SubCategoryForm extends StatefulWidget {
     required this.categories,
     required this.selectedCategory,
     required this.nameController,
-    required this.fixedPriceController,
-    required this.visitPriceController,
+    required this.priceController, // Updated parameter
     required this.imagePath,
     required this.primaryColor,
     required this.onCategoryChange,
@@ -55,12 +52,12 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
           ),
         ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.fromLTRB(28, 28, 28, 36),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,12 +65,12 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
               // Drag handle
               Center(
                 child: Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 20),
+                  width: 48,
+                  height: 5,
+                  margin: const EdgeInsets.only(bottom: 24),
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(3),
                   ),
                 ),
               ),
@@ -83,13 +80,13 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                 child: Text(
                   widget.subCategory == null ? 'Add Sub-category' : 'Edit Sub-category',
                   style: const TextStyle(
-                    fontSize: 22,
+                    fontSize: 24,
                     fontWeight: FontWeight.w700,
                     color: Colors.black87,
                   ),
                 ),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 36),
 
               // Parent Category Dropdown
               Column(
@@ -98,27 +95,30 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                   const Text(
                     'Parent Category',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 17,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   Container(
                     decoration: BoxDecoration(
                       color: const Color(0xFFF8F9FA),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                     child: DropdownButtonFormField<ServiceCategory>(
                       value: _selectedCategory,
                       items: widget.categories.map((category) {
                         return DropdownMenuItem(
                           value: category,
-                          child: Text(
-                            category.name,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.black87,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Text(
+                              category.name,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black87,
+                              ),
                             ),
                           ),
                         );
@@ -133,18 +133,18 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                       },
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
+                          horizontal: 20,
+                          vertical: 18,
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(14),
                           borderSide: BorderSide.none,
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(14),
                           borderSide: BorderSide(
                             color: widget.primaryColor,
-                            width: 2,
+                            width: 2.5,
                           ),
                         ),
                         filled: true,
@@ -155,12 +155,17 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                         color: Colors.black87,
                       ),
                       dropdownColor: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
+                      icon: Icon(
+                        Icons.arrow_drop_down_rounded,
+                        size: 28,
+                        color: Colors.grey[600],
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
 
               // Image picker section
               Column(
@@ -169,28 +174,28 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                   const Text(
                     'Add an image for this sub-category (optional)',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 17,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   GestureDetector(
                     onTap: widget.onImagePick,
                     child: Container(
                       width: double.infinity,
-                      height: 140,
+                      height: 160,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(18),
                         color: widget.primaryColor.withOpacity(0.05),
                         border: Border.all(
-                          color: widget.primaryColor.withOpacity(0.2),
-                          width: 2,
+                          color: widget.primaryColor.withOpacity(0.25),
+                          width: 2.5,
                         ),
                       ),
                       child: widget.imagePath != null
                           ? ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(18),
                         child: Image.file(
                           File(widget.imagePath!),
                           fit: BoxFit.cover,
@@ -201,14 +206,14 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                         children: [
                           Icon(
                             Icons.add_a_photo_rounded,
-                            size: 40,
+                            size: 48,
                             color: widget.primaryColor.withOpacity(0.7),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 16),
                           Text(
                             'Tap to add image',
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 16,
                               color: widget.primaryColor.withOpacity(0.8),
                               fontWeight: FontWeight.w500,
                             ),
@@ -219,7 +224,7 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                   ),
                 ],
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 36),
 
               // Sub-category Name section
               Column(
@@ -228,35 +233,35 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                   const Text(
                     'Sub-category Name',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 17,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   TextField(
                     controller: widget.nameController,
                     decoration: InputDecoration(
                       hintText: 'Enter sub-category name',
                       hintStyle: TextStyle(
                         color: Colors.grey[600],
-                        fontSize: 15,
+                        fontSize: 16,
                       ),
                       filled: true,
                       fillColor: const Color(0xFFF8F9FA),
                       contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
+                        horizontal: 20,
+                        vertical: 18,
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
                         borderSide: BorderSide.none,
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
                         borderSide: BorderSide(
                           color: widget.primaryColor,
-                          width: 2,
+                          width: 2.5,
                         ),
                       ),
                     ),
@@ -267,166 +272,91 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
 
-              // Pricing section
+              // Price section (Single price field)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Pricing',
+                    'Price',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 17,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Fixed Price (\$)',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            TextField(
-                              controller: widget.fixedPriceController,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                prefixText: '\$ ',
-                                prefixStyle: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black87,
-                                ),
-                                hintText: '0',
-                                hintStyle: TextStyle(
-                                  color: Colors.grey[500],
-                                  fontSize: 15,
-                                ),
-                                filled: true,
-                                fillColor: const Color(0xFFF8F9FA),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: widget.primaryColor,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
+                  TextField(
+                    controller: widget.priceController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      prefixText: '\$ ',
+                      prefixStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
+                      hintText: '0',
+                      hintStyle: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 16,
+                      ),
+                      filled: true,
+                      fillColor: const Color(0xFFF8F9FA),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 18,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                          color: widget.primaryColor,
+                          width: 2.5,
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Visit Price (\$)',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            TextField(
-                              controller: widget.visitPriceController,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                prefixText: '\$ ',
-                                prefixStyle: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black87,
-                                ),
-                                hintText: '0',
-                                hintStyle: TextStyle(
-                                  color: Colors.grey[500],
-                                  fontSize: 15,
-                                ),
-                                filled: true,
-                                fillColor: const Color(0xFFF8F9FA),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: widget.primaryColor,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 40),
 
               // Add Sub-category Button
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: 60,
                 child: ElevatedButton(
                   onPressed: widget.onSave,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: widget.primaryColor,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(18),
                     ),
-                    elevation: 2,
-                    shadowColor: widget.primaryColor.withOpacity(0.3),
+                    elevation: 3,
+                    shadowColor: widget.primaryColor.withOpacity(0.4),
                   ),
                   child: Text(
                     widget.subCategory == null ? 'Add Sub-category' : 'Save Changes',
                     style: const TextStyle(
-                      fontSize: 17,
+                      fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
 
               // Extra bottom padding for safety
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
             ],
           ),
         ),
