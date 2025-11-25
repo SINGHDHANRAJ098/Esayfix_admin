@@ -32,7 +32,6 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
         elevation: 1,
         centerTitle: true,
       ),
-
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.redAccent,
         foregroundColor: Colors.white,
@@ -40,7 +39,6 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
         icon: const Icon(Icons.add),
         label: const Text("Add Category"),
       ),
-
       body: _categories.isEmpty
           ? const Center(
               child: Text(
@@ -74,7 +72,6 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
           ),
         ],
       ),
-
       child: Padding(
         padding: const EdgeInsets.all(18),
         child: Column(
@@ -86,7 +83,6 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
               children: [
                 _buildCategoryImage(c.imagePath, c.name),
                 const SizedBox(width: 14),
-
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +114,6 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
                     ],
                   ),
                 ),
-
                 Column(
                   children: [
                     IconButton(
@@ -135,9 +130,7 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
                 ),
               ],
             ),
-
             const SizedBox(height: 16),
-
             // Sub-category header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -159,7 +152,6 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
                 ),
               ],
             ),
-
             if (c.subCategories.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 12),
@@ -204,15 +196,15 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
     );
   }
 
-  // -------------------------------------------------------------
+
   // SUB CATEGORY CARD — clean white tile
-  // -------------------------------------------------------------
+
   Widget _buildSubCategoryTile(ServiceCategory parent, SubCategory s) {
     return Container(
       margin: const EdgeInsets.only(top: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white, // white tile
+        color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
@@ -222,12 +214,10 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
           ),
         ],
       ),
-
       child: Row(
         children: [
           _buildSubImage(s.imagePath, s.name),
           const SizedBox(width: 14),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,7 +242,6 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
               ],
             ),
           ),
-
           Column(
             children: [
               IconButton(
@@ -294,7 +283,7 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
   }
 
   // -------------------------------------------------------------
-  // CATEGORY FORM
+  // CATEGORY FORM  (DraggableScrollableSheet)
   // -------------------------------------------------------------
   Future<void> _openCategoryForm({ServiceCategory? editing}) async {
     final name = TextEditingController(text: editing?.name ?? "");
@@ -310,67 +299,92 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-
+      backgroundColor: Colors.transparent,
       builder: (_) {
-        return _bottomSheet(
-          title: editing == null ? "Add Category" : "Edit Category",
-          name: name,
-          fixed: fixed,
-          visit: visit,
-          imagePath: imagePath,
-          onPickImage: () async {
-            final img = await _pickImageChoice();
-            if (img != null) setState(() => imagePath = img);
-          },
-          buttonText: editing == null ? "Add Category" : "Save",
-          onSubmit: () {
-            final n = name.text.trim();
-            final f = double.tryParse(fixed.text.trim());
-            final v = double.tryParse(visit.text.trim());
-
-            if (n.isEmpty || f == null || v == null) {
-              _error("Please fill all fields");
-              return;
-            }
-
-            if (editing == null) {
-              setState(() {
-                _categories.add(
-                  ServiceCategory(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    name: n,
-                    fixedPrice: f,
-                    visitPrice: v,
-                    imagePath: imagePath,
-                    createdAt: DateTime.now(),
-                  ),
-                );
-              });
-            } else {
-              setState(() {
-                final index = _categories.indexWhere(
-                  (item) => item.id == editing.id,
-                );
-                _categories[index] = editing.copyWith(
-                  name: n,
-                  fixedPrice: f,
-                  visitPrice: v,
+        return DraggableScrollableSheet(
+          initialChildSize: 0.75,
+          minChildSize: 0.45,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+              ),
+              child: SingleChildScrollView(
+                controller: scrollController,
+                padding: EdgeInsets.only(
+                  left: 18,
+                  right: 18,
+                  top: 18,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 18,
+                ),
+                child: _bottomSheet(
+                  title: editing == null ? "Add Category" : "Edit Category",
+                  name: name,
+                  fixed: fixed,
+                  visit: visit,
                   imagePath: imagePath,
-                );
-              });
-            }
+                  onPickImage: () async {
+                    final img = await _pickImageChoice();
+                    if (img != null) {
+                      setState(() => imagePath = img);
+                    }
+                  },
+                  buttonText: editing == null ? "Add Category" : "Save",
+                  onSubmit: () {
+                    final n = name.text.trim();
+                    final f = double.tryParse(fixed.text.trim());
+                    final v = double.tryParse(visit.text.trim());
 
-            Navigator.pop(context);
+                    if (n.isEmpty || f == null || v == null) {
+                      _error("Please fill all fields");
+                      return;
+                    }
+
+                    if (editing == null) {
+                      setState(() {
+                        _categories.add(
+                          ServiceCategory(
+                            id: DateTime.now().millisecondsSinceEpoch
+                                .toString(),
+                            name: n,
+                            fixedPrice: f,
+                            visitPrice: v,
+                            imagePath: imagePath,
+                            createdAt: DateTime.now(),
+                          ),
+                        );
+                      });
+                    } else {
+                      setState(() {
+                        final index = _categories.indexWhere(
+                          (item) => item.id == editing.id,
+                        );
+                        _categories[index] = editing.copyWith(
+                          name: n,
+                          fixedPrice: f,
+                          visitPrice: v,
+                          imagePath: imagePath,
+                        );
+                      });
+                    }
+
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            );
           },
         );
       },
     );
   }
 
-  // -------------------------------------------------------------
-  // SUB-CATEGORY FORM
-  // -------------------------------------------------------------
+
+  // SUB-CATEGORY FORM (DraggableScrollableSheet)
+
   Future<void> _openSubCategoryForm({
     required ServiceCategory parent,
     SubCategory? editing,
@@ -388,60 +402,90 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-
+      backgroundColor: Colors.transparent,
       builder: (_) {
-        return _bottomSheet(
-          title: editing == null ? "Add Sub-category" : "Edit Sub-category",
-          name: name,
-          fixed: fixed,
-          visit: visit,
-          imagePath: imagePath,
-          onPickImage: () async {
-            final img = await _pickImageChoice();
-            if (img != null) setState(() => imagePath = img);
-          },
-          buttonText: editing == null ? "Add" : "Save",
-          onSubmit: () {
-            final n = name.text.trim();
-            final f = double.tryParse(fixed.text.trim());
-            final v = double.tryParse(visit.text.trim());
-
-            if (n.isEmpty || f == null || v == null) {
-              _error("Please fill all fields");
-              return;
-            }
-
-            final index = _categories.indexWhere((c) => c.id == parent.id);
-            final cat = _categories[index];
-            final updated = List<SubCategory>.from(cat.subCategories);
-
-            if (editing == null) {
-              updated.add(
-                SubCategory(
-                  id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  name: n,
-                  fixedPrice: f,
-                  visitPrice: v,
-                  imagePath: imagePath,
-                  createdAt: DateTime.now(),
+        return DraggableScrollableSheet(
+          initialChildSize: 0.75,
+          minChildSize: 0.45,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+              ),
+              child: SingleChildScrollView(
+                controller: scrollController,
+                padding: EdgeInsets.only(
+                  left: 18,
+                  right: 18,
+                  top: 18,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 18,
                 ),
-              );
-            } else {
-              final subIndex = updated.indexWhere((s) => s.id == editing.id);
-              updated[subIndex] = editing.copyWith(
-                name: n,
-                fixedPrice: f,
-                visitPrice: v,
-                imagePath: imagePath,
-              );
-            }
+                child: _bottomSheet(
+                  title: editing == null
+                      ? "Add Sub-category"
+                      : "Edit Sub-category",
+                  name: name,
+                  fixed: fixed,
+                  visit: visit,
+                  imagePath: imagePath,
+                  onPickImage: () async {
+                    final img = await _pickImageChoice();
+                    if (img != null) {
+                      setState(() => imagePath = img);
+                    }
+                  },
+                  buttonText: editing == null ? "Add" : "Save",
+                  onSubmit: () {
+                    final n = name.text.trim();
+                    final f = double.tryParse(fixed.text.trim());
+                    final v = double.tryParse(visit.text.trim());
 
-            setState(() {
-              _categories[index] = cat.copyWith(subCategories: updated);
-            });
+                    if (n.isEmpty || f == null || v == null) {
+                      _error("Please fill all fields");
+                      return;
+                    }
 
-            Navigator.pop(context);
+                    final index = _categories.indexWhere(
+                      (c) => c.id == parent.id,
+                    );
+                    final cat = _categories[index];
+                    final updated = List<SubCategory>.from(cat.subCategories);
+
+                    if (editing == null) {
+                      updated.add(
+                        SubCategory(
+                          id: DateTime.now().millisecondsSinceEpoch.toString(),
+                          name: n,
+                          fixedPrice: f,
+                          visitPrice: v,
+                          imagePath: imagePath,
+                          createdAt: DateTime.now(),
+                        ),
+                      );
+                    } else {
+                      final subIndex = updated.indexWhere(
+                        (s) => s.id == editing.id,
+                      );
+                      updated[subIndex] = editing.copyWith(
+                        name: n,
+                        fixedPrice: f,
+                        visitPrice: v,
+                        imagePath: imagePath,
+                      );
+                    }
+
+                    setState(() {
+                      _categories[index] = cat.copyWith(subCategories: updated);
+                    });
+
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            );
           },
         );
       },
@@ -515,9 +559,9 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
     );
   }
 
-  // -------------------------------------------------------------
+
   // IMAGE PICKER
-  // -------------------------------------------------------------
+
   Future<String?> _pickImageChoice() async {
     String? picked;
 
@@ -554,9 +598,8 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
     return picked;
   }
 
-  // -------------------------------------------------------------
-  // BOTTOM SHEET UI — clean and beautiful
-  // -------------------------------------------------------------
+  // BOTTOM SHEET CONTENT (no scrolling here – Draggable handles it)
+
   Widget _bottomSheet({
     required String title,
     required TextEditingController name,
@@ -567,127 +610,103 @@ class _ServicePriceScreenState extends State<ServicePriceScreen> {
     required String buttonText,
     required VoidCallback onSubmit,
   }) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 18,
-        right: 18,
-        top: 18,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 18,
-      ),
-
-      child: ListView(
-        shrinkWrap: true,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 19,
-              fontWeight: FontWeight.w700,
-              color: Colors.black,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 19,
+            fontWeight: FontWeight.w700,
+            color: Colors.black,
           ),
-
-          const SizedBox(height: 18),
-
-          Row(
-            children: [
-              _buildCategoryImage(imagePath, name.text),
-              const SizedBox(width: 14),
-              ElevatedButton(
-                onPressed: onPickImage,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text("Pick Image"),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          TextField(
-            controller: name,
-            decoration: InputDecoration(
-              labelText: "Name",
-              labelStyle: const TextStyle(fontSize: 15),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 14),
-
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: fixed,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: "Fixed Price",
-                    prefixText: "₹ ",
-                    labelStyle: const TextStyle(fontSize: 15),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: TextField(
-                  controller: visit,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: "Visit Price",
-                    prefixText: "₹ ",
-                    labelStyle: const TextStyle(fontSize: 15),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 22),
-
-          Align(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton(
-              onPressed: onSubmit,
+        ),
+        const SizedBox(height: 18),
+        Row(
+          children: [
+            _buildCategoryImage(imagePath, name.text),
+            const SizedBox(width: 14),
+            ElevatedButton(
+              onPressed: onPickImage,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.redAccent,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 28,
-                  vertical: 14,
+                  horizontal: 20,
+                  vertical: 12,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text(
-                buttonText,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+              child: const Text("Pick Image"),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        TextField(
+          controller: name,
+          decoration: InputDecoration(
+            labelText: "Name",
+            labelStyle: const TextStyle(fontSize: 15),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+        const SizedBox(height: 14),
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: fixed,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Fixed Price",
+                  prefixText: "₹ ",
+                  labelStyle: const TextStyle(fontSize: 15),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: TextField(
+                controller: visit,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Visit Price",
+                  prefixText: "₹ ",
+                  labelStyle: const TextStyle(fontSize: 15),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 22),
+        Align(
+          alignment: Alignment.centerRight,
+          child: ElevatedButton(
+            onPressed: onSubmit,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              buttonText,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

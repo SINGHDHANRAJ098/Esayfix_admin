@@ -1,6 +1,6 @@
+import 'package:easyfix_admin/admin_auth/admin_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'admin_otp.dart';
 
 class AdminLogin extends StatefulWidget {
   const AdminLogin({super.key});
