@@ -36,7 +36,10 @@ class SupportContactSection extends StatelessWidget {
                 children: [
                   Icon(Icons.error_outline, size: 40, color: Colors.redAccent),
                   const SizedBox(height: 8),
-                  Text('Failed to load support details', style: TextStyle(color: Colors.grey[600])),
+                  Text(
+                    'Failed to load support details',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: () {},
@@ -102,8 +105,14 @@ class SupportContactSection extends StatelessWidget {
         ),
         child: Icon(icon, size: 20, color: Colors.redAccent),
       ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-      subtitle: Text(subtitle, style: TextStyle(color: Colors.grey[700], fontSize: 14)),
+      title: Text(
+        title,
+        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(color: Colors.grey[700], fontSize: 14),
+      ),
       trailing: Container(
         width: 36,
         height: 36,
@@ -137,21 +146,36 @@ class SupportContactSection extends StatelessWidget {
         ),
         child: Icon(icon, size: 20, color: Colors.redAccent),
       ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-      subtitle: Text(subtitle, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-      trailing: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.redAccent),
+      title: Text(
+        title,
+        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(color: Colors.grey[600], fontSize: 13),
+      ),
+      trailing: Icon(
+        Icons.arrow_forward_ios_rounded,
+        size: 16,
+        color: Colors.redAccent,
+      ),
       onTap: onTap,
     );
   }
 
   void _navigateToEditSupport(BuildContext context, SupportContact contact) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => EditSupportDetailsScreen(contact: contact)));
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => EditSupportDetailsScreen(contact: contact),
+      ),
+    );
   }
 
   void _navigateToSupportTickets(BuildContext context) {
     Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const SupportTicketListScreen())
+      context,
+      MaterialPageRoute(builder: (_) => const SupportTicketListScreen()),
     );
   }
 }
@@ -162,7 +186,8 @@ class EditSupportDetailsScreen extends StatefulWidget {
   const EditSupportDetailsScreen({super.key, required this.contact});
 
   @override
-  State<EditSupportDetailsScreen> createState() => _EditSupportDetailsScreenState();
+  State<EditSupportDetailsScreen> createState() =>
+      _EditSupportDetailsScreenState();
 }
 
 class _EditSupportDetailsScreenState extends State<EditSupportDetailsScreen> {
@@ -205,10 +230,7 @@ class _EditSupportDetailsScreenState extends State<EditSupportDetailsScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -279,7 +301,11 @@ class _EditSupportDetailsScreenState extends State<EditSupportDetailsScreen> {
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Edit Support Details',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 18),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
         ),
       ),
       body: SafeArea(
@@ -295,16 +321,25 @@ class _EditSupportDetailsScreenState extends State<EditSupportDetailsScreen> {
                   decoration: BoxDecoration(
                     color: Colors.redAccent.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
+                    border: Border.all(
+                      color: Colors.redAccent.withOpacity(0.3),
+                    ),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline, size: 18, color: Colors.redAccent),
+                      Icon(
+                        Icons.info_outline,
+                        size: 18,
+                        color: Colors.redAccent,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           'These contact details will be visible to users',
-                          style: TextStyle(color: Colors.redAccent.withOpacity(0.8), fontSize: 12),
+                          style: TextStyle(
+                            color: Colors.redAccent.withOpacity(0.8),
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ],
@@ -341,21 +376,23 @@ class _EditSupportDetailsScreenState extends State<EditSupportDetailsScreen> {
                       backgroundColor: Colors.redAccent,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     child: _loading
                         ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation(Colors.white),
-                      ),
-                    )
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation(Colors.white),
+                            ),
+                          )
                         : const Text(
-                      'Save Changes',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
+                            'Save Changes',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
                   ),
                 ),
               ],

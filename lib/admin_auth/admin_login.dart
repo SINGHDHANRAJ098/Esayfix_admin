@@ -28,7 +28,8 @@ class _AdminLoginState extends State<AdminLogin> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => AdminOtp(phone: "+91-${_phoneController.text.trim()}"),
+          builder: (context) =>
+              AdminOtp(phone: "+91-${_phoneController.text.trim()}"),
         ),
       );
     }
@@ -41,7 +42,7 @@ class _AdminLoginState extends State<AdminLogin> {
       child: Image.asset(
         'images/easyfix.webp',
         height: 120, // Consistent height
-        width: 200,  // Consistent width
+        width: 200, // Consistent width
         fit: BoxFit.contain,
       ),
     );
@@ -67,7 +68,6 @@ class _AdminLoginState extends State<AdminLogin> {
                   // Logo - Centered and consistent
                   Center(child: _buildLogo()),
                   const SizedBox(height: 20), // Consistent spacing
-
                   // Admin Heading
                   Text(
                     "Admin Panel Login",
@@ -80,7 +80,6 @@ class _AdminLoginState extends State<AdminLogin> {
                     ),
                   ),
                   const SizedBox(height: 28), // Consistent spacing
-
                   // Label
                   Align(
                     alignment: Alignment.centerLeft,
@@ -95,7 +94,6 @@ class _AdminLoginState extends State<AdminLogin> {
                     ),
                   ),
                   const SizedBox(height: 10), // Consistent spacing
-
                   // Phone + Country Code
                   Row(
                     children: [
@@ -127,8 +125,8 @@ class _AdminLoginState extends State<AdminLogin> {
                           controller: _phoneController,
                           keyboardType: TextInputType.number,
                           style: TextStyle(
-                              fontFamily: fontFamily,
-                              fontSize: 14
+                            fontFamily: fontFamily,
+                            fontSize: 14,
                           ),
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
@@ -139,27 +137,41 @@ class _AdminLoginState extends State<AdminLogin> {
                             fillColor: Colors.grey.shade100,
                             hintText: 'Enter admin phone number',
                             hintStyle: TextStyle(
-                                fontSize: 14,
-                                fontFamily: fontFamily
+                              fontSize: 14,
+                              fontFamily: fontFamily,
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Colors.grey.shade400),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade400,
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: redAccent, width: 2),
+                              borderSide: BorderSide(
+                                color: redAccent,
+                                width: 2,
+                              ),
                             ),
                             suffixIcon: _phoneController.text.isEmpty
                                 ? null
                                 : (_isPhoneValid
-                                ? Icon(Icons.check_circle, color: Colors.green, size: 20)
-                                : Icon(Icons.error, color: Colors.redAccent, size: 20)),
+                                      ? Icon(
+                                          Icons.check_circle,
+                                          color: Colors.green,
+                                          size: 20,
+                                        )
+                                      : Icon(
+                                          Icons.error,
+                                          color: Colors.redAccent,
+                                          size: 20,
+                                        )),
                           ),
                           validator: (value) {
                             final v = value?.trim() ?? '';
                             if (v.isEmpty) return 'Enter admin number';
-                            if (!_isPhoneValid) return 'Enter valid 10 digit number';
+                            if (!_isPhoneValid)
+                              return 'Enter valid 10 digit number';
                             return null;
                           },
                           onChanged: (s) => setState(() {}),
@@ -175,7 +187,8 @@ class _AdminLoginState extends State<AdminLogin> {
                       Checkbox(
                         activeColor: redAccent,
                         value: _isChecked,
-                        onChanged: (v) => setState(() => _isChecked = v ?? false),
+                        onChanged: (v) =>
+                            setState(() => _isChecked = v ?? false),
                       ),
                       Expanded(
                         child: RichText(
@@ -202,7 +215,6 @@ class _AdminLoginState extends State<AdminLogin> {
                     ],
                   ),
                   const SizedBox(height: 28), // Consistent spacing
-
                   // Login Button
                   SizedBox(
                     width: double.infinity,

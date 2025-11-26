@@ -20,7 +20,6 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
   @override
   void initState() {
     super.initState();
-
     // Initialize all pages
     pages = [
       const Dashboard(),

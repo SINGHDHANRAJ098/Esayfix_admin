@@ -43,7 +43,11 @@ class SupportTicketListScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.support_rounded, size: 64, color: Colors.redAccent.withOpacity(0.5)),
+                  Icon(
+                    Icons.support_rounded,
+                    size: 64,
+                    color: Colors.redAccent.withOpacity(0.5),
+                  ),
                   const SizedBox(height: 16),
                   const Text(
                     'No support tickets found',
@@ -82,11 +86,18 @@ class SupportTicketListScreen extends StatelessWidget {
                       color: Colors.redAccent.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(Icons.support_rounded, size: 22, color: Colors.redAccent),
+                    child: Icon(
+                      Icons.support_rounded,
+                      size: 22,
+                      color: Colors.redAccent,
+                    ),
                   ),
                   title: Text(
                     ticket.subject,
-                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -105,12 +116,17 @@ class SupportTicketListScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  trailing: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.redAccent),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 16,
+                    color: Colors.redAccent,
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => SupportTicketDetailScreen(ticket: ticket),
+                        builder: (_) =>
+                            SupportTicketDetailScreen(ticket: ticket),
                       ),
                     );
                   },
@@ -191,14 +207,23 @@ class SupportTicketDetailScreen extends StatelessWidget {
                 children: [
                   Text(
                     ticket.subject,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      _buildStatusChip('Priority: ${ticket.priority}', _getPriorityColor(ticket.priority)),
+                      _buildStatusChip(
+                        'Priority: ${ticket.priority}',
+                        _getPriorityColor(ticket.priority),
+                      ),
                       const SizedBox(width: 8),
-                      _buildStatusChip('Status: ${ticket.status}', Colors.redAccent),
+                      _buildStatusChip(
+                        'Status: ${ticket.status}',
+                        Colors.redAccent,
+                      ),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -258,7 +283,11 @@ class SupportTicketDetailScreen extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: color),
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: color,
+        ),
       ),
     );
   }

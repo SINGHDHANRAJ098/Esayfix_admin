@@ -101,17 +101,19 @@ class _CategoryFormState extends State<CategoryForm> {
                           width: 2.5,
                         ),
                       ),
-                      child: widget.imagePath != null && File(widget.imagePath!).existsSync()
+                      child:
+                          widget.imagePath != null &&
+                              File(widget.imagePath!).existsSync()
                           ? ClipRRect(
-                        borderRadius: BorderRadius.circular(18),
-                        child: Image.file(
-                          File(widget.imagePath!),
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return _buildPlaceholderImage();
-                          },
-                        ),
-                      )
+                              borderRadius: BorderRadius.circular(18),
+                              child: Image.file(
+                                File(widget.imagePath!),
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return _buildPlaceholderImage();
+                                },
+                              ),
+                            )
                           : _buildPlaceholderImage(),
                     ),
                   ),
@@ -158,10 +160,7 @@ class _CategoryFormState extends State<CategoryForm> {
                         ),
                       ),
                     ),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87,
-                    ),
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ],
               ),
@@ -213,10 +212,7 @@ class _CategoryFormState extends State<CategoryForm> {
                         ),
                       ),
                     ),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87,
-                    ),
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ],
               ),

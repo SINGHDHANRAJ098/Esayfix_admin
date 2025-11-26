@@ -125,11 +125,7 @@ class SupportContact {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'phone': phone,
-      'email': email,
-      'workingHours': workingHours,
-    };
+    return {'phone': phone, 'email': email, 'workingHours': workingHours};
   }
 
   factory SupportContact.fromMap(Map<String, dynamic> map) {
@@ -238,7 +234,9 @@ class ReportData {
       pendingInquiries: map['pendingInquiries'] ?? 0,
       totalRevenue: map['totalRevenue']?.toDouble() ?? 0.0,
       averageRating: map['averageRating']?.toDouble() ?? 0.0,
-      serviceDistribution: Map<String, int>.from(map['serviceDistribution'] ?? {}),
+      serviceDistribution: Map<String, int>.from(
+        map['serviceDistribution'] ?? {},
+      ),
     );
   }
 }

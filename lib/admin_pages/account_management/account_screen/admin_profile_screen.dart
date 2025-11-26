@@ -64,7 +64,11 @@ class _AdminProfileSectionState extends State<AdminProfileSection> {
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Column(
                 children: [
-                  Icon(Icons.error_outline_rounded, size: 40, color: Colors.redAccent),
+                  Icon(
+                    Icons.error_outline_rounded,
+                    size: 40,
+                    color: Colors.redAccent,
+                  ),
                   const SizedBox(height: 8),
                   const Text('Failed to load profile'),
                   const SizedBox(height: 12),
@@ -73,8 +77,13 @@ class _AdminProfileSectionState extends State<AdminProfileSection> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 8,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     child: const Text('Try Again'),
                   ),
@@ -233,7 +242,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             content: const Text('Profile updated successfully'),
             backgroundColor: Colors.redAccent,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         );
       }
@@ -292,9 +303,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   keyboardType: keyboardType,
                   decoration: const InputDecoration(
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 12,
+                    ),
                   ),
-                  validator: (value) => value == null || value.isEmpty ? 'Required' : null,
+                  validator: (value) =>
+                      value == null || value.isEmpty ? 'Required' : null,
                 ),
               ),
             ],
@@ -314,7 +329,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Edit Profile',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 18),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
         ),
       ),
       body: SafeArea(
@@ -330,7 +349,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   decoration: BoxDecoration(
                     color: Colors.redAccent.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.redAccent.withOpacity(0.2)),
+                    border: Border.all(
+                      color: Colors.redAccent.withOpacity(0.2),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -341,12 +362,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           color: Colors.redAccent,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.person_rounded, color: Colors.white, size: 24),
+                        child: const Icon(
+                          Icons.person_rounded,
+                          color: Colors.white,
+                          size: 24,
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Text(
                         'Edit your profile information',
-                        style: TextStyle(color: Colors.redAccent.withOpacity(0.8)),
+                        style: TextStyle(
+                          color: Colors.redAccent.withOpacity(0.8),
+                        ),
                       ),
                     ],
                   ),
@@ -388,21 +415,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       backgroundColor: Colors.redAccent,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     child: _isLoading
                         ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation(Colors.white),
-                      ),
-                    )
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation(Colors.white),
+                            ),
+                          )
                         : const Text(
-                      'Save Changes',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
+                            'Save Changes',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
                   ),
                 ),
               ],

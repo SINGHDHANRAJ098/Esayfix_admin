@@ -84,10 +84,7 @@ class CategoriesTab extends StatelessWidget {
                   // Total sub-categories
                   Text(
                     '${category.subCategories.length} sub-categories',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: hintColor,
-                    ),
+                    style: TextStyle(fontSize: 13, color: hintColor),
                   ),
                   const SizedBox(height: 4),
 
@@ -110,7 +107,11 @@ class CategoriesTab extends StatelessWidget {
               children: [
                 // Edit Button
                 IconButton(
-                  icon: Icon(Icons.edit_outlined, size: 22, color: primaryColor),
+                  icon: Icon(
+                    Icons.edit_outlined,
+                    size: 22,
+                    color: primaryColor,
+                  ),
                   onPressed: () => onEditCategory(category),
                 ),
 
@@ -135,28 +136,25 @@ class CategoriesTab extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         color: primaryColor.withOpacity(0.1),
       ),
-      child: category.imagePath != null && File(category.imagePath!).existsSync()
+      child:
+          category.imagePath != null && File(category.imagePath!).existsSync()
           ? ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.file(
-          File(category.imagePath!),
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return _buildPlaceholderIcon();
-          },
-        ),
-      )
+              borderRadius: BorderRadius.circular(12),
+              child: Image.file(
+                File(category.imagePath!),
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return _buildPlaceholderIcon();
+                },
+              ),
+            )
           : _buildPlaceholderIcon(),
     );
   }
 
   Widget _buildPlaceholderIcon() {
     return Center(
-      child: Icon(
-        Icons.category_rounded,
-        size: 28,
-        color: primaryColor,
-      ),
+      child: Icon(Icons.category_rounded, size: 28, color: primaryColor),
     );
   }
 
@@ -185,10 +183,7 @@ class CategoriesTab extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'Tap the + button to add your first category',
-              style: TextStyle(
-                fontSize: 14,
-                color: hintColor,
-              ),
+              style: TextStyle(fontSize: 14, color: hintColor),
               textAlign: TextAlign.center,
             ),
           ],

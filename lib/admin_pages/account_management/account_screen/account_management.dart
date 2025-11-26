@@ -3,7 +3,7 @@ import 'package:easyfix_admin/admin_pages/account_management/account_screen/poli
 import 'package:easyfix_admin/admin_pages/account_management/account_screen/reports_analytics_screen.dart';
 import 'package:easyfix_admin/admin_pages/account_management/account_screen/support_contact_screen.dart';
 import 'package:flutter/material.dart';
- // ADD THIS IMPORT
+// ADD THIS IMPORT
 
 class AccountManagementScreen extends StatelessWidget {
   const AccountManagementScreen({super.key});

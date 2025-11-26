@@ -1,8 +1,6 @@
-
 import 'package:flutter/material.dart';
 
 import '../notification_screen/notification.dart';
-
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -25,9 +23,7 @@ class _DashboardState extends State<Dashboard> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-              decoration: BoxDecoration(
-                color: redAccent,
-              ),
+              decoration: BoxDecoration(color: redAccent),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -81,8 +77,13 @@ class _DashboardState extends State<Dashboard> {
 
                   // NOTIFICATION ICON
                   GestureDetector(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>AdminNotification()));
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AdminNotification(),
+                        ),
+                      );
                     },
                     child: Container(
                       padding: const EdgeInsets.all(6),
@@ -112,8 +113,10 @@ class _DashboardState extends State<Dashboard> {
                   ),
                 ),
                 child: SingleChildScrollView(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
@@ -123,22 +126,42 @@ class _DashboardState extends State<Dashboard> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 11,
-                          mainAxisSpacing: 11,
-                          childAspectRatio: 1.05,
-                        ),
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 11,
+                              mainAxisSpacing: 11,
+                              childAspectRatio: 1.05,
+                            ),
                         itemBuilder: (_, index) {
                           final items = [
-                            ["Total Inquiries", "296", Colors.redAccent, Icons.list_alt],
+                            [
+                              "Total Inquiries",
+                              "296",
+                              Colors.redAccent,
+                              Icons.list_alt,
+                            ],
                             ["Pending", "14", Colors.orange, Icons.access_time],
                             ["Assigned", "9", Colors.blue, Icons.person_search],
                             ["In Progress", "6", Colors.purple, Icons.sync],
-                            ["Completed", "28", Colors.green, Icons.check_circle],
+                            [
+                              "Completed",
+                              "28",
+                              Colors.green,
+                              Icons.check_circle,
+                            ],
                             ["Cancelled", "3", Colors.grey, Icons.close],
-                            ["Service Providers", "57", Colors.teal, Icons.engineering],
-                            ["Today’s Activity", "12", Colors.brown, Icons.timeline],
+                            [
+                              "Service Providers",
+                              "57",
+                              Colors.teal,
+                              Icons.engineering,
+                            ],
+                            [
+                              "Today’s Activity",
+                              "12",
+                              Colors.brown,
+                              Icons.timeline,
+                            ],
                           ];
 
                           return _dashboardCard(
@@ -201,10 +224,7 @@ class _DashboardState extends State<Dashboard> {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
           ),
         ],
       ),

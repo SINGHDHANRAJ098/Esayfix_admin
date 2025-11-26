@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Image.asset(
               "images/easyfix.webp",
               height: 120, // Consistent height
-              width: 200,  // Consistent width
+              width: 200, // Consistent width
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 20),

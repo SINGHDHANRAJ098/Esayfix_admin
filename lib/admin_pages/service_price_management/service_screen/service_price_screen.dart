@@ -188,16 +188,16 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(category == null ? 'Category added!' : 'Category updated!'),
+        content: Text(
+          category == null ? 'Category added!' : 'Category updated!',
+        ),
         backgroundColor: _primaryColor,
       ),
     );
   }
 
   // SUB-CATEGORY FORM
-  void _showSubCategoryForm({
-    SubCategory? subCategory,
-  }) {
+  void _showSubCategoryForm({SubCategory? subCategory}) {
     if (_categories.isEmpty && subCategory == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -217,8 +217,8 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
 
     ServiceCategory? selectedCategory = subCategory != null
         ? _categories.firstWhere(
-          (cat) => cat.subCategories.contains(subCategory),
-    )
+            (cat) => cat.subCategories.contains(subCategory),
+          )
         : (_categories.isNotEmpty ? _categories.first : null);
 
     showModalBottomSheet(
@@ -286,7 +286,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
 
     setState(() {
       final categoryIndex = _categories.indexWhere(
-            (c) => c.id == selectedCategory.id,
+        (c) => c.id == selectedCategory.id,
       );
       final updatedSubCategories = List<SubCategory>.from(
         _categories[categoryIndex].subCategories,
@@ -304,7 +304,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
         );
       } else {
         final subIndex = updatedSubCategories.indexWhere(
-              (s) => s.id == subCategory.id,
+          (s) => s.id == subCategory.id,
         );
         updatedSubCategories[subIndex] = subCategory.copyWith(
           name: name,
@@ -321,7 +321,9 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(subCategory == null ? 'Sub-category added!' : 'Sub-category updated!'),
+        content: Text(
+          subCategory == null ? 'Sub-category added!' : 'Sub-category updated!',
+        ),
         backgroundColor: _primaryColor,
       ),
     );

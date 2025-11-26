@@ -27,7 +27,9 @@ class SubCategoriesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final allSubCategories = categories.expand((cat) => cat.subCategories).toList();
+    final allSubCategories = categories
+        .expand((cat) => cat.subCategories)
+        .toList();
 
     if (allSubCategories.isEmpty) {
       return _buildEmptyState();
@@ -39,14 +41,17 @@ class SubCategoriesTab extends StatelessWidget {
       itemBuilder: (context, index) {
         final subCategory = allSubCategories[index];
         final parentCategory = categories.firstWhere(
-              (cat) => cat.subCategories.contains(subCategory),
+          (cat) => cat.subCategories.contains(subCategory),
         );
         return _buildSubCategoryCard(subCategory, parentCategory);
       },
     );
   }
 
-  Widget _buildSubCategoryCard(SubCategory subCategory, ServiceCategory parentCategory) {
+  Widget _buildSubCategoryCard(
+    SubCategory subCategory,
+    ServiceCategory parentCategory,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -89,10 +94,7 @@ class SubCategoriesTab extends StatelessWidget {
                   // Parent Category
                   Text(
                     'Under: ${parentCategory.name}',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: hintColor,
-                    ),
+                    style: TextStyle(fontSize: 13, color: hintColor),
                   ),
                   const SizedBox(height: 4),
 
@@ -115,7 +117,11 @@ class SubCategoriesTab extends StatelessWidget {
               children: [
                 // Edit Button
                 IconButton(
-                  icon: Icon(Icons.edit_outlined, size: 22, color: primaryColor),
+                  icon: Icon(
+                    Icons.edit_outlined,
+                    size: 22,
+                    color: primaryColor,
+                  ),
                   onPressed: () => onEditSubCategory(subCategory),
                 ),
 
@@ -140,28 +146,26 @@ class SubCategoriesTab extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         color: primaryColor.withOpacity(0.1),
       ),
-      child: subCategory.imagePath != null && File(subCategory.imagePath!).existsSync()
+      child:
+          subCategory.imagePath != null &&
+              File(subCategory.imagePath!).existsSync()
           ? ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.file(
-          File(subCategory.imagePath!),
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return _buildPlaceholderIcon();
-          },
-        ),
-      )
+              borderRadius: BorderRadius.circular(12),
+              child: Image.file(
+                File(subCategory.imagePath!),
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return _buildPlaceholderIcon();
+                },
+              ),
+            )
           : _buildPlaceholderIcon(),
     );
   }
 
   Widget _buildPlaceholderIcon() {
     return Center(
-      child: Icon(
-        Icons.article_rounded,
-        size: 28,
-        color: primaryColor,
-      ),
+      child: Icon(Icons.article_rounded, size: 28, color: primaryColor),
     );
   }
 
@@ -190,10 +194,7 @@ class SubCategoriesTab extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'Add sub-categories under existing categories',
-              style: TextStyle(
-                fontSize: 14,
-                color: hintColor,
-              ),
+              style: TextStyle(fontSize: 14, color: hintColor),
               textAlign: TextAlign.center,
             ),
           ],

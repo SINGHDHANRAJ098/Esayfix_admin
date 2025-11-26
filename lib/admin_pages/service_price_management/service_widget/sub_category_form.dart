@@ -79,7 +79,9 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
               // Title
               Center(
                 child: Text(
-                  widget.subCategory == null ? 'Add Sub-category' : 'Edit Sub-category',
+                  widget.subCategory == null
+                      ? 'Add Sub-category'
+                      : 'Edit Sub-category',
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
@@ -194,17 +196,19 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                           width: 2.5,
                         ),
                       ),
-                      child: widget.imagePath != null && File(widget.imagePath!).existsSync()
+                      child:
+                          widget.imagePath != null &&
+                              File(widget.imagePath!).existsSync()
                           ? ClipRRect(
-                        borderRadius: BorderRadius.circular(18),
-                        child: Image.file(
-                          File(widget.imagePath!),
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return _buildPlaceholderImage();
-                          },
-                        ),
-                      )
+                              borderRadius: BorderRadius.circular(18),
+                              child: Image.file(
+                                File(widget.imagePath!),
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return _buildPlaceholderImage();
+                                },
+                              ),
+                            )
                           : _buildPlaceholderImage(),
                     ),
                   ),
@@ -251,10 +255,7 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                         ),
                       ),
                     ),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87,
-                    ),
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ],
               ),
@@ -306,10 +307,7 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                         ),
                       ),
                     ),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87,
-                    ),
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ],
               ),
@@ -331,7 +329,9 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                     shadowColor: widget.primaryColor.withOpacity(0.4),
                   ),
                   child: Text(
-                    widget.subCategory == null ? 'Add Sub-category' : 'Save Changes',
+                    widget.subCategory == null
+                        ? 'Add Sub-category'
+                        : 'Save Changes',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,

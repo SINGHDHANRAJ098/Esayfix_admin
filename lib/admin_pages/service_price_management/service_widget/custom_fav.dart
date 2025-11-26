@@ -31,12 +31,7 @@ class CustomFloatingActionButton extends StatelessWidget {
       backgroundColor: Colors.redAccent,
       foregroundColor: Colors.white,
       icon: const Icon(Icons.add, size: 22),
-      label: const Text(
-        'Add',
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+      label: const Text('Add', style: TextStyle(fontWeight: FontWeight.w600)),
     );
   }
 }

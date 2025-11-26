@@ -14,23 +14,23 @@ class ReportsAnalyticsSection extends StatelessWidget {
         children: [
           _buildReportItem(
             icon: Icons.assessment_outlined,
-            title: 'Daily/Monthly Inquiry Report',
-            subtitle: 'Track inquiry statistics and performance',
+            title: 'Inquiry Reports',
+            subtitle: 'Daily & monthly inquiry statistics',
             onTap: () => _navigateToInquiryReport(context),
           ),
           const SizedBox(height: 12),
           _buildReportItem(
             icon: Icons.bar_chart_outlined,
-            title: 'Revenue Report',
-            subtitle: 'View financial performance and earnings',
+            title: 'Revenue Reports',
+            subtitle: 'Financial performance & earnings',
             onTap: () => _navigateToRevenueReport(context),
           ),
           const SizedBox(height: 12),
           _buildReportItem(
-            icon: Icons.trending_up_outlined,
-            title: 'Service Analytics',
-            subtitle: 'Analyze service distribution and trends',
-            onTap: () => _navigateToServiceAnalytics(context),
+            icon: Icons.pie_chart_outline,
+            title: 'Service Reports',
+            subtitle: 'Service-wise performance analysis',
+            onTap: () => _navigateToServiceReport(context),
           ),
         ],
       ),
@@ -82,15 +82,16 @@ class ReportsAnalyticsSection extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.redAccent),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 16,
+                color: Colors.redAccent,
+              ),
             ],
           ),
         ),
@@ -112,10 +113,10 @@ class ReportsAnalyticsSection extends StatelessWidget {
     );
   }
 
-  void _navigateToServiceAnalytics(BuildContext context) {
+  void _navigateToServiceReport(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ServiceAnalyticsScreen()),
+      MaterialPageRoute(builder: (context) => const ServiceReportScreen()),
     );
   }
 }
@@ -178,20 +179,24 @@ class _InquiryReportScreenState extends State<InquiryReportScreen> {
               ),
               child: Row(
                 children: [
-                  _buildPeriodButton('Daily', 'daily'),
+                  _buildPeriodButton('Today', 'daily'),
                   const SizedBox(width: 8),
-                  _buildPeriodButton('Monthly', 'monthly'),
+                  _buildPeriodButton('This Month', 'monthly'),
                 ],
               ),
             ),
             Expanded(
               child: FutureBuilder<ReportData>(
-                future: _selectedPeriod == 'daily' ? _dailyReportFuture : _monthlyReportFuture,
+                future: _selectedPeriod == 'daily'
+                    ? _dailyReportFuture
+                    : _monthlyReportFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.redAccent),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.redAccent,
+                        ),
                       ),
                     );
                   }
@@ -201,7 +206,11 @@ class _InquiryReportScreenState extends State<InquiryReportScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.error_outline, color: Colors.redAccent, size: 40),
+                          Icon(
+                            Icons.error_outline,
+                            color: Colors.redAccent,
+                            size: 40,
+                          ),
                           const SizedBox(height: 8),
                           const Text('Failed to load report'),
                           const SizedBox(height: 12),
@@ -259,6 +268,9 @@ class _InquiryReportScreenState extends State<InquiryReportScreen> {
   }
 
   Widget _buildReportContent(ReportData report) {
+    // Calculate active providers (simulated data)
+    final activeProviders = _selectedPeriod == 'daily' ? 8 : 15;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -299,13 +311,62 @@ class _InquiryReportScreenState extends State<InquiryReportScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: _buildStatCard(
-                  'Avg Rating',
-                  report.averageRating.toStringAsFixed(1),
-                  Icons.star_outline,
-                  Colors.amber,
+                  'Active Providers',
+                  activeProviders.toString(),
+                  Icons.people_outline,
+                  Colors.purple,
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 16),
+
+          // Active Providers Section
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      'Active Providers',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        '$activeProviders Active',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _buildProviderList(),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
 
@@ -321,14 +382,36 @@ class _InquiryReportScreenState extends State<InquiryReportScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Service Distribution',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                Row(
+                  children: [
+                    const Text(
+                      'Service Distribution',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      'Total: ${report.totalInquiries}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
-                ...report.serviceDistribution.entries.map((entry) =>
-                    _buildServiceRow(entry.key, entry.value)
-                ).toList(),
+                ...report.serviceDistribution.entries
+                    .map(
+                      (entry) => _buildServiceRow(
+                        entry.key,
+                        entry.value,
+                        report.totalInquiries,
+                      ),
+                    )
+                    .toList(),
               ],
             ),
           ),
@@ -337,7 +420,12 @@ class _InquiryReportScreenState extends State<InquiryReportScreen> {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -370,29 +458,153 @@ class _InquiryReportScreenState extends State<InquiryReportScreen> {
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-            ),
-          ),
+          Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
         ],
       ),
     );
   }
 
-  Widget _buildServiceRow(String service, int count) {
+  Widget _buildProviderList() {
+    // Simulated active providers data
+    final activeProviders = [
+      {'name': 'Amit Kumar', 'service': 'AC Repair', 'status': 'Active'},
+      {'name': 'Rohan Singh', 'service': 'Electrical', 'status': 'Active'},
+      {'name': 'Deepak Jain', 'service': 'Plumbing', 'status': 'Active'},
+      {'name': 'Rajesh Patel', 'service': 'Carpentry', 'status': 'Active'},
+      {'name': 'Suresh Verma', 'service': 'Painting', 'status': 'Active'},
+    ];
+
+    return Column(
+      children: activeProviders
+          .map(
+            (provider) => Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.redAccent.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Center(
+                      child: Text(
+                        provider['name']![0],
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.redAccent,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          provider['name']!,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          provider['service']!,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: Colors.green,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          provider['status']!,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.green,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget _buildServiceRow(String service, int count, int total) {
+    final percentage = total > 0 ? ((count / total) * 100).round() : 0;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           Expanded(
+            flex: 2,
             child: Text(
               service,
-              style: const TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
           ),
+          Expanded(
+            flex: 3,
+            child: Row(
+              children: [
+                Expanded(
+                  child: LinearProgressIndicator(
+                    value: count / total,
+                    backgroundColor: Colors.grey.shade200,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.redAccent),
+                    minHeight: 6,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '$percentage%',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[700],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
@@ -447,7 +659,7 @@ class _RevenueReportScreenState extends State<RevenueReportScreen> {
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
-          'Revenue Report',
+          'Revenue Reports',
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -472,7 +684,11 @@ class _RevenueReportScreenState extends State<RevenueReportScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline, color: Colors.redAccent, size: 40),
+                    Icon(
+                      Icons.error_outline,
+                      color: Colors.redAccent,
+                      size: 40,
+                    ),
                     const SizedBox(height: 8),
                     const Text('Failed to load revenue report'),
                     const SizedBox(height: 12),
@@ -498,53 +714,44 @@ class _RevenueReportScreenState extends State<RevenueReportScreen> {
   }
 
   Widget _buildRevenueContent(List<ReportData> reports) {
-    final totalRevenue = reports.fold(0.0, (sum, report) => sum + report.totalRevenue);
+    final totalRevenue = reports.fold(
+      0.0,
+      (sum, report) => sum + report.totalRevenue,
+    );
+    final completedInquiries = reports.fold(
+      0,
+      (sum, report) => sum + report.completedInquiries,
+    );
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Total Revenue Card
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade200),
-            ),
-            child: Column(
-              children: [
-                Text(
+          // Summary Cards - Only Total Revenue and Completed Jobs
+          Row(
+            children: [
+              Expanded(
+                child: _buildRevenueStatCard(
                   'Total Revenue',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
                   '₹${totalRevenue.toStringAsFixed(0)}',
-                  style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black87,
-                  ),
+                  Icons.currency_rupee_outlined,
+                  Colors.green,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Across ${reports.length} months',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[500],
-                  ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildRevenueStatCard(
+                  'Completed Jobs',
+                  completedInquiries.toString(),
+                  Icons.work_outline,
+                  Colors.blue,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
 
-          // Monthly Breakdown
+          // Monthly Revenue Breakdown
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -557,11 +764,8 @@ class _RevenueReportScreenState extends State<RevenueReportScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Monthly Breakdown',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  'Monthly Revenue Breakdown',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 12),
                 ...reports.map((report) => _buildRevenueRow(report)).toList(),
@@ -573,54 +777,134 @@ class _RevenueReportScreenState extends State<RevenueReportScreen> {
     );
   }
 
+  Widget _buildRevenueStatCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, size: 18, color: color),
+              ),
+              const Spacer(),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+        ],
+      ),
+    );
+  }
+
   Widget _buildRevenueRow(ReportData report) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.grey[50],
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade200),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
+          Row(
+            children: [
+              Expanded(
+                child: Text(
                   report.period,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                    fontSize: 15,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  '${report.completedInquiries} inquiries • Rating: ${report.averageRating}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+              ),
+              Text(
+                '₹${report.totalRevenue.toStringAsFixed(0)}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.green,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          Text(
-            '₹${report.totalRevenue.toStringAsFixed(0)}',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: Colors.green,
-            ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              _buildMiniStat(
+                'Jobs',
+                report.completedInquiries.toString(),
+                Colors.blue,
+              ),
+              const SizedBox(width: 12),
+              _buildMiniStat(
+                'Pending',
+                report.pendingInquiries.toString(),
+                Colors.orange,
+              ),
+            ],
           ),
         ],
       ),
     );
   }
+
+  Widget _buildMiniStat(String label, String value, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Column(
+          children: [
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+            Text(
+              label,
+              style: TextStyle(fontSize: 10, color: color.withOpacity(0.8)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class ServiceAnalyticsScreen extends StatelessWidget {
-  const ServiceAnalyticsScreen({super.key});
+class ServiceReportScreen extends StatelessWidget {
+  const ServiceReportScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -632,7 +916,7 @@ class ServiceAnalyticsScreen extends StatelessWidget {
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
-          'Service Analytics',
+          'Service Reports',
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -647,15 +931,19 @@ class ServiceAnalyticsScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.analytics_outlined, size: 64, color: Colors.redAccent),
+                Icon(
+                  Icons.pie_chart_outline,
+                  size: 64,
+                  color: Colors.redAccent,
+                ),
                 SizedBox(height: 16),
                 Text(
-                  'Service Analytics',
+                  'Service Performance Reports',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Detailed service performance analytics and trends will be displayed here',
+                  'Detailed service-wise performance analysis and comparison reports',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),

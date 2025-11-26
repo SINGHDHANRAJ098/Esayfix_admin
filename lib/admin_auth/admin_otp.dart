@@ -15,7 +15,7 @@ class _AdminOtpState extends State<AdminOtp> {
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
   final List<TextEditingController> _controllers = List.generate(
     6,
-        (_) => TextEditingController(),
+    (_) => TextEditingController(),
   );
 
   final Color redAccent = Colors.redAccent;
@@ -30,7 +30,7 @@ class _AdminOtpState extends State<AdminOtp> {
       child: Image.asset(
         'images/easyfix.webp',
         height: 120, // Consistent height
-        width: 200,  // Consistent width
+        width: 200, // Consistent width
         fit: BoxFit.contain,
       ),
     );
@@ -60,9 +60,9 @@ class _AdminOtpState extends State<AdminOtp> {
   void _verifyOtp() {
     final otp = _controllers.map((e) => e.text).join();
     if (otp.length == 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Admin OTP Verified: $otp")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Admin OTP Verified: $otp")));
 
       Navigator.pushReplacement(
         context,
@@ -158,12 +158,12 @@ class _AdminOtpState extends State<AdminOtp> {
                       ),
                       boxShadow: isFocused
                           ? [
-                        BoxShadow(
-                          color: redAccent.withOpacity(0.2),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ]
+                              BoxShadow(
+                                color: redAccent.withOpacity(0.2),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ]
                           : [],
                     ),
                     child: TextField(
@@ -186,9 +186,13 @@ class _AdminOtpState extends State<AdminOtp> {
                       ),
                       onChanged: (value) {
                         if (value.isNotEmpty && index < 5) {
-                          FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
+                          FocusScope.of(
+                            context,
+                          ).requestFocus(_focusNodes[index + 1]);
                         } else if (value.isEmpty && index > 0) {
-                          FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
+                          FocusScope.of(
+                            context,
+                          ).requestFocus(_focusNodes[index - 1]);
                         }
                       },
                     ),

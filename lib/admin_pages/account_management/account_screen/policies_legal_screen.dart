@@ -77,7 +77,11 @@ class PoliciesLegalSection extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black87),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                        color: Colors.black87,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -87,7 +91,11 @@ class PoliciesLegalSection extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.redAccent),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 16,
+                color: Colors.redAccent,
+              ),
             ],
           ),
         ),
@@ -98,7 +106,9 @@ class PoliciesLegalSection extends StatelessWidget {
   void _navigateToPolicy(BuildContext context, String policyId) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => PolicyDetailScreen(policyId: policyId)),
+      MaterialPageRoute(
+        builder: (context) => PolicyDetailScreen(policyId: policyId),
+      ),
     );
   }
 }
@@ -142,7 +152,11 @@ class _PolicyDetailScreenState extends State<PolicyDetailScreen> {
           builder: (context, snapshot) {
             return Text(
               snapshot.data?.title ?? 'Policy',
-              style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w700),
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
             );
           },
         ),
@@ -158,7 +172,10 @@ class _PolicyDetailScreenState extends State<PolicyDetailScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => EditPolicyScreen(policy: policy, onUpdated: _refreshPolicy),
+                      builder: (_) => EditPolicyScreen(
+                        policy: policy,
+                        onUpdated: _refreshPolicy,
+                      ),
                     ),
                   );
                 },
@@ -184,14 +201,23 @@ class _PolicyDetailScreenState extends State<PolicyDetailScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline, color: Colors.redAccent, size: 40),
+                    Icon(
+                      Icons.error_outline,
+                      color: Colors.redAccent,
+                      size: 40,
+                    ),
                     const SizedBox(height: 8),
                     const Text('Failed to load policy'),
                     const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: _refreshPolicy,
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-                      child: const Text('Try Again', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                      ),
+                      child: const Text(
+                        'Try Again',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ),
@@ -217,13 +243,19 @@ class _PolicyDetailScreenState extends State<PolicyDetailScreen> {
                       children: [
                         Text(
                           policy.title,
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.redAccent.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
@@ -240,14 +272,20 @@ class _PolicyDetailScreenState extends State<PolicyDetailScreen> {
                             const SizedBox(width: 8),
                             Text(
                               'Updated: ${_formatDate(policy.lastUpdated)}',
-                              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 8),
                         Text(
                           policy.description,
-                          style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[700],
+                          ),
                         ),
                       ],
                     ),
@@ -284,7 +322,11 @@ class EditPolicyScreen extends StatefulWidget {
   final Policy policy;
   final VoidCallback onUpdated;
 
-  const EditPolicyScreen({super.key, required this.policy, required this.onUpdated});
+  const EditPolicyScreen({
+    super.key,
+    required this.policy,
+    required this.onUpdated,
+  });
 
   @override
   State<EditPolicyScreen> createState() => _EditPolicyScreenState();
@@ -302,7 +344,9 @@ class _EditPolicyScreenState extends State<EditPolicyScreen> {
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.policy.title);
-    _descriptionController = TextEditingController(text: widget.policy.description);
+    _descriptionController = TextEditingController(
+      text: widget.policy.description,
+    );
     _contentController = TextEditingController(text: widget.policy.content);
   }
 
@@ -363,7 +407,11 @@ class _EditPolicyScreenState extends State<EditPolicyScreen> {
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Edit Policy',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 18),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
         ),
       ),
       body: SafeArea(
@@ -379,16 +427,25 @@ class _EditPolicyScreenState extends State<EditPolicyScreen> {
                   decoration: BoxDecoration(
                     color: Colors.redAccent.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
+                    border: Border.all(
+                      color: Colors.redAccent.withOpacity(0.3),
+                    ),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline, color: Colors.redAccent, size: 18),
+                      Icon(
+                        Icons.info_outline,
+                        color: Colors.redAccent,
+                        size: 18,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           'Policy version will update automatically when saved',
-                          style: TextStyle(color: Colors.redAccent.withOpacity(0.8), fontSize: 12),
+                          style: TextStyle(
+                            color: Colors.redAccent.withOpacity(0.8),
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ],
@@ -402,7 +459,13 @@ class _EditPolicyScreenState extends State<EditPolicyScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Policy Title', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                            const Text(
+                              'Policy Title',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                             const SizedBox(height: 6),
                             Container(
                               decoration: BoxDecoration(
@@ -412,8 +475,12 @@ class _EditPolicyScreenState extends State<EditPolicyScreen> {
                               ),
                               child: TextFormField(
                                 controller: _titleController,
-                                decoration: const InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(12)),
-                                validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(12),
+                                ),
+                                validator: (v) =>
+                                    v == null || v.isEmpty ? 'Required' : null,
                               ),
                             ),
                           ],
@@ -422,7 +489,13 @@ class _EditPolicyScreenState extends State<EditPolicyScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Short Description', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                            const Text(
+                              'Short Description',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                             const SizedBox(height: 6),
                             Container(
                               decoration: BoxDecoration(
@@ -433,8 +506,12 @@ class _EditPolicyScreenState extends State<EditPolicyScreen> {
                               child: TextFormField(
                                 controller: _descriptionController,
                                 maxLines: 2,
-                                decoration: const InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(12)),
-                                validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(12),
+                                ),
+                                validator: (v) =>
+                                    v == null || v.isEmpty ? 'Required' : null,
                               ),
                             ),
                           ],
@@ -443,7 +520,13 @@ class _EditPolicyScreenState extends State<EditPolicyScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Policy Content', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                            const Text(
+                              'Policy Content',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                             const SizedBox(height: 6),
                             Container(
                               height: 200,
@@ -457,8 +540,12 @@ class _EditPolicyScreenState extends State<EditPolicyScreen> {
                                 maxLines: null,
                                 expands: true,
                                 textAlignVertical: TextAlignVertical.top,
-                                decoration: const InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.all(12)),
-                                validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(12),
+                                ),
+                                validator: (v) =>
+                                    v == null || v.isEmpty ? 'Required' : null,
                               ),
                             ),
                           ],
@@ -476,21 +563,23 @@ class _EditPolicyScreenState extends State<EditPolicyScreen> {
                       backgroundColor: Colors.redAccent,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     child: _loading
                         ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation(Colors.white),
-                      ),
-                    )
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation(Colors.white),
+                            ),
+                          )
                         : const Text(
-                      'Save Changes',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
+                            'Save Changes',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
                   ),
                 ),
               ],
