@@ -1,8 +1,6 @@
-// lib/widgets/custom_fab.dart
+// lib/service_widget/custom_fav.dart
 import 'package:flutter/material.dart';
-
 import '../service_model/service_category.dart';
-
 
 class CustomFloatingActionButton extends StatelessWidget {
   final List<ServiceCategory> categories;

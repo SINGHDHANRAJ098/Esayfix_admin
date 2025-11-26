@@ -1,5 +1,5 @@
+// lib/service_widget/sub_categories_tab.dart
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import '../service_model/service_category.dart';
 
@@ -98,7 +98,7 @@ class SubCategoriesTab extends StatelessWidget {
 
                   // Price
                   Text(
-                    'Price: ₹${subCategory.price.toStringAsFixed(0)}',
+                    'Price: \$${subCategory.price.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
@@ -134,23 +134,32 @@ class SubCategoriesTab extends StatelessWidget {
 
   Widget _buildSubCategoryImage(SubCategory subCategory) {
     return Container(
-      width: 50,
-      height: 50,
+      width: 60,
+      height: 60,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         color: primaryColor.withOpacity(0.1),
       ),
-      child: subCategory.imagePath != null
+      child: subCategory.imagePath != null && File(subCategory.imagePath!).existsSync()
           ? ClipRRect(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         child: Image.file(
           File(subCategory.imagePath!),
           fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return _buildPlaceholderIcon();
+          },
         ),
       )
-          : Icon(
+          : _buildPlaceholderIcon(),
+    );
+  }
+
+  Widget _buildPlaceholderIcon() {
+    return Center(
+      child: Icon(
         Icons.article_rounded,
-        size: 24,
+        size: 28,
         color: primaryColor,
       ),
     );

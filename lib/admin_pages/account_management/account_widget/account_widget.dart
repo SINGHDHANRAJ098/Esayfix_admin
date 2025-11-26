@@ -37,6 +37,7 @@ class SectionCard extends StatelessWidget {
         Card(
           elevation: 1,
           shadowColor: Colors.black12,
+          color: Colors.white, // WHITE background
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -141,8 +142,9 @@ class PolicyItem extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: Colors.redAccent.withOpacity(0.08),
+              color: Colors.white, // Changed from redAccent opacity → white
               borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey.shade200),
             ),
             child: Icon(icon, color: Colors.redAccent, size: 22),
           ),
@@ -150,10 +152,7 @@ class PolicyItem extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
             ),
           ),
           const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
@@ -185,10 +184,11 @@ class ContactInfoRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.grey[200],
+            color: Colors.white, // Changed from grey/pink to white
             borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
           ),
-          child: Icon(icon, size: 20, color: Colors.grey[700]),
+          child: Icon(icon, size: 20, color: Colors.redAccent),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -197,10 +197,7 @@ class ContactInfoRow extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
               const SizedBox(height: 3),
               Text(
@@ -235,16 +232,11 @@ class ContactInfoRow extends StatelessWidget {
   }
 }
 
-// New reusable edit icon widget
 class EditIconButton extends StatelessWidget {
   final VoidCallback onTap;
   final double size;
 
-  const EditIconButton({
-    super.key,
-    required this.onTap,
-    this.size = 16,
-  });
+  const EditIconButton({super.key, required this.onTap, this.size = 16});
 
   @override
   Widget build(BuildContext context) {

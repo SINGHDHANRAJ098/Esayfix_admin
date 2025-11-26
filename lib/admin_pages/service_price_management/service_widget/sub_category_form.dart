@@ -1,3 +1,4 @@
+// lib/service_widget/sub_category_form.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../service_model/service_category.dart';
@@ -7,7 +8,7 @@ class SubCategoryForm extends StatefulWidget {
   final List<ServiceCategory> categories;
   final ServiceCategory? selectedCategory;
   final TextEditingController nameController;
-  final TextEditingController priceController; // Changed from fixedPriceController
+  final TextEditingController priceController;
   final String? imagePath;
   final Color primaryColor;
   final Function(ServiceCategory) onCategoryChange;
@@ -20,7 +21,7 @@ class SubCategoryForm extends StatefulWidget {
     required this.categories,
     required this.selectedCategory,
     required this.nameController,
-    required this.priceController, // Updated parameter
+    required this.priceController,
     required this.imagePath,
     required this.primaryColor,
     required this.onCategoryChange,
@@ -193,33 +194,18 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                           width: 2.5,
                         ),
                       ),
-                      child: widget.imagePath != null
+                      child: widget.imagePath != null && File(widget.imagePath!).existsSync()
                           ? ClipRRect(
                         borderRadius: BorderRadius.circular(18),
                         child: Image.file(
                           File(widget.imagePath!),
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildPlaceholderImage();
+                          },
                         ),
                       )
-                          : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.add_a_photo_rounded,
-                            size: 48,
-                            color: widget.primaryColor.withOpacity(0.7),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Tap to add image',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: widget.primaryColor.withOpacity(0.8),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
+                          : _buildPlaceholderImage(),
                     ),
                   ),
                 ],
@@ -274,7 +260,7 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
               ),
               const SizedBox(height: 32),
 
-              // Price section (Single price field)
+              // Price section
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -297,7 +283,7 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
                         fontWeight: FontWeight.w500,
                         color: Colors.black87,
                       ),
-                      hintText: '0',
+                      hintText: '0.00',
                       hintStyle: TextStyle(
                         color: Colors.grey[500],
                         fontSize: 16,
@@ -361,6 +347,28 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildPlaceholderImage() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.add_a_photo_rounded,
+          size: 48,
+          color: widget.primaryColor.withOpacity(0.7),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'Tap to add image',
+          style: TextStyle(
+            fontSize: 16,
+            color: widget.primaryColor.withOpacity(0.8),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 }

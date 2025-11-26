@@ -107,33 +107,39 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
     final priceController = TextEditingController(
       text: category?.price.toString() ?? '',
     );
-    String? imagePath = category?.imagePath;
+
+    String? currentImagePath = category?.imagePath;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return CategoryForm(
-          category: category,
-          nameController: nameController,
-          priceController: priceController,
-          imagePath: imagePath,
-          primaryColor: _primaryColor,
-          onImagePick: () async {
-            final image = await _pickImage();
-            if (image != null && context.mounted) {
-              Navigator.pop(context);
-              _showCategoryForm(category: category);
-            }
-          },
-          onSave: () {
-            _saveCategory(
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return CategoryForm(
               category: category,
-              name: nameController.text.trim(),
-              price: double.tryParse(priceController.text) ?? 0,
-              imagePath: imagePath,
-              context: context,
+              nameController: nameController,
+              priceController: priceController,
+              imagePath: currentImagePath,
+              primaryColor: _primaryColor,
+              onImagePick: () async {
+                final image = await _pickImage();
+                if (image != null) {
+                  setModalState(() {
+                    currentImagePath = image;
+                  });
+                }
+              },
+              onSave: () {
+                _saveCategory(
+                  category: category,
+                  name: nameController.text.trim(),
+                  price: double.tryParse(priceController.text) ?? 0,
+                  imagePath: currentImagePath,
+                  context: context,
+                );
+              },
             );
           },
         );
@@ -179,12 +185,18 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
       }
     });
     Navigator.pop(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(category == null ? 'Category added!' : 'Category updated!'),
+        backgroundColor: _primaryColor,
+      ),
+    );
   }
 
   // ========================= SUB-CATEGORY FORM =========================
   void _showSubCategoryForm({
     SubCategory? subCategory,
-    ServiceCategory? parentCategory,
   }) {
     if (_categories.isEmpty && subCategory == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -200,12 +212,13 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
     final priceController = TextEditingController(
       text: subCategory?.price.toString() ?? '',
     );
-    String? imagePath = subCategory?.imagePath;
+
+    String? currentImagePath = subCategory?.imagePath;
 
     ServiceCategory? selectedCategory = subCategory != null
         ? _categories.firstWhere(
-            (cat) => cat.subCategories.contains(subCategory),
-          )
+          (cat) => cat.subCategories.contains(subCategory),
+    )
         : (_categories.isNotEmpty ? _categories.first : null);
 
     showModalBottomSheet(
@@ -213,35 +226,39 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return SubCategoryForm(
-          subCategory: subCategory,
-          categories: _categories,
-          selectedCategory: selectedCategory,
-          nameController: nameController,
-          priceController: priceController,
-          imagePath: imagePath,
-          primaryColor: _primaryColor,
-          onCategoryChange: (category) {
-            selectedCategory = category;
-          },
-          onImagePick: () async {
-            final image = await _pickImage();
-            if (image != null && context.mounted) {
-              Navigator.pop(context);
-              _showSubCategoryForm(
-                subCategory: subCategory,
-                parentCategory: selectedCategory,
-              );
-            }
-          },
-          onSave: () {
-            _saveSubCategory(
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return SubCategoryForm(
               subCategory: subCategory,
-              name: nameController.text.trim(),
-              price: double.tryParse(priceController.text) ?? 0,
-              imagePath: imagePath,
+              categories: _categories,
               selectedCategory: selectedCategory,
-              context: context,
+              nameController: nameController,
+              priceController: priceController,
+              imagePath: currentImagePath,
+              primaryColor: _primaryColor,
+              onCategoryChange: (category) {
+                setModalState(() {
+                  selectedCategory = category;
+                });
+              },
+              onImagePick: () async {
+                final image = await _pickImage();
+                if (image != null) {
+                  setModalState(() {
+                    currentImagePath = image;
+                  });
+                }
+              },
+              onSave: () {
+                _saveSubCategory(
+                  subCategory: subCategory,
+                  name: nameController.text.trim(),
+                  price: double.tryParse(priceController.text) ?? 0,
+                  imagePath: currentImagePath,
+                  selectedCategory: selectedCategory,
+                  context: context,
+                );
+              },
             );
           },
         );
@@ -269,7 +286,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
 
     setState(() {
       final categoryIndex = _categories.indexWhere(
-        (c) => c.id == selectedCategory.id,
+            (c) => c.id == selectedCategory.id,
       );
       final updatedSubCategories = List<SubCategory>.from(
         _categories[categoryIndex].subCategories,
@@ -287,7 +304,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
         );
       } else {
         final subIndex = updatedSubCategories.indexWhere(
-          (s) => s.id == subCategory.id,
+              (s) => s.id == subCategory.id,
         );
         updatedSubCategories[subIndex] = subCategory.copyWith(
           name: name,
@@ -301,15 +318,32 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
       );
     });
     Navigator.pop(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(subCategory == null ? 'Sub-category added!' : 'Sub-category updated!'),
+        backgroundColor: _primaryColor,
+      ),
+    );
   }
 
   // ========================= IMAGE PICKER =========================
   Future<String?> _pickImage() async {
     try {
-      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+        maxWidth: 800,
+      );
       return image?.path;
     } catch (e) {
       debugPrint('Error picking image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error picking image: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
       return null;
     }
   }
@@ -334,6 +368,12 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
                 _categories.removeWhere((c) => c.id == category.id);
               });
               Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Category "${category.name}" deleted'),
+                  backgroundColor: _primaryColor,
+                ),
+              );
             },
             child: Text('Delete', style: TextStyle(color: _primaryColor)),
           ),
@@ -372,6 +412,12 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
                 }
               });
               Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Sub-category "${subCategory.name}" deleted'),
+                  backgroundColor: _primaryColor,
+                ),
+              );
             },
             child: Text('Delete', style: TextStyle(color: _primaryColor)),
           ),

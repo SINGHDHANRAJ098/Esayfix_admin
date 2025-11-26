@@ -3,7 +3,7 @@ class ServiceCategory {
   final String id;
   final String name;
   final String? imagePath;
-  final double price; // Changed from fixedPrice
+  final double price;
   final List<SubCategory> subCategories;
   final DateTime createdAt;
 
@@ -39,7 +39,7 @@ class SubCategory {
   final String id;
   final String name;
   final String? imagePath;
-  final double price; // Changed from fixedPrice
+  final double price;
   final DateTime createdAt;
 
   SubCategory({

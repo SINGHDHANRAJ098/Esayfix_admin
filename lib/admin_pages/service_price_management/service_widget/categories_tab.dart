@@ -1,5 +1,5 @@
+// lib/service_widget/categories_tab.dart
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import '../service_model/service_category.dart';
 
@@ -89,6 +89,17 @@ class CategoriesTab extends StatelessWidget {
                       color: hintColor,
                     ),
                   ),
+                  const SizedBox(height: 4),
+
+                  // Price
+                  Text(
+                    'Price: \$${category.price.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: primaryColor,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -118,23 +129,32 @@ class CategoriesTab extends StatelessWidget {
 
   Widget _buildCategoryImage(ServiceCategory category) {
     return Container(
-      width: 50,
-      height: 50,
+      width: 60,
+      height: 60,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         color: primaryColor.withOpacity(0.1),
       ),
-      child: category.imagePath != null
+      child: category.imagePath != null && File(category.imagePath!).existsSync()
           ? ClipRRect(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         child: Image.file(
           File(category.imagePath!),
           fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return _buildPlaceholderIcon();
+          },
         ),
       )
-          : Icon(
+          : _buildPlaceholderIcon(),
+    );
+  }
+
+  Widget _buildPlaceholderIcon() {
+    return Center(
+      child: Icon(
         Icons.category_rounded,
-        size: 24,
+        size: 28,
         color: primaryColor,
       ),
     );

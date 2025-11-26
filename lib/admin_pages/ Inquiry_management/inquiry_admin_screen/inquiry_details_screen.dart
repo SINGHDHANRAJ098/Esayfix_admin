@@ -159,6 +159,7 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
     return Scaffold(
       backgroundColor: const Color(0xfff7f7f7),
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
