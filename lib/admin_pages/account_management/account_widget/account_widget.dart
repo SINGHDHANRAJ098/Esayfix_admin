@@ -37,7 +37,7 @@ class SectionCard extends StatelessWidget {
         Card(
           elevation: 1,
           shadowColor: Colors.black12,
-          color: Colors.white, // WHITE background
+          color: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -142,7 +142,7 @@ class PolicyItem extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: Colors.white, // Changed from redAccent opacity → white
+              color: Colors.white,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: Colors.grey.shade200),
             ),
@@ -184,7 +184,7 @@ class ContactInfoRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white, // Changed from grey/pink to white
+            color: Colors.white,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.grey.shade300),
           ),

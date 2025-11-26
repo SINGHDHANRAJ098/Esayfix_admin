@@ -1,13 +1,10 @@
+import 'package:easyfix_admin/admin_pages/account_management/account_screen/admin_profile_screen.dart';
+import 'package:easyfix_admin/admin_pages/account_management/account_screen/policies_legal_screen.dart';
+import 'package:easyfix_admin/admin_pages/account_management/account_screen/reports_analytics_screen.dart';
+import 'package:easyfix_admin/admin_pages/account_management/account_screen/support_contact_screen.dart';
 import 'package:flutter/material.dart';
+ // ADD THIS IMPORT
 
-import 'admin_profile_screen.dart';
-import 'policies_legal_screen.dart';
-import 'support_contact_screen.dart';
-
-/// Main Account Management screen – groups:
-/// 1) Admin Profile
-/// 2) Policies & Legal
-/// 3) Support & Contact
 class AccountManagementScreen extends StatelessWidget {
   const AccountManagementScreen({super.key});
 
@@ -20,7 +17,6 @@ class AccountManagementScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         elevation: 0,
-
         title: const Text(
           'Account Management',
           style: TextStyle(
@@ -35,6 +31,8 @@ class AccountManagementScreen extends StatelessWidget {
         child: Column(
           children: [
             AdminProfileSection(),
+            SizedBox(height: 16),
+            ReportsAnalyticsSection(), // ADD THIS SECTION
             SizedBox(height: 16),
             PoliciesLegalSection(),
             SizedBox(height: 16),

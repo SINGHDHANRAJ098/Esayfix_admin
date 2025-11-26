@@ -1,5 +1,4 @@
 // lib/account_service/account_service.dart
-
 import '../account_model/account_model.dart';
 
 class AccountService {
@@ -155,6 +154,81 @@ class AccountService {
     ];
 
     return _cachedTickets!;
+  }
+
+  // Reports & Analytics Methods
+  Future<ReportData> getDailyReport() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    return ReportData(
+      period: 'Today',
+      totalInquiries: 24,
+      completedInquiries: 18,
+      pendingInquiries: 6,
+      totalRevenue: 12500.0,
+      averageRating: 4.7,
+      serviceDistribution: {
+        'AC Repair': 8,
+        'Plumbing': 6,
+        'Electrical': 5,
+        'Carpentry': 3,
+        'Painting': 2,
+      },
+    );
+  }
+
+  Future<ReportData> getMonthlyReport() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    return ReportData(
+      period: 'This Month',
+      totalInquiries: 342,
+      completedInquiries: 315,
+      pendingInquiries: 27,
+      totalRevenue: 185000.0,
+      averageRating: 4.6,
+      serviceDistribution: {
+        'AC Repair': 125,
+        'Plumbing': 89,
+        'Electrical': 67,
+        'Carpentry': 35,
+        'Painting': 26,
+      },
+    );
+  }
+
+  Future<List<ReportData>> getRevenueReport() async {
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    return [
+      ReportData(
+        period: 'Jan 2024',
+        totalInquiries: 298,
+        completedInquiries: 285,
+        pendingInquiries: 13,
+        totalRevenue: 162000.0,
+        averageRating: 4.5,
+        serviceDistribution: {},
+      ),
+      ReportData(
+        period: 'Feb 2024',
+        totalInquiries: 315,
+        completedInquiries: 302,
+        pendingInquiries: 13,
+        totalRevenue: 172500.0,
+        averageRating: 4.6,
+        serviceDistribution: {},
+      ),
+      ReportData(
+        period: 'Mar 2024',
+        totalInquiries: 342,
+        completedInquiries: 315,
+        pendingInquiries: 27,
+        totalRevenue: 185000.0,
+        averageRating: 4.6,
+        serviceDistribution: {},
+      ),
+    ];
   }
 
   // Clear cache methods (useful for logout or refresh)

@@ -54,7 +54,6 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
     }
   }
 
-  // FIXED: Show success BEFORE pop()
   void _confirm() {
     if (_selectedProvider == null) {
       _error("Please select a service provider");
@@ -94,6 +93,8 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
   @override
   Widget build(BuildContext context) {
     final providers = widget.providers;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
@@ -111,14 +112,20 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
         ),
       ),
 
+      // FIXED: Simplified layout structure
       body: Column(
         children: [
           _summaryCard(),
-          const SizedBox(height: 8),
-          Expanded(child: _providerList(providers)),
-          _bottomPanel(),
+          const SizedBox(height: 12),
+          // FIXED: Removed unnecessary Expanded and simplified structure
+          _providersHeader(),
+          const SizedBox(height: 12),
+          _providersList(providers),
         ],
       ),
+
+      // FIXED: Bottom panel with safe area
+      bottomNavigationBar: _bottomPanel(bottomPadding),
     );
   }
 
@@ -169,8 +176,8 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
     );
   }
 
-  // PROVIDERS LIST
-  Widget _providerList(List<ProviderModel> providers) {
+  // FIXED: Providers Header separated from list
+  Widget _providersHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -180,20 +187,25 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
             "Available Providers",
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
             "Select a provider",
             style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
           ),
-          const SizedBox(height: 14),
-
-          Expanded(
-            child: ListView.builder(
-              itemCount: providers.length,
-              itemBuilder: (_, i) => _providerCard(providers[i]),
-            ),
-          ),
         ],
+      ),
+    );
+  }
+
+  // FIXED: Providers List without unnecessary Expanded
+  Widget _providersList(List<ProviderModel> providers) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: ListView.builder(
+          itemCount: providers.length,
+          itemBuilder: (_, i) => _providerCard(providers[i]),
+        ),
       ),
     );
   }
@@ -259,13 +271,20 @@ class _AssignInquiryScreenState extends State<AssignInquiryScreen> {
     );
   }
 
-  // BOTTOM PANEL
-  Widget _bottomPanel() {
+  // BOTTOM PANEL - FIXED: Added safe area padding
+  Widget _bottomPanel(double bottomPadding) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + bottomPadding),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: Colors.grey.shade300)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
+          ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

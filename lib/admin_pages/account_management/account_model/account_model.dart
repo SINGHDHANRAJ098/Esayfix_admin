@@ -1,4 +1,3 @@
-
 class AdminProfile {
   final String name;
   final String email;
@@ -132,6 +131,7 @@ class SupportContact {
       'workingHours': workingHours,
     };
   }
+
   factory SupportContact.fromMap(Map<String, dynamic> map) {
     return SupportContact(
       phone: map['phone'] ?? '',
@@ -195,6 +195,50 @@ class SupportTicket {
       priority: map['priority'] ?? 'Medium',
       status: map['status'] ?? 'Open',
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
+    );
+  }
+}
+
+class ReportData {
+  final String period;
+  final int totalInquiries;
+  final int completedInquiries;
+  final int pendingInquiries;
+  final double totalRevenue;
+  final double averageRating;
+  final Map<String, int> serviceDistribution;
+
+  const ReportData({
+    required this.period,
+    required this.totalInquiries,
+    required this.completedInquiries,
+    required this.pendingInquiries,
+    required this.totalRevenue,
+    required this.averageRating,
+    required this.serviceDistribution,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'period': period,
+      'totalInquiries': totalInquiries,
+      'completedInquiries': completedInquiries,
+      'pendingInquiries': pendingInquiries,
+      'totalRevenue': totalRevenue,
+      'averageRating': averageRating,
+      'serviceDistribution': serviceDistribution,
+    };
+  }
+
+  factory ReportData.fromMap(Map<String, dynamic> map) {
+    return ReportData(
+      period: map['period'] ?? '',
+      totalInquiries: map['totalInquiries'] ?? 0,
+      completedInquiries: map['completedInquiries'] ?? 0,
+      pendingInquiries: map['pendingInquiries'] ?? 0,
+      totalRevenue: map['totalRevenue']?.toDouble() ?? 0.0,
+      averageRating: map['averageRating']?.toDouble() ?? 0.0,
+      serviceDistribution: Map<String, int>.from(map['serviceDistribution'] ?? {}),
     );
   }
 }

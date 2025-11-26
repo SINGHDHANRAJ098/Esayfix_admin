@@ -1,4 +1,3 @@
-
 import 'package:easyfix_admin/admin_pages/admin_bottom_navigation/admin_bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +15,7 @@ class _AdminOtpState extends State<AdminOtp> {
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
   final List<TextEditingController> _controllers = List.generate(
     6,
-    (_) => TextEditingController(),
+        (_) => TextEditingController(),
   );
 
   final Color redAccent = Colors.redAccent;
@@ -24,12 +23,14 @@ class _AdminOtpState extends State<AdminOtp> {
   final Color lightGrey = Colors.grey.shade100;
   final String fontFamily = 'Inter';
 
+  // Consistent logo widget
   Widget _buildLogo() {
     return Hero(
       tag: 'admin_logo',
       child: Image.asset(
         'images/easyfix.webp',
-        height: 120,
+        height: 120, // Consistent height
+        width: 200,  // Consistent width
         fit: BoxFit.contain,
       ),
     );
@@ -59,13 +60,13 @@ class _AdminOtpState extends State<AdminOtp> {
   void _verifyOtp() {
     final otp = _controllers.map((e) => e.text).join();
     if (otp.length == 6) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Admin OTP Verified: $otp")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Admin OTP Verified: $otp")),
+      );
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => AdminBottomNav()),
+        MaterialPageRoute(builder: (context) => const AdminBottomNav()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -104,35 +105,35 @@ class _AdminOtpState extends State<AdminOtp> {
               ),
               const SizedBox(height: 24),
 
-              // App Logo
-              _buildLogo(),
+              // App Logo - Centered and consistent
+              Center(child: _buildLogo()),
               const SizedBox(height: 28),
 
               // Heading
               Text(
                 "Admin OTP Verification",
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 20, // Consistent font size
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                   fontFamily: fontFamily,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12), // Increased spacing
               Text(
                 "Enter the 6-digit code sent to your number",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 14, // Slightly larger for better readability
                   color: Colors.grey.shade600,
                   fontFamily: fontFamily,
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 8),
               Text(
-                widget.phone, // dynamically shows number
+                widget.phone,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 15, // Consistent font size
                   fontWeight: FontWeight.w600,
                   fontFamily: fontFamily,
                 ),
@@ -157,12 +158,12 @@ class _AdminOtpState extends State<AdminOtp> {
                       ),
                       boxShadow: isFocused
                           ? [
-                              BoxShadow(
-                                color: redAccent.withOpacity(0.2),
-                                blurRadius: 8,
-                                offset: const Offset(0, 3),
-                              ),
-                            ]
+                        BoxShadow(
+                          color: redAccent.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ]
                           : [],
                     ),
                     child: TextField(
@@ -185,13 +186,9 @@ class _AdminOtpState extends State<AdminOtp> {
                       ),
                       onChanged: (value) {
                         if (value.isNotEmpty && index < 5) {
-                          FocusScope.of(
-                            context,
-                          ).requestFocus(_focusNodes[index + 1]);
+                          FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
                         } else if (value.isEmpty && index > 0) {
-                          FocusScope.of(
-                            context,
-                          ).requestFocus(_focusNodes[index - 1]);
+                          FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
                         }
                       },
                     ),
@@ -235,10 +232,10 @@ class _AdminOtpState extends State<AdminOtp> {
                     style: TextStyle(
                       fontFamily: fontFamily,
                       color: Colors.grey.shade600,
-                      fontSize: 13,
+                      fontSize: 14, // Consistent font size
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   GestureDetector(
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -253,7 +250,7 @@ class _AdminOtpState extends State<AdminOtp> {
                         fontFamily: fontFamily,
                         color: redAccent,
                         fontWeight: FontWeight.w600,
-                        fontSize: 14,
+                        fontSize: 14, // Consistent font size
                       ),
                     ),
                   ),

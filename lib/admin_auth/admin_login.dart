@@ -34,12 +34,14 @@ class _AdminLoginState extends State<AdminLogin> {
     }
   }
 
+  // Consistent logo widget
   Widget _buildLogo() {
     return Hero(
       tag: 'admin_logo',
       child: Image.asset(
         'images/easyfix.webp',
-        height: 120,
+        height: 120, // Consistent height
+        width: 200,  // Consistent width
         fit: BoxFit.contain,
       ),
     );
@@ -62,22 +64,22 @@ class _AdminLoginState extends State<AdminLogin> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Logo
-                  _buildLogo(),
-                  const SizedBox(height: 16),
+                  // Logo - Centered and consistent
+                  Center(child: _buildLogo()),
+                  const SizedBox(height: 20), // Consistent spacing
 
                   // Admin Heading
                   Text(
                     "Admin Panel Login",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 20, // Consistent font size
                       fontWeight: FontWeight.w700,
                       color: Colors.black87,
                       fontFamily: fontFamily,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28), // Consistent spacing
 
                   // Label
                   Align(
@@ -86,13 +88,13 @@ class _AdminLoginState extends State<AdminLogin> {
                       "Admin Phone Number",
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 14,
+                        fontSize: 15, // Consistent font size
                         color: Colors.grey.shade800,
                         fontFamily: fontFamily,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10), // Consistent spacing
 
                   // Phone + Country Code
                   Row(
@@ -124,7 +126,10 @@ class _AdminLoginState extends State<AdminLogin> {
                         child: TextFormField(
                           controller: _phoneController,
                           keyboardType: TextInputType.number,
-                          style: TextStyle(fontFamily: fontFamily, fontSize: 14),
+                          style: TextStyle(
+                              fontFamily: fontFamily,
+                              fontSize: 14
+                          ),
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(10),
@@ -133,7 +138,10 @@ class _AdminLoginState extends State<AdminLogin> {
                             filled: true,
                             fillColor: Colors.grey.shade100,
                             hintText: 'Enter admin phone number',
-                            hintStyle: TextStyle(fontSize: 14, fontFamily: fontFamily),
+                            hintStyle: TextStyle(
+                                fontSize: 14,
+                                fontFamily: fontFamily
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide(color: Colors.grey.shade400),
@@ -175,7 +183,7 @@ class _AdminLoginState extends State<AdminLogin> {
                             text: 'I agree to the ',
                             style: TextStyle(
                               color: Colors.black87,
-                              fontSize: 13,
+                              fontSize: 14, // Consistent font size
                               fontFamily: fontFamily,
                             ),
                             children: [
@@ -193,7 +201,7 @@ class _AdminLoginState extends State<AdminLogin> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28), // Consistent spacing
 
                   // Login Button
                   SizedBox(
@@ -206,12 +214,12 @@ class _AdminLoginState extends State<AdminLogin> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        elevation: 1,
+                        elevation: 3, // Consistent elevation
                       ),
                       child: Text(
                         "Send OTP",
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 16, // Consistent font size
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           fontFamily: fontFamily,
@@ -220,14 +228,14 @@ class _AdminLoginState extends State<AdminLogin> {
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
 
                   Text(
                     "EasyFix Admin Portal © 2025",
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       color: Colors.grey.shade500,
-                      fontSize: 12,
+                      fontSize: 13, // Consistent font size
                       fontFamily: fontFamily,
                     ),
                   ),

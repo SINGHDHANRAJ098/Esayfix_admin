@@ -1,5 +1,5 @@
 // lib/screens/service_management_screen.dart
-import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -101,7 +101,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
     );
   }
 
-  // ========================= CATEGORY FORM =========================
+  //  CATEGORY FORM
   void _showCategoryForm({ServiceCategory? category}) {
     final nameController = TextEditingController(text: category?.name ?? '');
     final priceController = TextEditingController(
@@ -194,7 +194,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
     );
   }
 
-  // ========================= SUB-CATEGORY FORM =========================
+  // SUB-CATEGORY FORM
   void _showSubCategoryForm({
     SubCategory? subCategory,
   }) {
@@ -327,7 +327,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
     );
   }
 
-  // ========================= IMAGE PICKER =========================
+  // IMAGE PICKER
   Future<String?> _pickImage() async {
     try {
       final XFile? image = await _picker.pickImage(
@@ -348,7 +348,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
     }
   }
 
-  // ========================= DELETE OPERATIONS =========================
+  //  DELETE OPERATIONS
   void _deleteCategory(ServiceCategory category) {
     showDialog(
       context: context,
