@@ -119,6 +119,37 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
         children: [
           const SizedBox(height: 8),
 
+          // Show active filter label if filter is applied
+          if (widget.currentFilter != null) ...[
+            Row(
+              children: [
+                Icon(Icons.filter_alt, size: 16, color: Colors.redAccent),
+                SizedBox(width: 4),
+                Text(
+                  "Showing: ${widget.currentFilter!.label}",
+                  style: TextStyle(
+                    color: Colors.redAccent,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                Spacer(),
+                GestureDetector(
+                  onTap: () => widget.onFilterChange(null),
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.close, size: 14, color: Colors.grey.shade700),
+                  ),
+                )
+              ],
+            ),
+            SizedBox(height: 8),
+          ],
+
           // Search Box
           Container(
             decoration: BoxDecoration(
@@ -189,8 +220,12 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
           children: [
             Icon(Icons.inbox, size: 60, color: Colors.grey.shade400),
             const SizedBox(height: 12),
-            const Text("No inquiries found",
-                style: TextStyle(color: Colors.black54))
+            Text(
+                widget.currentFilter != null
+                    ? "No ${widget.currentFilter!.label.toLowerCase()} inquiries found"
+                    : "No inquiries found",
+                style: const TextStyle(color: Colors.black54)
+            )
           ],
         ),
       );

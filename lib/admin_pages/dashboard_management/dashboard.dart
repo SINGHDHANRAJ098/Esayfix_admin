@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import '../ Inquiry_management/inquiry_admin_screen/inquiry_management_wrapper.dart';
 
+import '../account_management/account_screen/reports_analytics_screen.dart';
+import '../provider_management/provider_screen/provider_list_screen.dart';
 import '../notification_screen/notification.dart';
+// Import the revenue report screen
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -11,6 +15,29 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final Color redAccent = Colors.redAccent;
+
+  void _navigateToInquiries(BuildContext context, {String? initialFilter}) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => InquiryManagementWrapper(initialFilter: initialFilter),
+      ),
+    );
+  }
+
+  void _navigateToProviders(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => ProviderListScreen()),
+    );
+  }
+
+  void _navigateToRevenueReport(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => RevenueReportScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +62,6 @@ class _DashboardState extends State<Dashboard> {
                         backgroundImage: AssetImage("images/adminprofile.webp"),
                       ),
                       const SizedBox(width: 12),
-
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -122,7 +148,7 @@ class _DashboardState extends State<Dashboard> {
                     children: [
                       // GRID SECTION
                       GridView.builder(
-                        itemCount: 8, // total cards
+                        itemCount: 8,
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate:
@@ -139,28 +165,56 @@ class _DashboardState extends State<Dashboard> {
                               "296",
                               Colors.redAccent,
                               Icons.list_alt,
+                              null, // No filter for total inquiries
                             ],
-                            ["Pending", "14", Colors.orange, Icons.access_time],
-                            ["Assigned", "9", Colors.blue, Icons.person_search],
-                            ["In Progress", "6", Colors.purple, Icons.sync],
+                            [
+                              "Pending",
+                              "14",
+                              Colors.orange,
+                              Icons.access_time,
+                              "pending",
+                            ],
+                            [
+                              "Assigned",
+                              "9",
+                              Colors.blue,
+                              Icons.person_search,
+                              "assigned",
+                            ],
+                            [
+                              "In Progress",
+                              "6",
+                              Colors.purple,
+                              Icons.sync,
+                              "inProgress",
+                            ],
                             [
                               "Completed",
                               "28",
                               Colors.green,
                               Icons.check_circle,
+                              "completed",
                             ],
-                            ["Cancelled", "3", Colors.grey, Icons.close],
+                            [
+                              "Cancelled",
+                              "3",
+                              Colors.grey,
+                              Icons.close,
+                              "cancelled",
+                            ],
                             [
                               "Service Providers",
                               "57",
                               Colors.teal,
                               Icons.engineering,
+                              null, // Different navigation
                             ],
                             [
-                              "Today’s Activity",
-                              "12",
+                              "Revenue Report",
+                              "₹89,234",
                               Colors.brown,
-                              Icons.timeline,
+                              Icons.bar_chart,
+                              null, // Different navigation
                             ],
                           ];
 
@@ -169,6 +223,7 @@ class _DashboardState extends State<Dashboard> {
                             value: items[index][1] as String,
                             color: items[index][2] as Color,
                             icon: items[index][3] as IconData,
+                            filter: items[index][4] as String?,
                           );
                         },
                       ),
@@ -183,50 +238,69 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  //DASHBOARD CARD
+  // UPDATED DASHBOARD CARD WITH NAVIGATION
   Widget _dashboardCard({
     required String title,
     required String value,
     required Color color,
     required IconData icon,
+    required String? filter,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-            color: Colors.black.withOpacity(.07),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: color.withOpacity(.15),
-            child: Icon(icon, color: color, size: 22),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: color,
+    return GestureDetector(
+      onTap: () {
+        if (title == "Total Inquiries" ||
+            title == "Pending" ||
+            title == "Assigned" ||
+            title == "In Progress" ||
+            title == "Completed" ||
+            title == "Cancelled") {
+          _navigateToInquiries(context, initialFilter: filter);
+        } else if (title == "Service Providers") {
+          // Navigate to Service Providers screen
+          _navigateToProviders(context);
+        } else if (title == "Revenue Report") {
+          // Navigate to Revenue Report screen
+          _navigateToRevenueReport(context);
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+              color: Colors.black.withOpacity(.07),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-          ),
-        ],
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 22,
+              backgroundColor: color.withOpacity(.15),
+              child: Icon(icon, color: color, size: 22),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: color,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
       ),
     );
   }

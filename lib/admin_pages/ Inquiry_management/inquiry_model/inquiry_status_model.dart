@@ -1,4 +1,3 @@
-// models/inquiry_status_model.dart
 import 'package:flutter/material.dart';
 
 enum InquiryStatus {
@@ -52,6 +51,17 @@ extension InquiryStatusX on InquiryStatus {
         return Icons.check_circle;
       case InquiryStatus.cancelled:
         return Icons.cancel;
+    }
+  }
+
+  // ADD THIS METHOD FOR STRING CONVERSION
+  static InquiryStatus? fromString(String value) {
+    try {
+      return InquiryStatus.values.firstWhere(
+            (e) => e.name == value,
+      );
+    } catch (e) {
+      return null;
     }
   }
 }

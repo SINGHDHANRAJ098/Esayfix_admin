@@ -1,5 +1,3 @@
-// provider_management/provider_screen/provider_list_screen.dart
-
 import 'package:flutter/material.dart';
 import '../provider_model/provider_model.dart';
 
@@ -37,7 +35,7 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
         id: '2',
         name: 'Rajesh Sharma',
         phone: '+91 9876543211',
-        specialty: 'Electrical Wire service ',
+        specialty: 'Electrical Wire service',
         status: ProviderStatus.active,
         totalServicesAssigned: 32,
         totalServicesCompleted: 30,
@@ -50,6 +48,24 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
         status: ProviderStatus.inactive,
         totalServicesAssigned: 28,
         totalServicesCompleted: 25,
+      ),
+      ProviderModel(
+        id: '4',
+        name: 'Sanjay Patel',
+        phone: '+91 9876543213',
+        specialty: 'Plumbing',
+        status: ProviderStatus.active,
+        totalServicesAssigned: 38,
+        totalServicesCompleted: 35,
+      ),
+      ProviderModel(
+        id: '5',
+        name: 'Rahul Verma',
+        phone: '+91 9876543214',
+        specialty: 'Carpentry',
+        status: ProviderStatus.active,
+        totalServicesAssigned: 25,
+        totalServicesCompleted: 22,
       ),
     ];
 
@@ -68,9 +84,9 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
       _filteredProviders = _allProviders.where((p) {
         final matchesSearch =
             _searchQuery.isEmpty ||
-            p.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-            p.phone.contains(_searchQuery) ||
-            p.specialty.toLowerCase().contains(_searchQuery.toLowerCase());
+                p.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                p.phone.contains(_searchQuery) ||
+                p.specialty.toLowerCase().contains(_searchQuery.toLowerCase());
 
         final matchesStatus =
             _selectedStatus == null || p.status == _selectedStatus;
@@ -137,28 +153,48 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
           // Tabs
           _segmentedTabs(),
 
+          // Provider Count
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              "Total Providers: ${_filteredProviders.length}",
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+
           // Provider List
           Expanded(
             child: _filteredProviders.isEmpty
                 ? const Center(
-                    child: Text(
-                      "No providers found",
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _filteredProviders.length,
-                    itemBuilder: (context, index) =>
-                        _providerCard(_filteredProviders[index]),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.engineering, size: 60, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text(
+                    "No providers found",
+                    style: TextStyle(color: Colors.grey, fontSize: 16),
                   ),
+                ],
+              ),
+            )
+                : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _filteredProviders.length,
+              itemBuilder: (context, index) =>
+                  _providerCard(_filteredProviders[index]),
+            ),
           ),
         ],
       ),
     );
   }
 
-  //  TABS EXACT like your reference UI
+  // TABS EXACT like your reference UI
 
   Widget _segmentedTabs() {
     return Container(
@@ -276,6 +312,25 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
           _row(Icons.work, "Service: ${p.specialty}"),
           _row(Icons.assignment, "Assigned: ${p.totalServicesAssigned}"),
           _row(Icons.check_circle, "Completed: ${p.totalServicesCompleted}"),
+
+          // Completion Rate
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.trending_up, size: 18, color: Colors.blue.shade600),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  "Completion Rate: ${p.completionRate.toStringAsFixed(1)}%",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.blue.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

@@ -1,4 +1,3 @@
-// provider_management/provider_model/provider_model.dart
 import 'package:flutter/material.dart';
 
 enum ProviderStatus { active, inactive }

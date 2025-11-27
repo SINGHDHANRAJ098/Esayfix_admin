@@ -1,8 +1,4 @@
-// lib/admin_pages/Inquiry_management/inquiry_admin_screen/inquiry_management_wrapper.dart
-
 import 'package:flutter/material.dart';
-
-
 import '../inquiry_data_service/inquiry_data_service.dart';
 import '../inquiry_model/inquiry.model.dart';
 import '../inquiry_model/inquiry_provider_model.dart';
@@ -10,7 +6,9 @@ import '../inquiry_model/inquiry_status_model.dart';
 import 'inquiry_list_screen.dart';
 
 class InquiryManagementWrapper extends StatefulWidget {
-  const InquiryManagementWrapper({super.key});
+  final String? initialFilter;
+
+  const InquiryManagementWrapper({super.key, this.initialFilter});
 
   @override
   State<InquiryManagementWrapper> createState() =>
@@ -28,11 +26,16 @@ class _InquiryManagementWrapperState extends State<InquiryManagementWrapper> {
   void initState() {
     super.initState();
     _dataService.initializeData();
-    _filteredInquiries.addAll(_dataService.inquiries);
+
+    // Set initial filter if provided
+    if (widget.initialFilter != null) {
+      _currentFilter = InquiryStatusX.fromString(widget.initialFilter!);
+    }
+
+    _applyFilters();
   }
 
-  //  CALLBACK UPDATES
-
+  // CALLBACK UPDATES
   void _onStatusUpdate(String inquiryId, InquiryStatus newStatus) {
     setState(() {
       _dataService.updateInquiryStatus(inquiryId, newStatus);
@@ -91,7 +94,6 @@ class _InquiryManagementWrapperState extends State<InquiryManagementWrapper> {
   }
 
   // FILTER + SEARCH
-
   void _applyFilters() {
     List<Inquiry> results = _dataService.inquiries;
 
@@ -128,8 +130,7 @@ class _InquiryManagementWrapperState extends State<InquiryManagementWrapper> {
     return _dataService.getStatistics();
   }
 
-  //  UI
-
+  // UI
   @override
   Widget build(BuildContext context) {
     return Scaffold(

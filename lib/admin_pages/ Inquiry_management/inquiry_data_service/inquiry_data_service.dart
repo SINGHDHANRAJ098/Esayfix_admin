@@ -1,5 +1,4 @@
-// lib/admin_pages/Inquiry_management/inquiry_data_service/inquiry_data_service.dart
-
+import '../inquiry_model/additional_services.dart';
 import '../inquiry_model/inquiry.model.dart';
 import '../inquiry_model/inquiry_provider_model.dart';
 import '../inquiry_model/inquiry_status_model.dart';
@@ -20,8 +19,7 @@ class InquiryDataService {
     _loadInquiries();
   }
 
-  //  PROVIDERS
-
+  // PROVIDERS
   void _loadProviders() {
     _providers = [
       ProviderModel(
@@ -55,11 +53,10 @@ class InquiryDataService {
     ];
   }
 
-  //  INQUIRIES
-
+  // INQUIRIES
   void _loadInquiries() {
     _inquiries = [
-      //  Inquiry 1 (Pending)
+      // Inquiry 1 (Pending)
       Inquiry(
         id: "BZ4001",
         customer: "Rahul Sharma",
@@ -78,10 +75,11 @@ class InquiryDataService {
           ServiceItem(name: "AC Inspection", qty: 1, price: 500),
           ServiceItem(name: "Outdoor Unit Cleaning", qty: 1, price: 280),
         ],
+        additionalServices: [],
         additionalAmount: 0,
       ),
 
-      //  Inquiry 2 (Assigned)
+      // Inquiry 2 (Assigned)
       Inquiry(
         id: "BZ4002",
         customer: "Pooja Verma",
@@ -103,10 +101,11 @@ class InquiryDataService {
           ServiceItem(name: "Fan Installation", qty: 1, price: 300),
           ServiceItem(name: "Wiring Check", qty: 1, price: 100),
         ],
+        additionalServices: [],
         additionalAmount: 0,
       ),
 
-      //  Inquiry 3 (In Progress)
+      // Inquiry 3 (In Progress)
       Inquiry(
         id: "BZ4003",
         customer: "Amit Kumar",
@@ -128,10 +127,14 @@ class InquiryDataService {
         items: [
           ServiceItem(name: "LED Light Fitting", qty: 2, price: 350),
         ],
+        additionalServices: [
+          AdditionalService(name: "Emergency Callout", qty: 1, price: 200),
+          AdditionalService(name: "Premium LED Bulbs", qty: 2, price: 150),
+        ],
         additionalAmount: 150, // extra onsite charge
       ),
 
-      //  Inquiry 4 (Completed)
+      // Inquiry 4 (Completed)
       Inquiry(
         id: "BZ4004",
         customer: "Neha Gupta",
@@ -155,10 +158,11 @@ class InquiryDataService {
           ServiceItem(name: "AC Gas Refill", qty: 1, price: 550),
           ServiceItem(name: "Full Service", qty: 1, price: 350),
         ],
+        additionalServices: [],
         additionalAmount: 0,
       ),
 
-      //  Inquiry 5 (Cancelled)
+      // Inquiry 5 (Cancelled)
       Inquiry(
         id: "BZ4005",
         customer: "Sanjay Mehta",
@@ -178,13 +182,13 @@ class InquiryDataService {
         items: [
           ServiceItem(name: "Tap Leakage Repair", qty: 1, price: 300),
         ],
+        additionalServices: [],
         additionalAmount: 0,
       ),
     ];
   }
 
-  //  UPDATE METHODS
-
+  // UPDATE METHODS
   void updateInquiryStatus(String inquiryId, InquiryStatus newStatus) {
     final i = _find(inquiryId);
     if (i == -1) return;
@@ -277,8 +281,7 @@ class InquiryDataService {
     _inquiries[i] = _inquiries[i].copyWith(additionalAmount: amount);
   }
 
-  //  SEARCH
-
+  // SEARCH
   List<Inquiry> searchInquiries(String query) {
     if (query.isEmpty) return _inquiries;
 
@@ -289,63 +292,24 @@ class InquiryDataService {
           inquiry.customer.toLowerCase().contains(q) ||
           inquiry.service.toLowerCase().contains(q) ||
           inquiry.location.toLowerCase().contains(q) ||
-          (inquiry.customerPhone?.toLowerCase().contains(q) ?? false);
+          (inquiry.customerPhone?.toLowerCase().contains(q) ?? false) ||
+          (inquiry.customerAddress?.toLowerCase().contains(q) ?? false);
     }).toList();
   }
 
-  //  STATISTICS
-
+  // STATISTICS
   Map<String, dynamic> getStatistics() {
-    final total = _inquiries.length;
-
-    final pending =
-        _inquiries.where((i) => i.status == InquiryStatus.pending).length;
-    final assigned =
-        _inquiries.where((i) => i.status == InquiryStatus.assigned).length;
-    final inProgress =
-        _inquiries.where((i) => i.status == InquiryStatus.inProgress).length;
-    final completed =
-        _inquiries.where((i) => i.status == InquiryStatus.completed).length;
-    final cancelled =
-        _inquiries.where((i) => i.status == InquiryStatus.cancelled).length;
-
-    double totalRevenue = 0;
-    double unpaidAmount = 0;
-
-    for (var inq in _inquiries) {
-      double itemTotal = 0;
-
-      // Items total
-      if (inq.items != null) {
-        for (var item in inq.items!) {
-          itemTotal += item.price * item.qty;
-        }
-      }
-
-      // Additional
-      itemTotal += inq.additionalAmount ?? 0;
-
-      if (inq.paymentStatus == PaymentStatus.paid) {
-        totalRevenue += itemTotal;
-      } else {
-        unpaidAmount += itemTotal;
-      }
-    }
-
     return {
-      "total": total,
-      "pending": pending,
-      "assigned": assigned,
-      "inProgress": inProgress,
-      "completed": completed,
-      "cancelled": cancelled,
-      "totalRevenue": totalRevenue,
-      "unpaidAmount": unpaidAmount,
+      "total": _inquiries.length,
+      "pending": _inquiries.where((i) => i.status == InquiryStatus.pending).length,
+      "assigned": _inquiries.where((i) => i.status == InquiryStatus.assigned).length,
+      "inProgress": _inquiries.where((i) => i.status == InquiryStatus.inProgress).length,
+      "completed": _inquiries.where((i) => i.status == InquiryStatus.completed).length,
+      "cancelled": _inquiries.where((i) => i.status == InquiryStatus.cancelled).length,
     };
   }
 
-  //  UTILS
-
+  // UTILS
   int _find(String id) {
     return _inquiries.indexWhere((inq) => inq.id == id);
   }
