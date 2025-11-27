@@ -1,9 +1,7 @@
-// lib/service_model/service_category.dart
 class ServiceCategory {
   final String id;
   final String name;
   final String? imagePath;
-  final double price;
   final List<SubCategory> subCategories;
   final DateTime createdAt;
 
@@ -11,7 +9,6 @@ class ServiceCategory {
     required this.id,
     required this.name,
     this.imagePath,
-    required this.price,
     List<SubCategory>? subCategories,
     required this.createdAt,
   }) : subCategories = subCategories ?? [];
@@ -20,7 +17,6 @@ class ServiceCategory {
     String? id,
     String? name,
     String? imagePath,
-    double? price,
     List<SubCategory>? subCategories,
     DateTime? createdAt,
   }) {
@@ -28,7 +24,6 @@ class ServiceCategory {
       id: id ?? this.id,
       name: name ?? this.name,
       imagePath: imagePath ?? this.imagePath,
-      price: price ?? this.price,
       subCategories: subCategories ?? this.subCategories,
       createdAt: createdAt ?? this.createdAt,
     );

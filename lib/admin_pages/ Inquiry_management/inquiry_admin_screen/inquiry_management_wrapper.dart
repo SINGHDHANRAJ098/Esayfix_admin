@@ -138,7 +138,6 @@ class _InquiryManagementWrapperState extends State<InquiryManagementWrapper> {
       body: InquiryListScreen(
         inquiries: _filteredInquiries,
         providers: _dataService.providers,
-
         onStatusUpdate: _onStatusUpdate,
         onAssignProvider: _onAssignProvider,
         onUpdateProvider: _onUpdateProvider,
@@ -146,13 +145,11 @@ class _InquiryManagementWrapperState extends State<InquiryManagementWrapper> {
         onUpdateAdminNotes: _onUpdateAdminNotes,
         onAddAdminNote: _onAddAdminNote,
         onUpdateInquiryPrice: _onUpdateInquiryPrice,
-
         searchQuery: _searchQuery,
         currentFilter: _currentFilter,
         onSearch: _onSearch,
         onFilterChange: _onFilterChange,
         onRefresh: _refreshData,
-
         statistics: _getStatistics(),
       ),
     );

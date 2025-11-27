@@ -84,9 +84,9 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
       _filteredProviders = _allProviders.where((p) {
         final matchesSearch =
             _searchQuery.isEmpty ||
-                p.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                p.phone.contains(_searchQuery) ||
-                p.specialty.toLowerCase().contains(_searchQuery.toLowerCase());
+            p.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            p.phone.contains(_searchQuery) ||
+            p.specialty.toLowerCase().contains(_searchQuery.toLowerCase());
 
         final matchesStatus =
             _selectedStatus == null || p.status == _selectedStatus;
@@ -149,7 +149,6 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
               ),
             ),
           ),
-
           // Tabs
           _segmentedTabs(),
 
@@ -170,24 +169,24 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
           Expanded(
             child: _filteredProviders.isEmpty
                 ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.engineering, size: 60, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text(
-                    "No providers found",
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
-                  ),
-                ],
-              ),
-            )
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.engineering, size: 60, color: Colors.grey),
+                        SizedBox(height: 16),
+                        Text(
+                          "No providers found",
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                        ),
+                      ],
+                    ),
+                  )
                 : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _filteredProviders.length,
-              itemBuilder: (context, index) =>
-                  _providerCard(_filteredProviders[index]),
-            ),
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _filteredProviders.length,
+                    itemBuilder: (context, index) =>
+                        _providerCard(_filteredProviders[index]),
+                  ),
           ),
         ],
       ),
@@ -195,7 +194,6 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
   }
 
   // TABS EXACT like your reference UI
-
   Widget _segmentedTabs() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -252,7 +250,6 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
   }
 
   // Provider Card
-
   Widget _providerCard(ProviderModel p) {
     return Container(
       padding: const EdgeInsets.all(16),

@@ -21,7 +21,7 @@ class InvoiceScreen extends StatelessWidget {
 
   double get outstandingAmount => totalBeforeBooking - bookingAmount;
 
-  // ------------------ AUTO PAYMENT STATUS ------------------
+  //  AUTO PAYMENT STATUS
   PaymentStatus get autoPaymentStatus {
     if (bookingAmount == 0) return PaymentStatus.unpaid;
 
@@ -54,7 +54,7 @@ class InvoiceScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(14),
         children: [
-          // ---------------- HEADER ----------------
+          //  HEADER
           Container(
             padding: const EdgeInsets.all(14),
             decoration: box(),
@@ -123,7 +123,7 @@ class InvoiceScreen extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          // ------------ ADDITIONAL SERVICES ------------
+          //  ADDITIONAL SERVICES
           Container(
             padding: const EdgeInsets.all(14),
             decoration: box(),
@@ -150,7 +150,7 @@ class InvoiceScreen extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          // ------------ TOTALS ------------
+          //  TOTALS
           Container(
             padding: const EdgeInsets.all(14),
             decoration: box(),
@@ -183,7 +183,7 @@ class InvoiceScreen extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          // ------------ PAYMENT INFO (MATCHING DETAIL SCREEN) ------------
+          //  PAYMENT INFO (MATCHING DETAIL SCREEN)
           Container(
             padding: const EdgeInsets.all(14),
             decoration: box(),

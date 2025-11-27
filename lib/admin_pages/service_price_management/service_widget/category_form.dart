@@ -1,4 +1,3 @@
-// lib/service_widget/category_form.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../service_model/service_category.dart';
@@ -6,7 +5,6 @@ import '../service_model/service_category.dart';
 class CategoryForm extends StatefulWidget {
   final ServiceCategory? category;
   final TextEditingController nameController;
-  final TextEditingController priceController;
   final String? imagePath;
   final Color primaryColor;
   final VoidCallback onImagePick;
@@ -16,7 +14,6 @@ class CategoryForm extends StatefulWidget {
     super.key,
     this.category,
     required this.nameController,
-    required this.priceController,
     required this.imagePath,
     required this.primaryColor,
     required this.onImagePick,
@@ -102,18 +99,18 @@ class _CategoryFormState extends State<CategoryForm> {
                         ),
                       ),
                       child:
-                          widget.imagePath != null &&
-                              File(widget.imagePath!).existsSync()
+                      widget.imagePath != null &&
+                          File(widget.imagePath!).existsSync()
                           ? ClipRRect(
-                              borderRadius: BorderRadius.circular(18),
-                              child: Image.file(
-                                File(widget.imagePath!),
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return _buildPlaceholderImage();
-                                },
-                              ),
-                            )
+                        borderRadius: BorderRadius.circular(18),
+                        child: Image.file(
+                          File(widget.imagePath!),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildPlaceholderImage();
+                          },
+                        ),
+                      )
                           : _buildPlaceholderImage(),
                     ),
                   ),
@@ -140,58 +137,6 @@ class _CategoryFormState extends State<CategoryForm> {
                       hintText: 'Enter category name',
                       hintStyle: TextStyle(
                         color: Colors.grey[600],
-                        fontSize: 16,
-                      ),
-                      filled: true,
-                      fillColor: const Color(0xFFF8F9FA),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 18,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide(
-                          color: widget.primaryColor,
-                          width: 2.5,
-                        ),
-                      ),
-                    ),
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32),
-
-              // Price section
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Price',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: widget.priceController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      prefixText: '\$ ',
-                      prefixStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
-                      ),
-                      hintText: '0.00',
-                      hintStyle: TextStyle(
-                        color: Colors.grey[500],
                         fontSize: 16,
                       ),
                       filled: true,

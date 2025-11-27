@@ -1,4 +1,3 @@
-// lib/service_widget/categories_tab.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../service_model/service_category.dart';
@@ -86,17 +85,6 @@ class CategoriesTab extends StatelessWidget {
                     '${category.subCategories.length} sub-categories',
                     style: TextStyle(fontSize: 13, color: hintColor),
                   ),
-                  const SizedBox(height: 4),
-
-                  // Price
-                  Text(
-                    'Price: \$${category.price.toStringAsFixed(2)}',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: primaryColor,
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -137,17 +125,17 @@ class CategoriesTab extends StatelessWidget {
         color: primaryColor.withOpacity(0.1),
       ),
       child:
-          category.imagePath != null && File(category.imagePath!).existsSync()
+      category.imagePath != null && File(category.imagePath!).existsSync()
           ? ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.file(
-                File(category.imagePath!),
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return _buildPlaceholderIcon();
-                },
-              ),
-            )
+        borderRadius: BorderRadius.circular(12),
+        child: Image.file(
+          File(category.imagePath!),
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return _buildPlaceholderIcon();
+          },
+        ),
+      )
           : _buildPlaceholderIcon(),
     );
   }

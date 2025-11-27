@@ -1,5 +1,3 @@
-// lib/screens/service_management_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -104,9 +102,6 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
   //  CATEGORY FORM
   void _showCategoryForm({ServiceCategory? category}) {
     final nameController = TextEditingController(text: category?.name ?? '');
-    final priceController = TextEditingController(
-      text: category?.price.toString() ?? '',
-    );
 
     String? currentImagePath = category?.imagePath;
 
@@ -120,7 +115,6 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
             return CategoryForm(
               category: category,
               nameController: nameController,
-              priceController: priceController,
               imagePath: currentImagePath,
               primaryColor: _primaryColor,
               onImagePick: () async {
@@ -135,7 +129,6 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
                 _saveCategory(
                   category: category,
                   name: nameController.text.trim(),
-                  price: double.tryParse(priceController.text) ?? 0,
                   imagePath: currentImagePath,
                   context: context,
                 );
@@ -150,7 +143,6 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
   void _saveCategory({
     ServiceCategory? category,
     required String name,
-    required double price,
     required String? imagePath,
     required BuildContext context,
   }) {
@@ -171,7 +163,6 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
             id: DateTime.now().millisecondsSinceEpoch.toString(),
             name: name,
             imagePath: imagePath,
-            price: price,
             createdAt: DateTime.now(),
           ),
         );
@@ -180,7 +171,6 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
         _categories[index] = category.copyWith(
           name: name,
           imagePath: imagePath,
-          price: price,
         );
       }
     });
@@ -217,8 +207,8 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
 
     ServiceCategory? selectedCategory = subCategory != null
         ? _categories.firstWhere(
-            (cat) => cat.subCategories.contains(subCategory),
-          )
+          (cat) => cat.subCategories.contains(subCategory),
+    )
         : (_categories.isNotEmpty ? _categories.first : null);
 
     showModalBottomSheet(
@@ -286,7 +276,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
 
     setState(() {
       final categoryIndex = _categories.indexWhere(
-        (c) => c.id == selectedCategory.id,
+            (c) => c.id == selectedCategory.id,
       );
       final updatedSubCategories = List<SubCategory>.from(
         _categories[categoryIndex].subCategories,
@@ -304,7 +294,7 @@ class _ServiceManagementScreenState extends State<ServiceManagementScreen> {
         );
       } else {
         final subIndex = updatedSubCategories.indexWhere(
-          (s) => s.id == subCategory.id,
+              (s) => s.id == subCategory.id,
         );
         updatedSubCategories[subIndex] = subCategory.copyWith(
           name: name,

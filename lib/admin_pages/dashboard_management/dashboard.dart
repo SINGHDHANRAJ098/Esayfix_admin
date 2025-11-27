@@ -4,7 +4,6 @@ import '../ Inquiry_management/inquiry_admin_screen/inquiry_management_wrapper.d
 import '../account_management/account_screen/reports_analytics_screen.dart';
 import '../provider_management/provider_screen/provider_list_screen.dart';
 import '../notification_screen/notification.dart';
-// Import the revenue report screen
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -128,7 +127,7 @@ class _DashboardState extends State<Dashboard> {
               ),
             ),
 
-            // WHITE ROUNDED CONTENT AREA
+            // WHITE ROUNDED CONTENT AREA - CUSTOM LAYOUT
             Expanded(
               child: Container(
                 decoration: const BoxDecoration(
@@ -138,94 +137,119 @@ class _DashboardState extends State<Dashboard> {
                     topRight: Radius.circular(30),
                   ),
                 ),
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
-                  ),
-                  physics: const BouncingScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      // GRID SECTION
-                      GridView.builder(
-                        itemCount: 8,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 11,
-                              mainAxisSpacing: 11,
-                              childAspectRatio: 1.05,
+                      // First Row of Cards
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _dashboardCard(
+                                title: "Total Inquiries",
+                                value: "296",
+                                color: Colors.redAccent,
+                                icon: Icons.list_alt,
+                                filter: null,
+                              ),
                             ),
-                        itemBuilder: (_, index) {
-                          final items = [
-                            [
-                              "Total Inquiries",
-                              "296",
-                              Colors.redAccent,
-                              Icons.list_alt,
-                              null, // No filter for total inquiries
-                            ],
-                            [
-                              "Pending",
-                              "14",
-                              Colors.orange,
-                              Icons.access_time,
-                              "pending",
-                            ],
-                            [
-                              "Assigned",
-                              "9",
-                              Colors.blue,
-                              Icons.person_search,
-                              "assigned",
-                            ],
-                            [
-                              "In Progress",
-                              "6",
-                              Colors.purple,
-                              Icons.sync,
-                              "inProgress",
-                            ],
-                            [
-                              "Completed",
-                              "28",
-                              Colors.green,
-                              Icons.check_circle,
-                              "completed",
-                            ],
-                            [
-                              "Cancelled",
-                              "3",
-                              Colors.grey,
-                              Icons.close,
-                              "cancelled",
-                            ],
-                            [
-                              "Service Providers",
-                              "57",
-                              Colors.teal,
-                              Icons.engineering,
-                              null, // Different navigation
-                            ],
-                            [
-                              "Revenue Report",
-                              "₹89,234",
-                              Colors.brown,
-                              Icons.bar_chart,
-                              null, // Different navigation
-                            ],
-                          ];
+                            const SizedBox(width: 11),
+                            Expanded(
+                              child: _dashboardCard(
+                                title: "Pending",
+                                value: "14",
+                                color: Colors.orange,
+                                icon: Icons.access_time,
+                                filter: "pending",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 11),
 
-                          return _dashboardCard(
-                            title: items[index][0] as String,
-                            value: items[index][1] as String,
-                            color: items[index][2] as Color,
-                            icon: items[index][3] as IconData,
-                            filter: items[index][4] as String?,
-                          );
-                        },
+                      // Second Row of Cards
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _dashboardCard(
+                                title: "Assigned",
+                                value: "9",
+                                color: Colors.blue,
+                                icon: Icons.person_search,
+                                filter: "assigned",
+                              ),
+                            ),
+                            const SizedBox(width: 11),
+                            Expanded(
+                              child: _dashboardCard(
+                                title: "In Progress",
+                                value: "6",
+                                color: Colors.purple,
+                                icon: Icons.sync,
+                                filter: "inProgress",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 11),
+
+                      // Third Row of Cards
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _dashboardCard(
+                                title: "Completed",
+                                value: "28",
+                                color: Colors.green,
+                                icon: Icons.check_circle,
+                                filter: "completed",
+                              ),
+                            ),
+                            const SizedBox(width: 11),
+                            Expanded(
+                              child: _dashboardCard(
+                                title: "Cancelled",
+                                value: "3",
+                                color: Colors.grey,
+                                icon: Icons.close,
+                                filter: "cancelled",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 11),
+
+                      // Fourth Row of Cards
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _dashboardCard(
+                                title: "Service Providers",
+                                value: "57",
+                                color: Colors.teal,
+                                icon: Icons.engineering,
+                                filter: null,
+                              ),
+                            ),
+                            const SizedBox(width: 11),
+                            Expanded(
+                              child: _dashboardCard(
+                                title: "Revenue Report",
+                                value: "₹89,234",
+                                color: Colors.brown,
+                                icon: Icons.bar_chart,
+                                filter: null,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -238,7 +262,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  // UPDATED DASHBOARD CARD WITH NAVIGATION
+  // DASHBOARD CARD WITH NAVIGATION
   Widget _dashboardCard({
     required String title,
     required String value,
@@ -256,15 +280,12 @@ class _DashboardState extends State<Dashboard> {
             title == "Cancelled") {
           _navigateToInquiries(context, initialFilter: filter);
         } else if (title == "Service Providers") {
-          // Navigate to Service Providers screen
           _navigateToProviders(context);
         } else if (title == "Revenue Report") {
-          // Navigate to Revenue Report screen
           _navigateToRevenueReport(context);
         }
       },
       child: Container(
-        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
@@ -280,15 +301,15 @@ class _DashboardState extends State<Dashboard> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
-              radius: 22,
+              radius: 20,
               backgroundColor: color.withOpacity(.15),
-              child: Icon(icon, color: color, size: 22),
+              child: Icon(icon, color: color, size: 20),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Text(
               value,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.w800,
                 color: color,
               ),
@@ -297,7 +318,10 @@ class _DashboardState extends State<Dashboard> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),

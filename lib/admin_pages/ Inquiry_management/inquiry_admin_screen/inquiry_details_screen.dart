@@ -42,14 +42,14 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
     inquiry = widget.inquiry;
   }
 
-  // ------------------ CALCULATIONS ------------------
+  //  CALCULATIONS
   double get serviceTotal => inquiry.serviceTotal;
   double get additionalServiceTotal => inquiry.additionalServiceTotal;
   double get bookingAmount => inquiry.price ?? 0;
   double get additionalAmount => inquiry.additionalAmount;
   double get totalPayable => inquiry.payableAmount;
 
-  // ------------------ PAYMENT STATUS AUTO ------------------
+  //  PAYMENT STATUS AUTO
   PaymentStatus get autoPaymentStatus {
     double totalBeforeBooking = serviceTotal + additionalServiceTotal + additionalAmount;
 
@@ -78,7 +78,7 @@ class _InquiryDetailsScreenState extends State<InquiryDetailsScreen> {
     return (totalBeforeBooking - bookingAmount).clamp(0, double.infinity);
   }
 
-  // ------------------ NAVIGATION ------------------
+  //  NAVIGATION
   void _assignProvider() {
     Navigator.push(
       context,
