@@ -104,7 +104,7 @@ class _RevenueReportScreenState extends State<RevenueReportScreen> {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Summary Cards - Only Total Revenue and Completed Jobs
+          // Summary Cards
           Row(
             children: [
               Expanded(

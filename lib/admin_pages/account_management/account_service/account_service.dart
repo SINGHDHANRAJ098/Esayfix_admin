@@ -157,6 +157,7 @@ class AccountService {
   }
 
   // Reports & Analytics Methods
+
   Future<ReportData> getDailyReport() async {
     await Future.delayed(const Duration(milliseconds: 300));
 

@@ -228,7 +228,7 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
         ),
         child: Center(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,  // perfect center text
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (isSelected) ...[
                 const Icon(Icons.check, size: 16, color: Colors.white),

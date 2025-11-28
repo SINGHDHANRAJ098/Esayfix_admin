@@ -23,14 +23,14 @@ class _AdminOtpState extends State<AdminOtp> {
   final Color lightGrey = Colors.grey.shade100;
   final String fontFamily = 'Inter';
 
-  // Consistent logo widget
+  //logo widget
   Widget _buildLogo() {
     return Hero(
       tag: 'admin_logo',
       child: Image.asset(
         'images/easyfix.webp',
-        height: 120, // Consistent height
-        width: 200, // Consistent width
+        height: 120,
+        width: 200,
         fit: BoxFit.contain,
       ),
     );
@@ -105,7 +105,7 @@ class _AdminOtpState extends State<AdminOtp> {
               ),
               const SizedBox(height: 24),
 
-              // App Logo - Centered and consistent
+              // App Logo -
               Center(child: _buildLogo()),
               const SizedBox(height: 28),
 
@@ -113,7 +113,7 @@ class _AdminOtpState extends State<AdminOtp> {
               Text(
                 "Admin OTP Verification",
                 style: TextStyle(
-                  fontSize: 20, // Consistent font size
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                   fontFamily: fontFamily,
@@ -133,7 +133,7 @@ class _AdminOtpState extends State<AdminOtp> {
               Text(
                 widget.phone,
                 style: TextStyle(
-                  fontSize: 15, // Consistent font size
+                  fontSize: 15,
                   fontWeight: FontWeight.w600,
                   fontFamily: fontFamily,
                 ),

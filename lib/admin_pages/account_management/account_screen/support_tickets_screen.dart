@@ -237,6 +237,7 @@ class SupportTicketDetailScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Description Card
+
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),

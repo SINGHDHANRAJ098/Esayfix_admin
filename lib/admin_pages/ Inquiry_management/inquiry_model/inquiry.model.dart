@@ -138,7 +138,7 @@ class Inquiry {
       customerAddress: customerAddress ?? this.customerAddress,
       items: items ?? this.items,
       additionalServices:
-          additionalServices ?? this.additionalServices, // ⭐ REQUIRED
+          additionalServices ?? this.additionalServices,
       price: price ?? this.price,
       additionalAmount: additionalAmount ?? this.additionalAmount,
       userNotes: userNotes ?? this.userNotes,

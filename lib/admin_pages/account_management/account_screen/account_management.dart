@@ -32,7 +32,7 @@ class AccountManagementScreen extends StatelessWidget {
           children: [
             AdminProfileSection(),
             SizedBox(height: 16),
-            ReportsAnalyticsSection(), // ADD THIS SECTION
+            ReportsAnalyticsSection(),
             SizedBox(height: 16),
             PoliciesLegalSection(),
             SizedBox(height: 16),

@@ -235,7 +235,6 @@ class ContactInfoRow extends StatelessWidget {
 class EditIconButton extends StatelessWidget {
   final VoidCallback onTap;
   final double size;
-
   const EditIconButton({super.key, required this.onTap, this.size = 16});
 
   @override
