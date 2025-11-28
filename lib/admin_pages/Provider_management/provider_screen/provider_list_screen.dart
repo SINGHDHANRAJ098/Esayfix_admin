@@ -217,7 +217,7 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
       borderRadius: BorderRadius.circular(14),
       onTap: () => _updateStatusFilter(status),
       child: Container(
-        height: 42, // Bigger box height
+        height: 42,  // Bigger box height
         decoration: BoxDecoration(
           color: isSelected ? Colors.redAccent : Colors.white,
           borderRadius: BorderRadius.circular(14),
@@ -228,7 +228,7 @@ class _ProviderListScreenState extends State<ProviderListScreen> {
         ),
         child: Center(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center, // perfect center text
+            mainAxisAlignment: MainAxisAlignment.center,  // perfect center text
             children: [
               if (isSelected) ...[
                 const Icon(Icons.check, size: 16, color: Colors.white),

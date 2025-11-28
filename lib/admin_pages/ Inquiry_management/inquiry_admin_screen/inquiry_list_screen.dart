@@ -77,8 +77,10 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: true,
         elevation: 0.3,
         backgroundColor: Colors.white,
         centerTitle: true,

@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'inquiry_provider_model.dart';
 import 'inquiry_status_model.dart';
 
-
-
-
 // SERVICE ITEM MODEL (for multiple main services)
 
 class ServiceItem {
@@ -14,17 +11,9 @@ class ServiceItem {
   final int qty;
   final double price;
 
-  ServiceItem({
-    required this.name,
-    required this.qty,
-    required this.price,
-  });
+  ServiceItem({required this.name, required this.qty, required this.price});
 
-  ServiceItem copyWith({
-    String? name,
-    int? qty,
-    double? price,
-  }) {
+  ServiceItem copyWith({String? name, int? qty, double? price}) {
     return ServiceItem(
       name: name ?? this.name,
       qty: qty ?? this.qty,
@@ -32,7 +21,6 @@ class ServiceItem {
     );
   }
 }
-
 
 //INQUIRY MODEL
 
@@ -55,16 +43,13 @@ class Inquiry {
 
   List<ServiceItem> items;
 
-  /// ----------------------------------------
-  /// ADDITIONAL SERVICES (⭐ NEW)
-  /// ----------------------------------------
+  //ADDITIONAL SERVICES
   List<AdditionalService> additionalServices;
 
-  /// ----------------------------------------
-  /// PRICING
-  /// ----------------------------------------
-  double? price;             // booking / advance amount
-  double additionalAmount;   // manual extra charge
+  // PRICING
+
+  double? price; // booking / advance amount
+  double additionalAmount; // manual extra charge
 
   final String? userNotes;
   String? adminNotes;
@@ -87,7 +72,7 @@ class Inquiry {
     required this.createdAt,
     required this.items,
 
-    this.additionalServices = const [],       // ⭐ DEFAULT EMPTY LIST
+    this.additionalServices = const [],
     this.provider,
     this.customerPhone,
     this.customerAddress,
@@ -102,9 +87,8 @@ class Inquiry {
     this.cancelledAt,
   });
 
-  /// ----------------------------------------
-  /// TOTAL CALCULATIONS
-  /// ----------------------------------------
+  // TOTAL CALCULATIONS
+
   double get serviceTotal =>
       items.fold(0.0, (sum, item) => sum + (item.qty * item.price));
 
@@ -114,9 +98,8 @@ class Inquiry {
   double get payableAmount =>
       serviceTotal + additionalServiceTotal + additionalAmount - (price ?? 0);
 
-  /// ----------------------------------------
-  /// COPY-WITH
-  /// ----------------------------------------
+  //COPY-WITH
+
   Inquiry copyWith({
     String? id,
     String? customer,
@@ -154,7 +137,8 @@ class Inquiry {
       customerPhone: customerPhone ?? this.customerPhone,
       customerAddress: customerAddress ?? this.customerAddress,
       items: items ?? this.items,
-      additionalServices: additionalServices ?? this.additionalServices, // ⭐ REQUIRED
+      additionalServices:
+          additionalServices ?? this.additionalServices, // ⭐ REQUIRED
       price: price ?? this.price,
       additionalAmount: additionalAmount ?? this.additionalAmount,
       userNotes: userNotes ?? this.userNotes,
@@ -168,10 +152,8 @@ class Inquiry {
   }
 }
 
+//PAYMENT STATUS ENUM
 
-/// ----------------------------------------------------------
-/// PAYMENT STATUS ENUM
-/// ----------------------------------------------------------
 enum PaymentStatus { unpaid, paid, partiallyPaid, refunded }
 
 extension PaymentStatusX on PaymentStatus {
@@ -202,10 +184,8 @@ extension PaymentStatusX on PaymentStatus {
   }
 }
 
+// PAYMENT METHOD ENUM
 
-/// ----------------------------------------------------------
-/// PAYMENT METHOD ENUM
-/// ----------------------------------------------------------
 enum PaymentMethod { cash, card, online, bankTransfer }
 
 extension PaymentMethodX on PaymentMethod {
