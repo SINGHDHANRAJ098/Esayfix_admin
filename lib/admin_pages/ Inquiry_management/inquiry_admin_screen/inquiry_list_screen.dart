@@ -425,7 +425,7 @@ class _InquiryListScreenState extends State<InquiryListScreen> {
     );
   }
 
-  // UI HELPERS
+     // UI HELPERS
   Widget _info(IconData icon, String text) {
     return Row(
       children: [
